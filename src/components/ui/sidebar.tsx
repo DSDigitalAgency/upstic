@@ -97,7 +97,6 @@ const sidebarItems: SidebarItem[] = [
       </svg>
     ),
     children: [
-      { id: 'reports-financial', label: 'Financial', href: '/admin/reports/financial', icon: null },
       { id: 'reports-performance', label: 'Performance', href: '/admin/reports/performance', icon: null },
       { id: 'reports-compliance', label: 'Compliance', href: '/admin/reports/compliance', icon: null },
     ],
@@ -115,7 +114,6 @@ const sidebarItems: SidebarItem[] = [
     children: [
       { id: 'settings-general', label: 'General', href: '/admin/settings/general', icon: null },
       { id: 'settings-notifications', label: 'Notifications', href: '/admin/settings/notifications', icon: null },
-      { id: 'settings-admins', label: 'Admin Users', href: '/admin/settings/admins', icon: null },
     ],
   },
 ];

@@ -52,11 +52,11 @@ export interface Client {
   email: string;
   phone: string;
   address: string;
-  status: 'active' | 'inactive' | 'trial' | 'suspended';
+  status: 'ACTIVE' | 'INACTIVE' | 'TRIAL' | 'SUSPENDED';
   createdAt: string;
   updatedAt: string;
   description: string;
-  industry: string;
+  industry: 'HOSPITAL' | 'CLINIC' | 'CARE_HOME' | 'OTHER';
   subscriptionPlan: string;
   trialDetails?: {
     startDate: string;
@@ -404,6 +404,24 @@ export class ApiClient {
   }
 
   /**
+   * Update current user profile
+   */
+  async updateCurrentUser(data: Partial<AuthResponse['user']>): Promise<ApiResponse<AuthResponse['user']>> {
+    const response = await this.put<AuthResponse['user']>('/api/auth/me', data);
+    
+    if (response.success && response.data) {
+      // Update stored user data
+      if (typeof window !== 'undefined') {
+        const currentData = this.getUserData();
+        const updatedData = { ...currentData, ...response.data };
+        localStorage.setItem('user_data', JSON.stringify(updatedData));
+      }
+    }
+    
+    return response;
+  }
+
+  /**
    * Admin Dashboard Methods
    */
 
@@ -460,14 +478,32 @@ export class ApiClient {
    * Get all clients
    */
   async getClients(): Promise<ApiResponse<Client[]>> {
-    return this.get(`/api/clients`);
+    const response = await this.get<(Client & { _id?: string })[]>('/api/clients');
+    
+    if (response.success && Array.isArray(response.data)) {
+      response.data.forEach(client => {
+        if (client && client._id && !client.id) {
+          client.id = client._id;
+        }
+      });
+    }
+    
+    return response as ApiResponse<Client[]>;
   }
 
   /**
    * Get a single client by ID
    */
   async getClientById(id: string): Promise<ApiResponse<Client>> {
-    return this.get(`/api/clients/${id}`);
+    const response = await this.get<Client & { _id?: string }>(`/api/clients/${id}`);
+    
+    if (response.success && response.data) {
+      if (response.data._id && !response.data.id) {
+        response.data.id = response.data._id;
+      }
+    }
+    
+    return response as ApiResponse<Client>;
   }
 
   /**

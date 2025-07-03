@@ -14,6 +14,7 @@ interface AuthActions {
   register: (userData: RegisterRequest) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
+  updateUser: (data: Partial<AuthResponse['user']>) => Promise<boolean>;
 }
 
 export function useAuth(): AuthState & AuthActions {
@@ -270,6 +271,23 @@ export function useAuth(): AuthState & AuthActions {
     }
   }, []);
 
+  const updateUser = useCallback(async (data: Partial<AuthResponse['user']>) => {
+    try {
+      const response = await apiClient.updateCurrentUser(data);
+      if (response.success && response.data) {
+        setState(prev => ({
+          ...prev,
+          user: response.data as AuthResponse['user']
+        }));
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Failed to update user:', error);
+      return false;
+    }
+  }, []);
+
   /**
    * Check auth status on mount
    */
@@ -283,5 +301,6 @@ export function useAuth(): AuthState & AuthActions {
     register,
     logout,
     checkAuth,
+    updateUser
   };
 } 

@@ -1,6 +1,64 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+import { getAllReports, Report } from '@/lib/reports';
+import Link from 'next/link';
+
 export default function ComplianceReportsPage() {
+  const [reports, setReports] = useState<Report[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchReports = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await getAllReports();
+        console.log('getAllReports response:', response);
+        if (response.success && response.data) {
+          setReports(response.data.data.reports);
+        } else {
+          setError(response.error || 'Failed to fetch reports.');
+        }
+      } catch (err) {
+        setError('An unexpected error occurred.');
+        console.error('Error fetching reports:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchReports();
+  }, []);
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority.toLowerCase()) {
+      case 'high':
+        return 'text-red-600 bg-red-50';
+      case 'medium':
+        return 'text-yellow-600 bg-yellow-50';
+      case 'low':
+        return 'text-green-600 bg-green-50';
+      default:
+        return 'text-gray-600 bg-gray-50';
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'open':
+        return 'text-blue-600 bg-blue-50';
+      case 'in_progress':
+        return 'text-yellow-600 bg-yellow-50';
+      case 'resolved':
+        return 'text-green-600 bg-green-50';
+      case 'closed':
+        return 'text-gray-600 bg-gray-50';
+      default:
+        return 'text-gray-600 bg-gray-50';
+    }
+  };
+
   return (
     <div>
       <div className="mb-8">
@@ -8,54 +66,65 @@ export default function ComplianceReportsPage() {
         <p className="text-gray-600">Regulatory compliance and audit trail reports</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-medium text-gray-900">Compliance Rate</h3>
-          <p className="text-3xl font-bold text-green-600 mt-2">98.7%</p>
-          <p className="text-sm text-green-600 mt-1">Platform wide</p>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-medium text-gray-900">Active Violations</h3>
-          <p className="text-3xl font-bold text-red-600 mt-2">3</p>
-          <p className="text-sm text-red-600 mt-1">Requiring attention</p>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-medium text-gray-900">Audits Completed</h3>
-          <p className="text-3xl font-bold text-blue-600 mt-2">156</p>
-          <p className="text-sm text-blue-600 mt-1">This quarter</p>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h3 className="text-lg font-medium text-gray-900">Risk Score</h3>
-          <p className="text-3xl font-bold text-yellow-600 mt-2">Low</p>
-          <p className="text-sm text-yellow-600 mt-1">Overall platform risk</p>
-        </div>
-      </div>
-
       <div className="bg-white rounded-lg shadow">
-        <div className="p-6 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">Compliance Analytics</h3>
-        </div>
         <div className="p-6">
-          <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-12 text-center">
-            <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
-            <h3 className="mt-4 text-lg font-medium text-gray-900">Regulatory Compliance Dashboard</h3>
-            <p className="mt-2 text-gray-600">
-              Comprehensive compliance reporting for healthcare regulations, data protection, and industry standards.
-            </p>
-            <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm text-gray-500">
-              <div>• GDPR compliance reports</div>
-              <div>• Healthcare regulation audits</div>
-              <div>• Data protection assessments</div>
-              <div>• Staff certification tracking</div>
-              <div>• Facility accreditation status</div>
-              <div>• Regulatory filing reports</div>
+          {isLoading ? (
+            <div className="text-center text-gray-500">Loading reports...</div>
+          ) : error ? (
+            <div className="text-center text-red-500">Error: {error}</div>
+          ) : reports.length === 0 ? (
+            <div className="text-center text-gray-500">No compliance reports found.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reporter</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned To</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {reports.map((report) => (
+                    <tr key={report.id}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{report.title}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{report.type.replace('_', ' ')}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(report.priority)}`}>
+                          {report.priority.toUpperCase()}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(report.status)}`}>
+                          {report.status.replace('_', ' ').toUpperCase()}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <div>{report.reporterName}</div>
+                        <div className="text-xs text-gray-400">{report.reporterRole}</div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {report.assignedToName || 'Unassigned'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(report.createdAt).toLocaleDateString()}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <Link href={`/admin/reports/compliance/${report.id}`} className="text-indigo-600 hover:text-indigo-900">
+                          View
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

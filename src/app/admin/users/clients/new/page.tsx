@@ -29,20 +29,21 @@ export default function NewClientPage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    
-    if (name === 'status' && value !== 'TRIAL') {
-        setClient(prev => ({ 
-            ...prev, 
-            status: value,
-            trialDetails: {
-              startDate: '',
-              endDate: '',
-              isConverted: false,
-              conversionDate: '',
-            },
-        }));
+    if (name === 'status' || name === 'industry') {
+      setClient(prev => ({ ...prev, [name]: value.toUpperCase() }));
+    } else if (name === 'status' && value !== 'TRIAL') {
+      setClient(prev => ({ 
+        ...prev, 
+        status: value.toUpperCase(),
+        trialDetails: {
+          startDate: '',
+          endDate: '',
+          isConverted: false,
+          conversionDate: '',
+        },
+      }));
     } else {
-        setClient(prev => ({ ...prev, [name]: value }));
+      setClient(prev => ({ ...prev, [name]: value }));
     }
   };
 
@@ -66,12 +67,25 @@ export default function NewClientPage() {
     setError(null);
 
     const { trialDetails, ...restOfClient } = client;
-    const payload: Partial<Client> = {
+    const payload = {
       ...restOfClient,
-      status: restOfClient.status.toLowerCase() as Client['status'],
+      status: restOfClient.status.toUpperCase() as 'TRIAL' | 'ACTIVE' | 'INACTIVE' | 'SUSPENDED',
+      industry: restOfClient.industry.toUpperCase() as 'HOSPITAL' | 'CLINIC' | 'CARE_HOME' | 'OTHER',
+    } as Partial<Client> & { billing?: { plan: string; amount: number; currency: string } };
+
+    // Add billing
+    const planAmounts: { [key: string]: number } = {
+      BASIC: 99,
+      STANDARD: 199,
+      PREMIUM: 299,
+    };
+    payload.billing = {
+      plan: client.subscriptionPlan.toUpperCase(),
+      amount: planAmounts[client.subscriptionPlan.toUpperCase()] || 0,
+      currency: 'GBP',
     };
 
-    if (payload.status === 'trial') {
+    if (payload.status === 'TRIAL') {
       if (!trialDetails.startDate || !trialDetails.endDate) {
         setError("Start Date and End Date are required when status is TRIAL.");
         setIsLoading(false);
@@ -119,10 +133,10 @@ export default function NewClientPage() {
               <label htmlFor="industry" className="block text-sm font-medium text-gray-700">Industry</label>
               <select name="industry" id="industry" value={client.industry} onChange={handleInputChange} required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black">
                 <option value="">Select an industry</option>
-                <option>Hospital</option>
-                <option>Clinic</option>
-                <option>Care Home</option>
-                <option>Other</option>
+                <option value="HOSPITAL">Hospital</option>
+                <option value="CLINIC">Clinic</option>
+                <option value="CARE_HOME">Care Home</option>
+                <option value="OTHER">Other</option>
               </select>
             </div>
           </div>
@@ -165,9 +179,9 @@ export default function NewClientPage() {
             <div>
               <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
               <select name="status" id="status" value={client.status} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black">
-                <option>TRIAL</option>
-                <option>ACTIVE</option>
-                <option>SUSPENDED</option>
+                <option value="TRIAL">Trial</option>
+                <option value="ACTIVE">Active</option>
+                <option value="SUSPENDED">Suspended</option>
               </select>
             </div>
             <div>

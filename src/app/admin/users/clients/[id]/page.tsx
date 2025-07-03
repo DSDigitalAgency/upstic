@@ -6,12 +6,10 @@ import { apiClient, Client } from '@/lib/api';
 import { Input } from '@/components/ui/input';
 import { TextArea } from '@/components/ui/textarea';
 
-type ClientStatus = 'trial' | 'active' | 'suspended';
-
 export default function EditClientPage() {
   const router = useRouter();
   const params = useParams();
-  const id = params.id as string;
+  const id = typeof params?.id === 'string' ? params.id : Array.isArray(params?.id) ? params.id[0] : null;
 
   const [client, setClient] = useState<Partial<Client> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,13 +17,21 @@ export default function EditClientPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (id) {
-      const fetchClient = async () => {
+    async function fetchClient() {
+      try {
+        if (!id) {
+          setError('Client ID is missing');
+          setIsLoading(false);
+          return;
+        }
+
         setIsLoading(true);
-        const response = await apiClient.getClientById(id as string);
+        const response = await apiClient.getClientById(id);
+        
         if (response.success && response.data) {
           const fetchedData = response.data;
-          
+          fetchedData.industry = (fetchedData.industry?.toUpperCase() || '') as 'HOSPITAL' | 'CLINIC' | 'CARE_HOME' | 'OTHER';
+          fetchedData.status = (fetchedData.status?.toUpperCase() || '') as 'ACTIVE' | 'INACTIVE' | 'TRIAL' | 'SUSPENDED';
           if (!fetchedData.trialDetails) {
             fetchedData.trialDetails = { startDate: '', endDate: '', isConverted: false, conversionDate: '' };
           } else {
@@ -33,27 +39,33 @@ export default function EditClientPage() {
             fetchedData.trialDetails.endDate = fetchedData.trialDetails.endDate?.split('T')[0] || '';
             fetchedData.trialDetails.conversionDate = fetchedData.trialDetails.conversionDate?.split('T')[0] || '';
           }
-
           setClient(fetchedData);
         } else {
-          setError('Failed to fetch client data.');
+          setError(response.error || 'Failed to fetch client data');
         }
+      } catch (err) {
+        setError('An error occurred while fetching client data');
+        console.error('Error fetching client:', err);
+      } finally {
         setIsLoading(false);
-      };
-      fetchClient();
+      }
     }
+
+    fetchClient();
   }, [id]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    if (name === 'status') {
-        setClient(prev => prev ? { 
-            ...prev, 
-            status: value.toLowerCase() as ClientStatus,
-            trialDetails: value.toLowerCase() !== 'trial' ? { startDate: '', endDate: '', isConverted: false, conversionDate: '' } : prev.trialDetails,
-        } : null);
+    if (name === 'status' || name === 'industry') {
+      setClient(prev => prev ? { ...prev, [name]: value } : null);
+    } else if (name === 'status') {
+      setClient(prev => prev ? { 
+        ...prev, 
+        status: value as Client['status'],
+        trialDetails: value.toUpperCase() !== 'TRIAL' ? { startDate: '', endDate: '', isConverted: false, conversionDate: '' } : prev.trialDetails,
+      } : null);
     } else {
-        setClient(prev => prev ? { ...prev, [name]: value } : null);
+      setClient(prev => prev ? { ...prev, [name]: value } : null);
     }
   };
 
@@ -74,38 +86,68 @@ export default function EditClientPage() {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!client) return;
+    if (!client || !id) return;
 
     setIsSaving(true);
     setError(null);
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, createdAt, updatedAt, ...payload } = client;
+    const { createdAt, updatedAt, ...payload } = client;
 
-    if (payload.status === 'trial') {
-      if (!payload.trialDetails?.startDate || !payload.trialDetails?.endDate) {
+    // 1. Format trial details and handle dates
+    const statusUpper = payload.status?.toUpperCase();
+    if (statusUpper === 'TRIAL' && payload.trialDetails) {
+      const { startDate, endDate, isConverted, conversionDate } = payload.trialDetails;
+      if (!startDate || !endDate) {
         setError("Start Date and End Date are required when status is TRIAL.");
         setIsSaving(false);
         return;
       }
       payload.trialDetails = {
-        isConverted: payload.trialDetails.isConverted,
-        startDate: new Date(payload.trialDetails.startDate).toISOString(),
-        endDate: new Date(payload.trialDetails.endDate).toISOString(),
+        startDate: new Date(startDate).toISOString(),
+        endDate: new Date(endDate).toISOString(),
+        isConverted: isConverted || false,
+        conversionDate: isConverted && conversionDate ? new Date(conversionDate).toISOString() : undefined,
       };
-      if (payload.trialDetails.isConverted && payload.trialDetails.conversionDate) {
-        payload.trialDetails.conversionDate = new Date(payload.trialDetails.conversionDate).toISOString();
-      }
+    } else {
+      delete (payload as Partial<Client>).trialDetails;
+    }
+
+    // 2. Construct billing object
+    const billingPlan = payload.subscriptionPlan;
+    const planAmounts: { [key: string]: number } = {
+        BASIC: 99,
+        STANDARD: 199,
+        PREMIUM: 299,
+    };
+
+    if (billingPlan && planAmounts[billingPlan.toUpperCase()]) {
+        let currency = 'GBP';
+        if (client && typeof client === 'object' && 'billing' in client && client.billing && typeof client.billing === 'object' && 'currency' in client.billing) {
+          currency = (client.billing as { currency: string }).currency || 'GBP';
+        }
+        (payload as Partial<Client> & { billing?: unknown }).billing = {
+            plan: billingPlan.toUpperCase(),
+            amount: planAmounts[billingPlan.toUpperCase()],
+            currency,
+        };
+    }
+    delete (payload as Partial<Client>).subscriptionPlan;
+
+    // 3. Capitalize status
+    if (payload.status) {
+      payload.status = payload.status.toUpperCase() as Client['status'];
     }
 
     try {
-      const response = await apiClient.updateClient(id as string, payload);
+      const response = await apiClient.updateClient(id, payload);
       if (response.success) {
         router.push('/admin/users/clients');
       } else {
         setError(response.error || 'Failed to update client.');
       }
-    } catch {
+    } catch (err) {
+      console.error('Error updating client:', err);
       setError('An unexpected error occurred.');
     } finally {
       setIsSaving(false);
@@ -142,10 +184,10 @@ export default function EditClientPage() {
               <label htmlFor="industry" className="block text-sm font-medium text-gray-700">Industry</label>
               <select name="industry" id="industry" value={client.industry || ''} onChange={handleInputChange} required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black">
                 <option value="">Select an industry</option>
-                <option>Hospital</option>
-                <option>Clinic</option>
-                <option>Care Home</option>
-                <option>Other</option>
+                <option value="HOSPITAL">Hospital</option>
+                <option value="CLINIC">Clinic</option>
+                <option value="CARE_HOME">Care Home</option>
+                <option value="OTHER">Other</option>
               </select>
             </div>
           </div>
@@ -161,9 +203,9 @@ export default function EditClientPage() {
             <div>
               <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status</label>
               <select name="status" id="status" value={client.status || ''} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black">
-                <option value="trial">trial</option>
-                <option value="active">active</option>
-                <option value="suspended">suspended</option>
+                <option value="ACTIVE">Active</option>
+                <option value="TRIAL">Trial</option>
+                <option value="SUSPENDED">Suspended</option>
               </select>
             </div>
             <div>
@@ -176,7 +218,7 @@ export default function EditClientPage() {
             </div>
           </div>
 
-          {client.status === 'trial' && (
+          {client.status === 'TRIAL' && (
             <fieldset className="border-t border-gray-200 pt-6">
               <legend className="text-lg font-medium text-gray-900">Trial Details</legend>
               <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
