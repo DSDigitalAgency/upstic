@@ -25,7 +25,7 @@ export function Input({
       {label && (
         <label 
           htmlFor={inputId}
-          className="block text-sm font-medium text-gray-700"
+          className="block text-sm font-medium text-gray-800"
         >
           {label}
         </label>
@@ -36,7 +36,7 @@ export function Input({
         id={inputId}
         className={`
           w-full px-3 py-2 border rounded-lg shadow-sm 
-          text-gray-900 placeholder-gray-400
+          text-black placeholder-gray-500
           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
           disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed
           ${error ? 'border-red-500' : 'border-gray-300'}
@@ -54,7 +54,7 @@ export function Input({
       )}
       
       {helperText && !error && (
-        <p className="text-sm text-gray-500">{helperText}</p>
+        <p className="text-sm text-gray-600">{helperText}</p>
       )}
     </div>
   );

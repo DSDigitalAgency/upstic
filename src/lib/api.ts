@@ -36,6 +36,16 @@ export interface AdminDashboardStats {
   conversionRate: number;
 }
 
+export interface WorkerDashboardStats {
+  openJobs: number;
+  totalCandidates: number;
+  interviewsScheduled: number;
+  recentHires: number;
+  applicationsSubmitted: number;
+  upcomingInterviews: number;
+  savedJobs: number;
+}
+
 export interface PaginatedResponse<T> {
   items: T[];
   total: number;
@@ -72,6 +82,105 @@ export interface Invoice {
     amount: number;
     status: string;
     pdfUrl: string;
+}
+
+export interface Assignment {
+  id: string;
+  title: string;
+  description: string;
+  facility: {
+    id: string;
+    name: string;
+    type: string;
+    address: string;
+  };
+  location: string;
+  startDate: string;
+  endDate: string;
+  status: 'UPCOMING' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
+  shiftType: 'DAY' | 'NIGHT' | 'EVENING' | 'WEEKEND';
+  hourlyRate: number;
+  totalHours: number;
+  clientId: string;
+  workerId: string;
+  contactPerson: {
+    name: string;
+    phone: string;
+    email: string;
+    role: string;
+  };
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Document {
+  id: string;
+  title: string;
+  description?: string;
+  fileUrl: string;
+  fileType: string;
+  fileSize: number;
+  category: 'CERTIFICATION' | 'COMPLIANCE' | 'IDENTIFICATION' | 'OTHER';
+  status: 'VALID' | 'EXPIRED' | 'PENDING_REVIEW';
+  expiryDate?: string;
+  uploadedAt: string;
+  workerId: string;
+  verifiedAt?: string;
+  verifiedBy?: string;
+  tags?: string[];
+}
+
+export interface Timesheet {
+  id: string;
+  workerId: string;
+  assignmentId: string;
+  clientId: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  breakDuration: number;
+  totalHours: number;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  notes?: string;
+  submittedAt: string;
+  approvedAt?: string;
+  approvedBy?: string;
+  rejectedReason?: string;
+}
+
+export interface Payment {
+  id: string;
+  workerId: string;
+  amount: number;
+  currency: string;
+  status: 'PENDING' | 'PROCESSED' | 'FAILED';
+  paymentDate: string;
+  paymentMethod: string;
+  reference: string;
+  description: string;
+  timesheetIds: string[];
+  taxDeductions?: number;
+  netAmount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Preference {
+  id: string;
+  workerId: string;
+  notificationSettings: {
+    email: boolean;
+    sms: boolean;
+    push: boolean;
+  };
+  jobAlerts: boolean;
+  availableForWork: boolean;
+  preferredLocations: string[];
+  preferredShiftTypes: string[];
+  minimumHourlyRate?: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Worker {
@@ -557,6 +666,10 @@ export class ApiClient {
   async markJobAsComplete(id: string): Promise<ApiResponse<Job>> {
     return this.put<Job>(`/api/jobs/${id}`, { status: 'COMPLETED' });
   }
+
+  /**
+   * Worker Dashboard Methods
+   */
 }
 
 /**

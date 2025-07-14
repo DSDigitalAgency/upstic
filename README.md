@@ -34,3 +34,32 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Worker Portal
+
+The Worker Portal provides healthcare professionals with a comprehensive platform to manage their work activities, including:
+
+### Key Features
+
+- **Dashboard**: Overview of job statistics, upcoming interviews, and quick actions
+- **Jobs**: Browse available jobs, view recommended positions, and track applications
+- **Timesheets**: Submit and track timesheets for payment processing
+- **Payments**: Access payment history, manage bank accounts, and view tax documents
+- **Documents**: Upload and manage certifications and compliance documents
+- **Work History**: Maintain professional experience records
+- **Availability**: Set work availability preferences by day and shift
+- **Settings**: Update profile, notifications, and job preferences
+
+### API Integration
+
+The Worker Portal integrates with the following API endpoints:
+
+- `/api/workers/{id}` - Get/update worker profile
+- `/api/workers/{id}/availability` - Get/update worker availability
+- `/api/workers/{id}/jobs/recommended` - Get recommended jobs
+- `/api/workers/{id}/applications` - Get/submit job applications
+- `/api/workers/{id}/documents` - Get/upload worker documents
+- `/api/workers/{id}/timesheets` - Get/submit timesheets
+- `/api/workers/{id}/payments` - Get payment history
+- `/api/workers/{id}/preferences` - Get/update preferences
+- `/api/workers/{id}/work-history` - Get/add work history entries
