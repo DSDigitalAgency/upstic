@@ -1,11 +1,18 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getAllReports, Report } from '@/lib/reports';
-import Link from 'next/link';
+import { getComplianceReports } from '@/demo/func/reports';
+
+interface ComplianceReport {
+  id: string;
+  type: string;
+  status: string;
+  count: number;
+  description: string;
+}
 
 export default function ComplianceReportsPage() {
-  const [reports, setReports] = useState<Report[]>([]);
+  const [reports, setReports] = useState<ComplianceReport[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,12 +21,11 @@ export default function ComplianceReportsPage() {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await getAllReports();
-        console.log('getAllReports response:', response);
+        const response = await getComplianceReports();
         if (response.success && response.data) {
-          setReports(response.data.data.reports);
+          setReports(response.data.items);
         } else {
-          setError(response.error || 'Failed to fetch reports.');
+          setError('Failed to fetch reports.');
         }
       } catch (err) {
         setError('An unexpected error occurred.');
@@ -31,33 +37,7 @@ export default function ComplianceReportsPage() {
     fetchReports();
   }, []);
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority.toLowerCase()) {
-      case 'high':
-        return 'text-red-600 bg-red-50';
-      case 'medium':
-        return 'text-yellow-600 bg-yellow-50';
-      case 'low':
-        return 'text-green-600 bg-green-50';
-      default:
-        return 'text-gray-600 bg-gray-50';
-    }
-  };
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case 'open':
-        return 'text-blue-600 bg-blue-50';
-      case 'in_progress':
-        return 'text-yellow-600 bg-yellow-50';
-      case 'resolved':
-        return 'text-green-600 bg-green-50';
-      case 'closed':
-        return 'text-gray-600 bg-gray-50';
-      default:
-        return 'text-gray-600 bg-gray-50';
-    }
-  };
 
   return (
     <div>
@@ -92,33 +72,10 @@ export default function ComplianceReportsPage() {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {reports.map((report) => (
                     <tr key={report.id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{report.title}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{report.type.replace('_', ' ')}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(report.priority)}`}>
-                          {report.priority.toUpperCase()}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(report.status)}`}>
-                          {report.status.replace('_', ' ').toUpperCase()}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <div>{report.reporterName}</div>
-                        <div className="text-xs text-gray-400">{report.reporterRole}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {report.assignedToName || 'Unassigned'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(report.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <Link href={`/admin/reports/compliance/${report.id}`} className="text-indigo-600 hover:text-indigo-900">
-                          View
-                        </Link>
-                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{report.type}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{report.status}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{report.count}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{report.description}</td>
                     </tr>
                   ))}
                 </tbody>

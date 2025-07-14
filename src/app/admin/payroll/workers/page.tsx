@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { LoadingButton } from '@/components/ui/loading-button';
-import { verifyBankAccount, getWorkerPaymentHistory, WorkerPayment } from '@/lib/payroll';
+import { verifyBankAccount, getWorkerPaymentHistory, WorkerPayment } from '@/demo/func/payroll';
 
 export default function WorkerPaymentsPage() {
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,7 @@ export default function WorkerPaymentsPage() {
     
     setVerificationStatus('verifying');
     try {
-      await verifyBankAccount(workerId);
+      await verifyBankAccount();
       setVerificationStatus('success');
     } catch (error) {
       console.error('Failed to verify bank account:', error);
@@ -29,7 +29,7 @@ export default function WorkerPaymentsPage() {
     
     setLoading(true);
     try {
-      const response = await getWorkerPaymentHistory(workerId);
+      const response = await getWorkerPaymentHistory();
       if (response.success && response.data) {
         setPayments(response.data);
       } else {

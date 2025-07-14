@@ -9,7 +9,7 @@ import { TextArea } from '@/components/ui/textarea';
 export default function EditJobPage() {
   const router = useRouter();
   const params = useParams();
-  const id = params.id as string;
+  const id = params?.id as string;
 
   const [job, setJob] = useState<Partial<Job> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,11 +43,7 @@ export default function EditJobPage() {
 
   const handleSalaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setJob(prev => {
-        if (!prev) return null;
-        const salary = { ...prev.salary, [name]: parseFloat(value) } as Job['salary'];
-        return { ...prev, salary };
-    });
+    setJob(prev => prev ? { ...prev, [name === 'min' ? 'salaryMin' : 'salaryMax']: parseFloat(value) } : null);
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -58,7 +54,7 @@ export default function EditJobPage() {
     setError(null);
 
     try {
-      const response = await apiClient.updateJob(id, job);
+      const response = await apiClient.updateJob();
       if (response.success) {
         router.push('/admin/jobs/active');
       } else {
@@ -118,21 +114,21 @@ export default function EditJobPage() {
             <TextArea
               label="Skills (comma-separated)"
               name="skills"
-              value={job.skills?.join(', ') || ''}
+              value={Array.isArray(job.skills) ? job.skills.join(', ') : ''}
               onChange={handleInputChange}
               rows={3}
             />
             <TextArea
               label="Requirements (comma-separated)"
               name="requirements"
-              value={job.requirements?.join(', ') || ''}
+              value={Array.isArray(job.requirements) ? job.requirements.join(', ') : ''}
               onChange={handleInputChange}
               rows={3}
             />
             <TextArea
               label="Responsibilities (comma-separated)"
               name="responsibilities"
-              value={job.responsibilities?.join(', ') || ''}
+              value={Array.isArray(job.responsibilities) ? job.responsibilities.join(', ') : ''}
               onChange={handleInputChange}
               rows={3}
             />
@@ -162,7 +158,7 @@ export default function EditJobPage() {
               label="Min Salary"
               name="min"
               type="number"
-              value={job.salary?.min || 0}
+              value={job.salaryMin || 0}
               onChange={handleSalaryChange}
               required
             />
@@ -170,7 +166,7 @@ export default function EditJobPage() {
               label="Max Salary"
               name="max"
               type="number"
-              value={job.salary?.max || 0}
+              value={job.salaryMax || 0}
               onChange={handleSalaryChange}
               required
             />

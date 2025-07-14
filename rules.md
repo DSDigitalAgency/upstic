@@ -1,182 +1,242 @@
-# Development Rules & Guidelines - Upstic Healthcare Platform
+# Upstic Healthcare Platform - Development Rules
 
-## 🔧 **API Integration Rules**
+## 🎯 **Core Development Principles**
 
-### 1. **API Base URL - MANDATORY**
-- ✅ **ALWAYS use**: `process.env.NEXT_PUBLIC_API_BASE_URL` from `.env.local`
-- ❌ **NEVER use**: `localhost`, `127.0.0.1`, or hardcoded URLs
-- ❌ **NEVER use**: Mock data or dummy responses
-- 🔧 **Configuration**: `NEXT_PUBLIC_API_BASE_URL=https://api.upstic.com`
+### 1. **Workflow-Based Development**
+- Always follow the established workflow patterns
+- Use existing components and patterns before creating new ones
+- Maintain consistency with the current codebase structure
+- Follow the established file organization and naming conventions
 
-### 2. **Real Data Only**
-- ✅ **ALWAYS**: Fetch data from the API endpoints
-- ✅ **ALWAYS**: Handle API responses (success, error, loading states)
-- ❌ **NEVER**: Use mock data, dummy arrays, or placeholder content
-- ❌ **NEVER**: Hardcode user data or business logic
+### 2. **Data Source Management**
+- **ALWAYS use data from the server folder** (`src/lib/mock/server/`)
+- Never create static mock data in components
+- Import data from JSON files in the server folder
+- Use the existing `fileSystem.ts` utilities for data operations
+- Keep server folder data updated and comprehensive
 
-### 3. **API Client Standards**
-- ✅ **ALWAYS**: Use a centralized API client/service
-- ✅ **ALWAYS**: Include proper error handling and retry logic
-- ✅ **ALWAYS**: Implement loading states for all API calls
-- ✅ **ALWAYS**: Handle authentication tokens properly
+### 3. **No Data Creation in Components**
+- **NEVER create hardcoded data in components**
+- All data must come from the server folder JSON files
+- Use the mock API client for data operations
+- Maintain data consistency across the application
 
-## 🏗️ **Architecture Rules**
+### 4. **Text Color Guidelines**
+- **NEVER use white color for input text and labels**
+- Use `text-gray-900` for labels and important text
+- Use `text-gray-700` for secondary text
+- Use `text-gray-500` for placeholder text
+- Ensure proper contrast ratios for accessibility
+- Always add `bg-white` to form inputs for proper visibility
 
-### 4. **Component Structure**
-- ✅ **ALWAYS**: Create reusable components for common UI elements
-- ✅ **ALWAYS**: Separate presentation components from data-fetching logic
-- ✅ **ALWAYS**: Use TypeScript interfaces for all API responses
-- ✅ **ALWAYS**: Implement proper props validation
+## 🎨 **UI/UX Standards**
 
-### 5. **State Management**
-- ✅ **ALWAYS**: Use React hooks for local state management
-- ✅ **ALWAYS**: Implement proper state updates for API responses
-- ✅ **ALWAYS**: Handle loading and error states consistently
-- ❌ **AVOID**: Unnecessary global state for simple operations
+### **Color Usage**
+```css
+/* ✅ CORRECT - Good contrast and visibility */
+text-gray-900  /* Primary text, labels, headings */
+text-gray-700  /* Secondary text */
+text-gray-500  /* Placeholder text */
+bg-white       /* Form input backgrounds */
 
-### 6. **Routing & Navigation**
-- ✅ **ALWAYS**: Use Next.js App Router for all routing
-- ✅ **ALWAYS**: Implement role-based route protection
-- ✅ **ALWAYS**: Handle portal-specific navigation correctly
-- ✅ **ALWAYS**: Implement proper redirects for unauthorized access
+/* ❌ AVOID - Poor visibility */
+text-white     /* Never for input text */
+text-gray-300  /* Too light for important text */
+```
 
-## 🔐 **Security & Authentication Rules**
+### **Form Elements**
+```jsx
+// ✅ CORRECT - Proper text visibility
+<input 
+  className="border border-gray-300 rounded-md px-3 py-1 text-sm text-gray-900 bg-white placeholder-gray-500"
+/>
 
-### 7. **Authentication Flow**
-- ✅ **ALWAYS**: Validate authentication status before API calls
-- ✅ **ALWAYS**: Handle token expiration and refresh properly
-- ✅ **ALWAYS**: Implement role-based access control (RBAC)
-- ✅ **ALWAYS**: Clear sensitive data on logout
+<select 
+  className="border border-gray-300 rounded-md px-3 py-1 text-sm text-gray-900 bg-white"
+/>
 
-### 8. **Data Protection**
-- ✅ **ALWAYS**: Validate all user inputs
-- ✅ **ALWAYS**: Sanitize data before display
-- ✅ **ALWAYS**: Implement proper error boundaries
-- ❌ **NEVER**: Log sensitive information to console
+<label className="text-sm font-medium text-gray-900">
+```
 
-## 💻 **Code Quality Rules**
+## 📁 **File Organization Rules**
 
-### 9. **TypeScript Standards**
-- ✅ **ALWAYS**: Use strict TypeScript configuration
-- ✅ **ALWAYS**: Define interfaces for all API responses
-- ✅ **ALWAYS**: Type all function parameters and returns
-- ❌ **NEVER**: Use `any` type (use `unknown` if necessary)
+### **Component Structure**
+```
+src/
+├── app/                    # Next.js app router pages
+│   ├── admin/             # Admin portal pages
+│   ├── client/            # Client portal pages
+│   └── worker/            # Worker portal pages
+├── components/            # Reusable components
+│   └── ui/               # Base UI components
+├── lib/                   # Utilities and configurations
+│   ├── mock/             # Mock data and API
+│   │   └── server/       # JSON data files
+│   └── api.ts            # API client
+└── hooks/                # Custom React hooks
+```
 
-### 10. **Error Handling**
-- ✅ **ALWAYS**: Implement try-catch blocks for async operations
-- ✅ **ALWAYS**: Provide user-friendly error messages
-- ✅ **ALWAYS**: Log errors appropriately for debugging
-- ✅ **ALWAYS**: Implement fallback UI for error states
+### **Naming Conventions**
+- **Files**: `kebab-case` (e.g., `user-profile.tsx`)
+- **Components**: `PascalCase` (e.g., `UserProfile`)
+- **Functions**: `camelCase` (e.g., `getUserData`)
+- **Constants**: `UPPER_SNAKE_CASE` (e.g., `API_BASE_URL`)
 
-### 11. **Performance Standards**
-- ✅ **ALWAYS**: Implement loading states for better UX
-- ✅ **ALWAYS**: Use React.memo for expensive components
-- ✅ **ALWAYS**: Optimize images and assets
-- ✅ **ALWAYS**: Implement proper caching strategies
+## 🔧 **Code Quality Standards**
 
-## 🎨 **UI/UX Rules**
+### **TypeScript Usage**
+- Use TypeScript for all new code
+- Define proper interfaces for all data structures
+- Avoid `any` type - use proper typing
+- Export types from dedicated type files
 
-### 12. **Design Consistency**
-- ✅ **ALWAYS**: Use Tailwind CSS classes consistently
-- ✅ **ALWAYS**: Follow the established design system
-- ✅ **ALWAYS**: Implement responsive design (mobile-first)
-- ✅ **ALWAYS**: Maintain consistent spacing and typography
+### **Component Guidelines**
+```tsx
+// ✅ CORRECT - Proper component structure
+interface ComponentProps {
+  data: DataType;
+  onAction: (id: string) => void;
+}
 
-### 13. **User Experience**
-- ✅ **ALWAYS**: Provide immediate feedback for user actions
-- ✅ **ALWAYS**: Implement proper loading indicators
-- ✅ **ALWAYS**: Show clear success and error messages
-- ✅ **ALWAYS**: Ensure keyboard accessibility
+export default function Component({ data, onAction }: ComponentProps) {
+  // Component logic
+}
+```
 
-### 14. **Forms & Validation**
-- ✅ **ALWAYS**: Implement client-side validation
-- ✅ **ALWAYS**: Show validation errors clearly
-- ✅ **ALWAYS**: Disable submit buttons during API calls
-- ✅ **ALWAYS**: Reset forms after successful submission
+### **Error Handling**
+- Always implement proper error handling
+- Show user-friendly error messages
+- Log errors for debugging
+- Handle loading states appropriately
 
-## 🏥 **Healthcare Platform Specific Rules**
+## 📊 **Data Management Rules**
 
-### 15. **Data Sensitivity**
-- ✅ **ALWAYS**: Handle healthcare data with extra care
-- ✅ **ALWAYS**: Implement audit trails for sensitive operations
-- ✅ **ALWAYS**: Follow GDPR compliance guidelines
-- ❌ **NEVER**: Cache sensitive personal data unnecessarily
+### **Server Folder Structure**
+```
+src/lib/mock/server/
+├── jobs.json              # Job listings
+├── workers.json           # Worker profiles
+├── clients.json           # Client information
+├── assignments.json       # Job assignments
+├── timesheets.json        # Time tracking
+├── payments.json          # Payment records
+├── applications.json      # Job applications
+├── referrals.json         # Referral system
+├── documents.json         # Document management
+├── preferences.json       # User preferences
+├── stats.json            # Analytics data
+├── users.json            # User accounts
+└── work-history.json     # Employment history
+```
 
-### 16. **Compliance Features**
-- ✅ **ALWAYS**: Track document expiry dates accurately
-- ✅ **ALWAYS**: Implement proper notification systems
-- ✅ **ALWAYS**: Maintain complete audit logs
-- ✅ **ALWAYS**: Ensure data integrity for compliance reports
+### **Data Operations**
+- Use `getData()` to read from server files
+- Use `saveData()` to persist changes
+- Use `addItem()`, `updateItem()`, `deleteItem()` for CRUD operations
+- Always validate data before operations
 
-### 17. **Multi-Portal Considerations**
-- ✅ **ALWAYS**: Respect role-based permissions
-- ✅ **ALWAYS**: Implement portal-specific navigation
-- ✅ **ALWAYS**: Handle multi-tenant data properly
-- ❌ **NEVER**: Show data from wrong portal/tenant
+## 🚀 **Performance Guidelines**
 
-## 🧪 **Development Process Rules**
+### **Loading States**
+- Always show loading indicators for async operations
+- Use skeleton loaders for better UX
+- Implement proper error boundaries
 
-### 18. **Testing Standards**
-- ✅ **ALWAYS**: Test API integration thoroughly
-- ✅ **ALWAYS**: Test error scenarios and edge cases
-- ✅ **ALWAYS**: Test with real API responses
-- ❌ **NEVER**: Test with mock data only
+### **Optimization**
+- Use React.memo for expensive components
+- Implement proper dependency arrays in useEffect
+- Use debouncing for search operations
+- Optimize bundle size with proper imports
 
-### 19. **Git & Version Control**
-- ✅ **ALWAYS**: Use descriptive commit messages
-- ✅ **ALWAYS**: Keep commits focused and atomic
-- ✅ **ALWAYS**: Test before committing
-- ❌ **NEVER**: Commit API keys or sensitive data
+## 🔒 **Security & Best Practices**
 
-### 20. **Environment Management**
-- ✅ **ALWAYS**: Use environment variables for configuration
-- ✅ **ALWAYS**: Validate environment variables on startup
-- ✅ **ALWAYS**: Document required environment variables
-- ❌ **NEVER**: Hardcode environment-specific values
+### **Input Validation**
+- Always validate user inputs
+- Sanitize data before processing
+- Use proper form validation libraries
 
-## 📝 **Documentation Rules**
+### **Accessibility**
+- Use semantic HTML elements
+- Provide proper ARIA labels
+- Ensure keyboard navigation
+- Maintain proper color contrast ratios
 
-### 21. **Code Documentation**
-- ✅ **ALWAYS**: Document complex business logic
-- ✅ **ALWAYS**: Add JSDoc comments for reusable functions
-- ✅ **ALWAYS**: Keep README files updated
-- ✅ **ALWAYS**: Document API integration patterns
+## 📝 **Documentation Standards**
 
-### 22. **Component Documentation**
-- ✅ **ALWAYS**: Document component props and usage
-- ✅ **ALWAYS**: Provide examples for complex components
-- ✅ **ALWAYS**: Document portal-specific components
-- ✅ **ALWAYS**: Maintain component library documentation
+### **Code Comments**
+```tsx
+/**
+ * Component description
+ * @param props - Component props description
+ * @returns JSX element
+ */
+export default function Component(props: ComponentProps) {
+  // Implementation
+}
+```
 
-## 🚀 **Deployment Rules**
+### **README Updates**
+- Update README.md when adding new features
+- Document API changes
+- Include setup instructions for new developers
 
-### 23. **Production Readiness**
-- ✅ **ALWAYS**: Remove console.log statements before production
-- ✅ **ALWAYS**: Optimize bundle size
-- ✅ **ALWAYS**: Test with production API endpoints
-- ✅ **ALWAYS**: Implement proper monitoring
+## 🧪 **Testing Guidelines**
 
-### 24. **Environment Configuration**
-- ✅ **ALWAYS**: Use different API endpoints for different environments
-- ✅ **ALWAYS**: Validate environment configuration
-- ✅ **ALWAYS**: Implement proper error reporting
-- ❌ **NEVER**: Deploy with development configurations
+### **Component Testing**
+- Write tests for critical user flows
+- Test error states and edge cases
+- Mock external dependencies properly
+
+### **Data Testing**
+- Verify data integrity from server files
+- Test CRUD operations thoroughly
+- Validate data transformations
+
+## 🔄 **Workflow Integration**
+
+### **Git Workflow**
+- Use descriptive commit messages
+- Create feature branches for new development
+- Review code before merging
+- Keep commits atomic and focused
+
+### **Development Process**
+1. **Plan**: Understand requirements and existing patterns
+2. **Implement**: Follow established conventions
+3. **Test**: Verify functionality and data integrity
+4. **Review**: Check against all rules and guidelines
+5. **Deploy**: Ensure smooth integration
+
+## ⚠️ **Common Pitfalls to Avoid**
+
+### **Data Issues**
+- ❌ Creating static data in components
+- ❌ Using hardcoded values instead of server data
+- ❌ Ignoring data consistency across files
+
+### **UI Issues**
+- ❌ Using white text on light backgrounds
+- ❌ Poor contrast ratios
+- ❌ Inconsistent styling patterns
+
+### **Code Issues**
+- ❌ Ignoring TypeScript types
+- ❌ Not handling loading/error states
+- ❌ Poor error handling
+
+## 📋 **Checklist for New Features**
+
+- [ ] Data comes from server folder
+- [ ] No hardcoded data in components
+- [ ] Proper text colors and contrast
+- [ ] Loading and error states implemented
+- [ ] TypeScript types defined
+- [ ] Follows existing patterns
+- [ ] Proper error handling
+- [ ] Accessibility considerations
+- [ ] Performance optimized
+- [ ] Documentation updated
 
 ---
 
-## 🎯 **Quick Reference Checklist**
-
-Before implementing any feature:
-- [ ] API endpoint identified and tested
-- [ ] TypeScript interfaces defined
-- [ ] Error handling implemented
-- [ ] Loading states designed
-- [ ] Role-based access verified
-- [ ] Mobile responsiveness checked
-- [ ] Real data integration confirmed
-
----
-
-**Last Updated**: January 2025  
-**Status**: Development Guidelines v1.0  
-**Compliance**: Healthcare Data Protection Ready 
+**Remember**: These rules ensure consistency, maintainability, and quality across the Upstic Healthcare Platform. Always refer to this document when making changes or adding new features. 

@@ -1,65 +1,195 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Upstic Healthcare Platform - UI Components
 
-## Getting Started
+A modern healthcare staffing and recruitment platform built with Next.js and Tailwind CSS.
 
-First, run the development server:
+## 🎯 Project Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+This is a **UI-only implementation** of the Upstic Healthcare Platform, focusing on the user interface and user experience. All functional code (API, data management, authentication) has been removed to provide a clean slate for UI development.
+
+## 🏗️ Architecture
+
+### **Three-Portal System**
+- **Admin Portal** (`/admin`) - Platform management interface
+- **Client Portal** (`/client`) - Healthcare facility management
+- **Worker Portal** (`/worker`) - Healthcare professional interface
+
+### **Technology Stack**
+- **Framework**: Next.js 14 with App Router
+- **Styling**: Tailwind CSS
+- **Language**: TypeScript
+- **UI Components**: Custom component library
+
+## 📁 Project Structure
+
+```
+src/
+├── app/                    # Next.js pages (UI only)
+│   ├── admin/             # Admin portal UI pages
+│   ├── client/            # Client portal UI pages  
+│   ├── worker/            # Worker portal UI pages
+│   ├── layout.tsx         # Root layout
+│   ├── page.tsx           # Landing page
+│   └── globals.css        # Global styles
+├── components/            # UI components only
+│   └── ui/               # Base UI components
+│       ├── alert.tsx
+│       ├── badge.tsx
+│       ├── email-notification.tsx
+│       ├── input.tsx
+│       ├── loading-button.tsx
+│       ├── password-input.tsx
+│       ├── sidebar.tsx
+│       ├── table.tsx
+│       └── textarea.tsx
+├── hooks/                 # Custom React hooks (empty)
+└── lib/                   # Utilities (empty)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Getting Started
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Installation
+```bash
+# Clone the repository
+git clone <repository-url>
 
-## Learn More
+# Navigate to project directory
+cd website
 
-To learn more about Next.js, take a look at the following resources:
+# Install dependencies
+npm install
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Start development server
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Development
+```bash
+# Run development server
+npm run dev
 
-## Deploy on Vercel
+# Build for production
+npm run build
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Start production server
+npm start
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🎨 UI Components
 
-## Worker Portal
+### **Base Components**
+- **Alert** - Success, error, warning notifications
+- **Badge** - Status indicators and labels
+- **Button** - Primary, secondary, loading states
+- **Input** - Text, email, password fields
+- **Table** - Data display and sorting
+- **Textarea** - Multi-line text input
 
-The Worker Portal provides healthcare professionals with a comprehensive platform to manage their work activities, including:
+### **Portal-Specific Components**
+- **Sidebar** - Navigation for each portal
+- **Email Notification** - Email templates
+- **Loading Button** - Interactive loading states
 
-### Key Features
+## 📱 Portal Features
 
-- **Dashboard**: Overview of job statistics, upcoming interviews, and quick actions
-- **Jobs**: Browse available jobs, view recommended positions, and track applications
-- **Timesheets**: Submit and track timesheets for payment processing
-- **Payments**: Access payment history, manage bank accounts, and view tax documents
-- **Documents**: Upload and manage certifications and compliance documents
-- **Work History**: Maintain professional experience records
-- **Availability**: Set work availability preferences by day and shift
-- **Settings**: Update profile, notifications, and job preferences
+### **Admin Portal** (`/admin`)
+- Dashboard overview
+- User management
+- Job management
+- Assignment tracking
+- Reports and analytics
 
-### API Integration
+### **Client Portal** (`/client`)
+- Staffing requests
+- Assignment management
+- Timesheet approval
+- Billing and payments
+- Compliance tracking
 
-The Worker Portal integrates with the following API endpoints:
+### **Worker Portal** (`/worker`)
+- Job browsing
+- Application management
+- Assignment tracking
+- Timesheet submission
+- Payment history
 
-- `/api/workers/{id}` - Get/update worker profile
-- `/api/workers/{id}/availability` - Get/update worker availability
-- `/api/workers/{id}/jobs/recommended` - Get recommended jobs
-- `/api/workers/{id}/applications` - Get/submit job applications
-- `/api/workers/{id}/documents` - Get/upload worker documents
-- `/api/workers/{id}/timesheets` - Get/submit timesheets
-- `/api/workers/{id}/payments` - Get payment history
-- `/api/workers/{id}/preferences` - Get/update preferences
-- `/api/workers/{id}/work-history` - Get/add work history entries
+## 🎯 Development Guidelines
+
+### **UI/UX Standards**
+- Follow Tailwind CSS conventions
+- Maintain consistent spacing and typography
+- Use semantic HTML elements
+- Ensure accessibility compliance
+- Mobile-first responsive design
+
+### **Component Structure**
+```tsx
+interface ComponentProps {
+  // Define props interface
+}
+
+export default function Component({ prop1, prop2 }: ComponentProps) {
+  return (
+    <div className="component-styles">
+      {/* Component content */}
+    </div>
+  );
+}
+```
+
+### **Styling Guidelines**
+- Use Tailwind utility classes
+- Maintain consistent color scheme
+- Follow component hierarchy
+- Ensure proper contrast ratios
+- Test on multiple screen sizes
+
+## 🔧 Configuration
+
+### **Tailwind CSS**
+- Custom color palette
+- Responsive breakpoints
+- Component-specific utilities
+
+### **Next.js**
+- App Router configuration
+- TypeScript strict mode
+- ESLint and Prettier setup
+
+## 📋 TODO
+
+### **UI Enhancements**
+- [ ] Add more interactive components
+- [ ] Improve responsive design
+- [ ] Add animations and transitions
+- [ ] Enhance accessibility features
+- [ ] Create component documentation
+
+### **Portal Improvements**
+- [ ] Enhance admin dashboard
+- [ ] Improve client request forms
+- [ ] Add worker job search filters
+- [ ] Create better navigation flows
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 🆘 Support
+
+For questions or support, please open an issue in the repository.
+
+---
+
+**Note**: This is a UI-only implementation. All functional features (authentication, data management, API integration) have been removed to focus on the user interface and experience.

@@ -1,0 +1,112 @@
+[
+  {
+    "id": "demo-001",
+    "email": "demo@upstic.com",
+    "username": "demouser",
+    "firstName": "Demo",
+    "lastName": "User",
+    "phone": "+44123456789",
+    "role": "admin",
+    "password": "Demo@12345"
+  },
+  {
+    "id": "demo-002",
+    "email": "worker@upstic.com",
+    "username": "demoworker",
+    "firstName": "Demo",
+    "lastName": "Worker",
+    "phone": "+44123456780",
+    "role": "worker",
+    "password": "Worker@12345"
+  },
+  {
+    "id": "demo-003",
+    "email": "client@upstic.com",
+    "username": "democlient",
+    "firstName": "Demo",
+    "lastName": "Client",
+    "phone": "+44123456781",
+    "role": "client",
+    "password": "Client@12345"
+  },
+  {
+    "id": "demo-004",
+    "email": "sarah.johnson@demo.com",
+    "username": "sarahjohnson",
+    "firstName": "Sarah",
+    "lastName": "Johnson",
+    "phone": "+44123456781",
+    "role": "worker",
+    "password": "Sarah@12345"
+  },
+  {
+    "id": "demo-005",
+    "email": "michael.chen@demo.com",
+    "username": "michaelchen",
+    "firstName": "Michael",
+    "lastName": "Chen",
+    "phone": "+44123456782",
+    "role": "worker",
+    "password": "Michael@12345"
+  },
+  {
+    "id": "demo-006",
+    "email": "emma.davis@demo.com",
+    "username": "emmadavis",
+    "firstName": "Emma",
+    "lastName": "Davis",
+    "phone": "+44123456783",
+    "role": "worker",
+    "password": "Emma@12345"
+  },
+  {
+    "id": "demo-007",
+    "email": "david.wilson@demo.com",
+    "username": "davidwilson",
+    "firstName": "David",
+    "lastName": "Wilson",
+    "phone": "+44123456784",
+    "role": "worker",
+    "password": "David@12345"
+  },
+  {
+    "id": "demo-008",
+    "email": "hr@manchesterclinic.com",
+    "username": "manchesterclinic",
+    "firstName": "Manchester",
+    "lastName": "Clinic",
+    "phone": "+441612345678",
+    "role": "client",
+    "password": "Manchester@12345"
+  },
+  {
+    "id": "demo-009",
+    "email": "admin@birminghamcare.co.uk",
+    "username": "birminghamcare",
+    "firstName": "Birmingham",
+    "lastName": "Care",
+    "phone": "+441214567890",
+    "role": "client",
+    "password": "Birmingham@12345"
+  },
+  {
+    "id": "demo-010",
+    "email": "recruitment@liverpoolmht.nhs.uk",
+    "username": "liverpoolmht",
+    "firstName": "Liverpool",
+    "lastName": "MHT",
+    "phone": "+441517123456",
+    "role": "client",
+    "password": "Liverpool@12345"
+  },
+  {
+    "id": "demo-011",
+    "email": "hr@leedscommunity.nhs.uk",
+    "username": "leedscommunity",
+    "firstName": "Leeds",
+    "lastName": "Community",
+    "phone": "+441133456789",
+    "role": "client",
+    "password": "Leeds@12345"
+  }
+] 

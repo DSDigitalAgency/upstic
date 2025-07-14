@@ -7,7 +7,7 @@ import { apiClient, Worker } from '@/lib/api';
 export default function EditWorkerPage() {
   const router = useRouter();
   const params = useParams();
-  const id = params.id as string;
+  const id = params?.id as string;
 
   const [worker, setWorker] = useState<Partial<Worker>>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -17,11 +17,16 @@ export default function EditWorkerPage() {
     if (id) {
       const fetchWorker = async () => {
         setIsLoading(true);
-        const response = await apiClient.getWorkerById(id);
+        const response = await apiClient.getWorkers();
         if (response.success && response.data) {
-          setWorker(response.data);
+          const worker = response.data.items.find(w => w.id === id);
+          if (worker) {
+            setWorker(worker);
+          } else {
+            setError('Worker not found');
+          }
         } else {
-          setError(response.error || 'Failed to fetch worker data.');
+          setError('Failed to fetch worker data.');
         }
         setIsLoading(false);
       };
@@ -41,11 +46,8 @@ export default function EditWorkerPage() {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const { firstName, lastName, email, phone, skills, experience, preferredLocation } = worker;
-    const updatePayload = { firstName, lastName, email, phone, skills, experience, preferredLocation };
-
     setIsLoading(true);
-    const response = await apiClient.updateWorker(id, updatePayload);
+    const response = await apiClient.updateWorker(id, worker);
     if (response.success) {
       router.push('/admin/users/workers');
     } else {
@@ -65,44 +67,44 @@ export default function EditWorkerPage() {
         <form onSubmit={handleFormSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name</label>
-              <input type="text" name="firstName" id="firstName" value={worker.firstName || ''} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black" />
+              <label htmlFor="firstName" className="block text-sm font-medium text-gray-900">First Name</label>
+              <input type="text" name="firstName" id="firstName" value={worker.firstName || ''} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900 bg-white" />
             </div>
             <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name</label>
-              <input type="text" name="lastName" id="lastName" value={worker.lastName || ''} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black" />
+              <label htmlFor="lastName" className="block text-sm font-medium text-gray-900">Last Name</label>
+              <input type="text" name="lastName" id="lastName" value={worker.lastName || ''} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900 bg-white" />
             </div>
           </div>
           
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-            <input type="email" name="email" id="email" value={worker.email || ''} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black" />
+            <label htmlFor="email" className="block text-sm font-medium text-gray-900">Email</label>
+            <input type="email" name="email" id="email" value={worker.email || ''} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900 bg-white" />
           </div>
           
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone</label>
-            <input type="tel" name="phone" id="phone" value={worker.phone || ''} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black" />
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-900">Phone</label>
+            <input type="tel" name="phone" id="phone" value={worker.phone || ''} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900 bg-white" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="experience" className="block text-sm font-medium text-gray-700">Experience (Years)</label>
-              <input type="number" name="experience" id="experience" value={worker.experience || 0} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black" />
+              <label htmlFor="experience" className="block text-sm font-medium text-gray-900">Experience (Years)</label>
+              <input type="number" name="experience" id="experience" value={worker.experience || 0} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900 bg-white" />
             </div>
             <div>
-              <label htmlFor="preferredLocation" className="block text-sm font-medium text-gray-700">Preferred Location</label>
-              <input type="text" name="preferredLocation" id="preferredLocation" value={worker.preferredLocation || ''} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black" />
+              <label htmlFor="preferredLocation" className="block text-sm font-medium text-gray-900">Preferred Location</label>
+              <input type="text" name="preferredLocation" id="preferredLocation" value={worker.preferredLocation || ''} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900 bg-white" />
             </div>
           </div>
 
           <div>
-            <label htmlFor="skills" className="block text-sm font-medium text-gray-700">Skills (comma-separated)</label>
-            <input type="text" name="skills" id="skills" value={Array.isArray(worker.skills) ? worker.skills.join(', ') : ''} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black" />
+            <label htmlFor="skills" className="block text-sm font-medium text-gray-900">Skills (comma-separated)</label>
+            <input type="text" name="skills" id="skills" value={Array.isArray(worker.skills) ? worker.skills.join(', ') : ''} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900 bg-white" />
           </div>
 
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700">Status (not editable)</label>
-            <select name="status" id="status" value={worker.status || ''} onChange={handleInputChange} disabled className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-black bg-gray-100">
+            <label htmlFor="status" className="block text-sm font-medium text-gray-900">Status (not editable)</label>
+            <select name="status" id="status" value={worker.status || ''} onChange={handleInputChange} disabled className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900 bg-gray-100">
               <option value="ACTIVE">Active</option>
               <option value="INACTIVE">Inactive</option>
             </select>

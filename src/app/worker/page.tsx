@@ -245,7 +245,13 @@ export default function WorkerDashboard() {
                     </div>
                   </div>
                   <div className="mt-2 h-2 bg-gray-100 rounded-full">
-                    <div className="h-full bg-blue-500 rounded-full" style={{ width: `${Math.min(100, ((dashboardData?.openJobs || 0) / 10) * 100)}%` }}></div>
+                    <div 
+                      className="h-full bg-blue-500 rounded-full transition-all duration-300"
+                      style={{ 
+                        width: `${Math.min(100, ((dashboardData?.openJobs || 0) / 10) * 100)}%`,
+                        maxWidth: '100%'
+                      }}
+                    ></div>
                   </div>
                 </div>
                 
@@ -262,7 +268,13 @@ export default function WorkerDashboard() {
                     </div>
                   </div>
                   <div className="mt-2 h-2 bg-gray-100 rounded-full">
-                    <div className="h-full bg-green-500 rounded-full" style={{ width: `${Math.min(100, ((dashboardData?.applicationsSubmitted || 0) / 5) * 100)}%` }}></div>
+                    <div 
+                      className="h-full bg-green-500 rounded-full transition-all duration-300"
+                      style={{ 
+                        width: `${Math.min(100, ((dashboardData?.applicationsSubmitted || 0) / 5) * 100)}%`,
+                        maxWidth: '100%'
+                      }}
+                    ></div>
                   </div>
                 </div>
                 
@@ -279,7 +291,13 @@ export default function WorkerDashboard() {
                     </div>
                   </div>
                   <div className="mt-2 h-2 bg-gray-100 rounded-full">
-                    <div className="h-full bg-purple-500 rounded-full" style={{ width: `${Math.min(100, ((dashboardData?.recentHires || 0) / 3) * 100)}%` }}></div>
+                    <div 
+                      className="h-full bg-purple-500 rounded-full transition-all duration-300"
+                      style={{ 
+                        width: `${Math.min(100, ((dashboardData?.recentHires || 0) / 3) * 100)}%`,
+                        maxWidth: '100%'
+                      }}
+                    ></div>
                   </div>
                 </div>
               </div>

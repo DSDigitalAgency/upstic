@@ -1,0 +1,678 @@
+[
+  {
+    "id": "timesheet-001",
+    "workerId": "worker-001",
+    "jobId": "job-001",
+    "clientId": "client-001",
+    "weekStarting": "2025-07-07",
+    "weekEnding": "2025-07-13",
+    "status": "approved",
+    "totalHours": 36,
+    "rate": 45,
+    "totalPay": 1620,
+    "submittedAt": "2024-01-22T08:00:00Z",
+    "approvedAt": "2024-01-23T10:30:00Z",
+    "approvedBy": "admin-001",
+    "days": [
+      {
+        "date": "2025-07-07",
+        "hours": 12,
+        "startTime": "19:00",
+        "endTime": "07:00",
+        "breakMinutes": 60
+      },
+      {
+        "date": "2025-07-08",
+        "hours": 12,
+        "startTime": "19:00",
+        "endTime": "07:00",
+        "breakMinutes": 60
+      },
+      {
+        "date": "2025-07-09",
+        "hours": 12,
+        "startTime": "19:00",
+        "endTime": "07:00",
+        "breakMinutes": 60
+      }
+    ]
+  },
+  {
+    "id": "timesheet-002",
+    "workerId": "worker-002",
+    "jobId": "job-002",
+    "clientId": "client-002",
+    "weekStarting": "2025-07-07",
+    "weekEnding": "2025-07-13",
+    "status": "pending",
+    "totalHours": 40,
+    "rate": 18,
+    "totalPay": 720,
+    "submittedAt": "2024-01-27T09:00:00Z",
+    "approvedAt": null,
+    "approvedBy": null,
+    "days": [
+      {
+        "date": "2025-07-07",
+        "hours": 8,
+        "startTime": "08:00",
+        "endTime": "16:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-08",
+        "hours": 8,
+        "startTime": "08:00",
+        "endTime": "16:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-09",
+        "hours": 8,
+        "startTime": "08:00",
+        "endTime": "16:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-10",
+        "hours": 8,
+        "startTime": "08:00",
+        "endTime": "16:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-11",
+        "hours": 8,
+        "startTime": "08:00",
+        "endTime": "16:00",
+        "breakMinutes": 30
+      }
+    ]
+  },
+  {
+    "id": "timesheet-003",
+    "workerId": "worker-001",
+    "jobId": "job-001",
+    "clientId": "client-001",
+    "weekStarting": "2025-07-07",
+    "weekEnding": "2025-07-13",
+    "status": "draft",
+    "totalHours": 0,
+    "rate": 45,
+    "totalPay": 0,
+    "submittedAt": null,
+    "approvedAt": null,
+    "approvedBy": null,
+    "days": [
+      {
+        "date": "2025-07-07",
+        "hours": 0,
+        "startTime": "",
+        "endTime": "",
+        "breakMinutes": 0
+      },
+      {
+        "date": "2025-07-08",
+        "hours": 0,
+        "startTime": "",
+        "endTime": "",
+        "breakMinutes": 0
+      },
+      {
+        "date": "2025-07-09",
+        "hours": 0,
+        "startTime": "",
+        "endTime": "",
+        "breakMinutes": 0
+      },
+      {
+        "date": "2025-07-10",
+        "hours": 0,
+        "startTime": "",
+        "endTime": "",
+        "breakMinutes": 0
+      },
+      {
+        "date": "2025-07-11",
+        "hours": 0,
+        "startTime": "",
+        "endTime": "",
+        "breakMinutes": 0
+      },
+      {
+        "date": "2025-07-12",
+        "hours": 0,
+        "startTime": "",
+        "endTime": "",
+        "breakMinutes": 0
+      },
+      {
+        "date": "2025-07-13",
+        "hours": 0,
+        "startTime": "",
+        "endTime": "",
+        "breakMinutes": 0
+      }
+    ]
+  },
+  {
+    "id": "timesheet-004",
+    "workerId": "worker-002",
+    "jobId": "job-008",
+    "clientId": "client-003",
+    "weekStarting": "2025-07-07",
+    "weekEnding": "2025-07-13",
+    "status": "approved",
+    "totalHours": 40,
+    "rate": 38,
+    "totalPay": 1520,
+    "submittedAt": "2024-01-22T08:00:00Z",
+    "approvedAt": "2024-01-23T10:30:00Z",
+    "approvedBy": "admin-001",
+    "days": [
+      {
+        "date": "2025-07-07",
+        "hours": 8,
+        "startTime": "08:00",
+        "endTime": "16:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-08",
+        "hours": 8,
+        "startTime": "08:00",
+        "endTime": "16:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-09",
+        "hours": 8,
+        "startTime": "08:00",
+        "endTime": "16:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-10",
+        "hours": 8,
+        "startTime": "08:00",
+        "endTime": "16:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-11",
+        "hours": 8,
+        "startTime": "08:00",
+        "endTime": "16:00",
+        "breakMinutes": 30
+      }
+    ]
+  },
+  {
+    "id": "timesheet-005",
+    "workerId": "worker-001",
+    "jobId": "job-007",
+    "clientId": "client-001",
+    "weekStarting": "2025-07-07",
+    "weekEnding": "2025-07-13",
+    "status": "approved",
+    "totalHours": 36,
+    "rate": 42,
+    "totalPay": 1512,
+    "submittedAt": "2024-01-27T08:00:00Z",
+    "approvedAt": "2024-01-28T10:30:00Z",
+    "approvedBy": "admin-001",
+    "days": [
+      {
+        "date": "2025-07-07",
+        "hours": 12,
+        "startTime": "07:00",
+        "endTime": "19:00",
+        "breakMinutes": 60
+      },
+      {
+        "date": "2025-07-08",
+        "hours": 12,
+        "startTime": "07:00",
+        "endTime": "19:00",
+        "breakMinutes": 60
+      },
+      {
+        "date": "2025-07-09",
+        "hours": 12,
+        "startTime": "07:00",
+        "endTime": "19:00",
+        "breakMinutes": 60
+      }
+    ]
+  },
+  {
+    "id": "timesheet-006",
+    "workerId": "worker-001",
+    "jobId": "job-010",
+    "clientId": "client-003",
+    "weekStarting": "2025-07-07",
+    "weekEnding": "2025-07-13",
+    "status": "approved",
+    "totalHours": 37.5,
+    "rate": 40,
+    "totalPay": 1500,
+    "submittedAt": "2024-01-22T08:00:00Z",
+    "approvedAt": "2024-01-23T10:30:00Z",
+    "approvedBy": "admin-001",
+    "days": [
+      {
+        "date": "2025-07-07",
+        "hours": 7.5,
+        "startTime": "08:00",
+        "endTime": "15:30",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-08",
+        "hours": 7.5,
+        "startTime": "08:00",
+        "endTime": "15:30",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-09",
+        "hours": 7.5,
+        "startTime": "08:00",
+        "endTime": "15:30",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-10",
+        "hours": 7.5,
+        "startTime": "08:00",
+        "endTime": "15:30",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-11",
+        "hours": 7.5,
+        "startTime": "08:00",
+        "endTime": "15:30",
+        "breakMinutes": 30
+      }
+    ]
+  },
+  {
+    "id": "timesheet-007",
+    "workerId": "worker-003",
+    "jobId": "job-011",
+    "clientId": "client-004",
+    "weekStarting": "2025-07-07",
+    "weekEnding": "2025-07-13",
+    "status": "approved",
+    "totalHours": 35,
+    "rate": 32,
+    "totalPay": 1120,
+    "submittedAt": "2024-01-15T09:00:00Z",
+    "approvedAt": "2024-01-16T11:30:00Z",
+    "approvedBy": "admin-001",
+    "days": [
+      {
+        "date": "2025-07-07",
+        "hours": 7,
+        "startTime": "08:00",
+        "endTime": "15:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-08",
+        "hours": 7,
+        "startTime": "08:00",
+        "endTime": "15:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-09",
+        "hours": 7,
+        "startTime": "08:00",
+        "endTime": "15:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-10",
+        "hours": 7,
+        "startTime": "08:00",
+        "endTime": "15:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-11",
+        "hours": 7,
+        "startTime": "08:00",
+        "endTime": "15:00",
+        "breakMinutes": 30
+      }
+    ]
+  },
+  {
+    "id": "timesheet-008",
+    "workerId": "worker-004",
+    "jobId": "job-012",
+    "clientId": "client-004",
+    "weekStarting": "2025-07-07",
+    "weekEnding": "2025-07-13",
+    "status": "approved",
+    "totalHours": 40,
+    "rate": 38,
+    "totalPay": 1520,
+    "submittedAt": "2024-01-15T08:00:00Z",
+    "approvedAt": "2024-01-16T10:30:00Z",
+    "approvedBy": "admin-001",
+    "days": [
+      {
+        "date": "2025-07-07",
+        "hours": 8,
+        "startTime": "08:00",
+        "endTime": "16:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-08",
+        "hours": 8,
+        "startTime": "08:00",
+        "endTime": "16:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-09",
+        "hours": 8,
+        "startTime": "08:00",
+        "endTime": "16:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-10",
+        "hours": 8,
+        "startTime": "08:00",
+        "endTime": "16:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-11",
+        "hours": 8,
+        "startTime": "08:00",
+        "endTime": "16:00",
+        "breakMinutes": 30
+      }
+    ]
+  },
+  {
+    "id": "timesheet-009",
+    "workerId": "worker-005",
+    "jobId": "job-013",
+    "clientId": "client-005",
+    "weekStarting": "2025-07-07",
+    "weekEnding": "2025-07-13",
+    "status": "pending",
+    "totalHours": 30,
+    "rate": 25,
+    "totalPay": 750,
+    "submittedAt": "2024-01-08T09:00:00Z",
+    "approvedAt": null,
+    "approvedBy": null,
+    "days": [
+      {
+        "date": "2025-07-07",
+        "hours": 6,
+        "startTime": "08:00",
+        "endTime": "14:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-08",
+        "hours": 6,
+        "startTime": "08:00",
+        "endTime": "14:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-09",
+        "hours": 6,
+        "startTime": "08:00",
+        "endTime": "14:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-10",
+        "hours": 6,
+        "startTime": "08:00",
+        "endTime": "14:00",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-11",
+        "hours": 6,
+        "startTime": "08:00",
+        "endTime": "14:00",
+        "breakMinutes": 30
+      }
+    ]
+  },
+  {
+    "id": "timesheet-010",
+    "workerId": "worker-002",
+    "jobId": "job-015",
+    "clientId": "client-001",
+    "weekStarting": "2025-07-07",
+    "weekEnding": "2025-07-13",
+    "status": "approved",
+    "totalHours": 36,
+    "rate": 45,
+    "totalPay": 1620,
+    "submittedAt": "2024-01-08T08:00:00Z",
+    "approvedAt": "2024-01-09T10:30:00Z",
+    "approvedBy": "admin-001",
+    "days": [
+      {
+        "date": "2025-07-07",
+        "hours": 12,
+        "startTime": "19:00",
+        "endTime": "07:00",
+        "breakMinutes": 60
+      },
+      {
+        "date": "2025-07-08",
+        "hours": 12,
+        "startTime": "19:00",
+        "endTime": "07:00",
+        "breakMinutes": 60
+      },
+      {
+        "date": "2025-07-09",
+        "hours": 12,
+        "startTime": "19:00",
+        "endTime": "07:00",
+        "breakMinutes": 60
+      }
+    ]
+  },
+  {
+    "id": "timesheet-011",
+    "workerId": "worker-003",
+    "jobId": "job-003",
+    "clientId": "client-003",
+    "weekStarting": "2025-07-07",
+    "weekEnding": "2025-07-13",
+    "status": "draft",
+    "totalHours": 0,
+    "rate": 35,
+    "totalPay": 0,
+    "submittedAt": null,
+    "approvedAt": null,
+    "approvedBy": null,
+    "days": [
+      {
+        "date": "2025-07-07",
+        "hours": 0,
+        "startTime": "",
+        "endTime": "",
+        "breakMinutes": 0
+      },
+      {
+        "date": "2025-07-08",
+        "hours": 0,
+        "startTime": "",
+        "endTime": "",
+        "breakMinutes": 0
+      },
+      {
+        "date": "2025-07-09",
+        "hours": 0,
+        "startTime": "",
+        "endTime": "",
+        "breakMinutes": 0
+      },
+      {
+        "date": "2025-07-10",
+        "hours": 0,
+        "startTime": "",
+        "endTime": "",
+        "breakMinutes": 0
+      },
+      {
+        "date": "2025-07-11",
+        "hours": 0,
+        "startTime": "",
+        "endTime": "",
+        "breakMinutes": 0
+      },
+      {
+        "date": "2025-07-12",
+        "hours": 0,
+        "startTime": "",
+        "endTime": "",
+        "breakMinutes": 0
+      },
+      {
+        "date": "2025-07-13",
+        "hours": 0,
+        "startTime": "",
+        "endTime": "",
+        "breakMinutes": 0
+      }
+    ]
+  },
+  {
+    "id": "timesheet-012",
+    "workerId": "worker-004",
+    "jobId": "job-004",
+    "clientId": "client-001",
+    "weekStarting": "2025-07-07",
+    "weekEnding": "2025-07-13",
+    "status": "pending",
+    "totalHours": 37.5,
+    "rate": 40,
+    "totalPay": 1500,
+    "submittedAt": "2024-02-19T09:00:00Z",
+    "approvedAt": null,
+    "approvedBy": null,
+    "days": [
+      {
+        "date": "2025-07-07",
+        "hours": 7.5,
+        "startTime": "08:00",
+        "endTime": "15:30",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-08",
+        "hours": 7.5,
+        "startTime": "08:00",
+        "endTime": "15:30",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-09",
+        "hours": 7.5,
+        "startTime": "08:00",
+        "endTime": "15:30",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-10",
+        "hours": 7.5,
+        "startTime": "08:00",
+        "endTime": "15:30",
+        "breakMinutes": 30
+      },
+      {
+        "date": "2025-07-11",
+        "hours": 7.5,
+        "startTime": "08:00",
+        "endTime": "15:30",
+        "breakMinutes": 30
+      }
+    ]
+  },
+  {
+    "id": "timesheet-013",
+    "workerId": "worker-003",
+    "jobId": "job-003",
+    "clientId": "client-003",
+    "weekStarting": "2025-07-07",
+    "weekEnding": "2025-07-13",
+    "status": "pending",
+    "totalHours": 30,
+    "rate": 35,
+    "totalPay": 1050,
+    "submittedAt": "2024-03-11T09:00:00Z",
+    "approvedAt": null,
+    "approvedBy": null,
+    "days": [
+      { "date": "2025-07-07", "hours": 6, "startTime": "08:00", "endTime": "14:00", "breakMinutes": 30 },
+      { "date": "2025-07-08", "hours": 6, "startTime": "08:00", "endTime": "14:00", "breakMinutes": 30 },
+      { "date": "2025-07-09", "hours": 6, "startTime": "08:00", "endTime": "14:00", "breakMinutes": 30 },
+      { "date": "2025-07-10", "hours": 6, "startTime": "08:00", "endTime": "14:00", "breakMinutes": 30 },
+      { "date": "2025-07-11", "hours": 6, "startTime": "08:00", "endTime": "14:00", "breakMinutes": 30 }
+    ]
+  },
+  {
+    "id": "timesheet-014",
+    "workerId": "worker-005",
+    "jobId": "job-013",
+    "clientId": "client-005",
+    "weekStarting": "2025-07-07",
+    "weekEnding": "2025-07-13",
+    "status": "approved",
+    "totalHours": 30,
+    "rate": 25,
+    "totalPay": 750,
+    "submittedAt": "2024-02-12T09:00:00Z",
+    "approvedAt": "2024-02-13T10:30:00Z",
+    "approvedBy": "admin-001",
+    "days": [
+      { "date": "2025-07-07", "hours": 6, "startTime": "08:00", "endTime": "14:00", "breakMinutes": 30 },
+      { "date": "2025-07-08", "hours": 6, "startTime": "08:00", "endTime": "14:00", "breakMinutes": 30 },
+      { "date": "2025-07-09", "hours": 6, "startTime": "08:00", "endTime": "14:00", "breakMinutes": 30 },
+      { "date": "2025-07-10", "hours": 6, "startTime": "08:00", "endTime": "14:00", "breakMinutes": 30 },
+      { "date": "2025-07-11", "hours": 6, "startTime": "08:00", "endTime": "14:00", "breakMinutes": 30 }
+    ]
+  },
+  {
+    "id": "timesheet-999",
+    "workerId": "worker-001",
+    "jobId": "job-001",
+    "clientId": "client-001",
+    "weekStarting": "2025-07-07",
+    "weekEnding": "2025-07-13",
+    "status": "pending",
+    "totalHours": 40,
+    "rate": 25,
+    "totalPay": 1000,
+    "submittedAt": "2024-06-08T09:00:00Z",
+    "approvedAt": null,
+    "approvedBy": null,
+    "days": [
+      { "date": "2025-07-07", "hours": 8, "startTime": "09:00", "endTime": "17:00", "breakMinutes": 60 },
+      { "date": "2025-07-08", "hours": 8, "startTime": "09:00", "endTime": "17:00", "breakMinutes": 60 },
+      { "date": "2025-07-09", "hours": 8, "startTime": "09:00", "endTime": "17:00", "breakMinutes": 60 },
+      { "date": "2025-07-10", "hours": 8, "startTime": "09:00", "endTime": "17:00", "breakMinutes": 60 },
+      { "date": "2025-07-11", "hours": 8, "startTime": "09:00", "endTime": "17:00", "breakMinutes": 60 }
+    ]
+  }
+] 

@@ -19,7 +19,12 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/lib/api": ["./src/demo/func/api"],
+      "@/lib/worker": ["./src/demo/func/worker"],
+      "@/lib/payroll": ["./src/demo/func/payroll"],
+      "@/lib/reports": ["./src/demo/func/reports"],
+      "@/lib/utils": ["./src/demo/func/utils"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

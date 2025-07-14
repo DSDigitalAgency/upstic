@@ -34,7 +34,7 @@ export default function GeneralSettingsPage() {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await apiClient.get<SiteSettings>('/api/admin/settings');
+        const response = await apiClient.get<SiteSettings>();
         if (response.success && response.data) {
           setSettings(response.data);
         } else {
@@ -58,7 +58,7 @@ export default function GeneralSettingsPage() {
     setSaveSuccess(false);
 
     try {
-      const response = await apiClient.put<{ success: boolean }>('/api/admin/settings', settings);
+      const response = await apiClient.put<{ success: boolean }>();
       if (response.success) {
         setSaveSuccess(true);
         setIsEditMode(false);
@@ -168,15 +168,21 @@ export default function GeneralSettingsPage() {
           <div className="flex justify-between py-3 border-b border-gray-100">
             <dt className="text-gray-600">Primary Color</dt>
             <dd className="flex items-center space-x-2">
-              <div className="w-6 h-6 rounded border" style={{ backgroundColor: settings.primaryColor }} />
-              <span className="text-gray-900 font-medium">{settings.primaryColor}</span>
+              <div 
+                className="w-6 h-6 rounded border border-gray-300"
+                style={{ backgroundColor: settings.primaryColor || '#3B82F6' }}
+              />
+              <span className="text-gray-900 font-medium">{settings.primaryColor || '#3B82F6'}</span>
             </dd>
           </div>
           <div className="flex justify-between py-3">
             <dt className="text-gray-600">Secondary Color</dt>
             <dd className="flex items-center space-x-2">
-              <div className="w-6 h-6 rounded border" style={{ backgroundColor: settings.secondaryColor }} />
-              <span className="text-gray-900 font-medium">{settings.secondaryColor}</span>
+              <div 
+                className="w-6 h-6 rounded border border-gray-300"
+                style={{ backgroundColor: settings.secondaryColor || '#6B7280' }}
+              />
+              <span className="text-gray-900 font-medium">{settings.secondaryColor || '#6B7280'}</span>
             </dd>
           </div>
         </dl>

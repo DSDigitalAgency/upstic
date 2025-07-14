@@ -1,186 +1,319 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { apiClient, Worker } from '@/lib/api';
+import { apiClient } from '@/lib/api';
+import type { Worker } from '@/lib/api';
 
-export default function WorkersPage() {
+export default function WorkersManagement() {
   const [workers, setWorkers] = useState<Worker[]>([]);
+  const [filteredWorkers, setFilteredWorkers] = useState<Worker[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 10,
-    total: 0,
-    pages: 1,
-    hasNext: false,
-    hasPrev: false,
-  });
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [workerToDelete, setWorkerToDelete] = useState<Worker | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   const fetchWorkers = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
     try {
-      const response = await apiClient.getWorkers(pagination.page, pagination.limit);
+      setIsLoading(true);
+      setError(null);
+      
+      const response = await apiClient.getWorkers(currentPage, itemsPerPage);
+      
       if (response.success && response.data) {
-        const data = response.data;
-        setWorkers(data.items || []);
-        setPagination(prev => ({
-          ...prev,
-          total: data.total,
-          pages: data.pages,
-          hasNext: data.hasNext,
-          hasPrev: data.hasPrev,
-        }));
+        setWorkers(response.data.items || []);
+        setTotalPages(response.data.pages || 1);
+        setFilteredWorkers(response.data.items || []);
       } else {
-        setError(response.error || 'Failed to fetch workers.');
-        setWorkers([]);
+        setError('Failed to load workers');
       }
-    } catch {
-      setError('An unexpected error occurred.');
-      setWorkers([]);
+    } catch (err) {
+      setError('An unexpected error occurred');
+      console.error('Error fetching workers:', err);
     } finally {
       setIsLoading(false);
     }
-  }, [pagination.page, pagination.limit]);
+  }, [currentPage, itemsPerPage]);
 
   useEffect(() => {
     fetchWorkers();
-  }, [fetchWorkers]);
+  }, [currentPage, fetchWorkers]);
 
-  const handlePageChange = (newPage: number) => {
-    if (newPage > 0 && newPage <= pagination.pages) {
-      setPagination(prev => ({ ...prev, page: newPage }));
+  useEffect(() => {
+    // Filter workers based on search term and status
+    let filtered = workers;
+
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      filtered = filtered.filter(worker => 
+        worker.firstName?.toLowerCase().includes(searchLower) ||
+        worker.lastName?.toLowerCase().includes(searchLower) ||
+        worker.email?.toLowerCase().includes(searchLower) ||
+        worker.phone?.toLowerCase().includes(searchLower)
+      );
     }
-  };
 
-  const openDeleteModal = (worker: Worker) => {
-    setWorkerToDelete(worker);
-    setIsModalOpen(true);
-  };
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(worker => worker.status === statusFilter);
+    }
 
-  const closeDeleteModal = () => {
-    setWorkerToDelete(null);
-    setIsModalOpen(false);
-  };
+    setFilteredWorkers(filtered);
+  }, [workers, searchTerm, statusFilter]);
 
-  const handleDeleteWorker = async () => {
-    if (workerToDelete) {
-      const response = await apiClient.deleteWorker(workerToDelete.id);
+  const handleDeleteWorker = async (workerId: string) => {
+    if (!confirm('Are you sure you want to delete this worker?')) return;
+
+    try {
+      const response = await apiClient.deleteWorker(workerId);
       if (response.success) {
-        fetchWorkers(); // Refresh the list
-        closeDeleteModal();
+        // Refresh the workers list
+        fetchWorkers();
       } else {
-        alert(`Error: ${response.error}`);
+        alert('Failed to delete worker');
       }
+    } catch (err) {
+      console.error('Error deleting worker:', err);
+      alert('An error occurred while deleting the worker');
     }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'ACTIVE':
+        return 'bg-green-100 text-green-800';
+      case 'INACTIVE':
+        return 'bg-red-100 text-red-800';
+      case 'PENDING':
+        return 'bg-yellow-100 text-yellow-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-GB');
   };
 
   return (
-    <div>
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Workers</h2>
-        <p className="text-gray-600">Manage nurses, doctors, and other healthcare workers</p>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Worker Management</h1>
+          <p className="text-gray-600 mt-1">Manage healthcare workers and their profiles</p>
+        </div>
+        <Link
+          href="/admin/users/workers/new"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Add New Worker
+        </Link>
       </div>
 
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium text-gray-900">All Workers ({pagination.total})</h3>
+      {/* Filters */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Search */}
+          <div>
+            <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-2">
+              Search Workers
+            </label>
+            <input
+              type="text"
+              id="search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search by name, email, or phone..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          {/* Status Filter */}
+          <div>
+            <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
+              Status
+            </label>
+            <select
+              id="status"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="all">All Statuses</option>
+              <option value="ACTIVE">Active</option>
+              <option value="INACTIVE">Inactive</option>
+              <option value="PENDING">Pending</option>
+            </select>
+          </div>
+
+          {/* Results Count */}
+          <div className="flex items-end">
+            <p className="text-sm text-gray-600">
+              Showing {filteredWorkers.length} of {workers.length} workers
+            </p>
           </div>
         </div>
-        <div className="p-6">
-          {isLoading ? (
-            <div className="text-center text-gray-500">Loading workers...</div>
-          ) : error ? (
-            <div className="text-center text-red-500">Error: {error}</div>
-          ) : (
-            <>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+      </div>
+
+      {/* Error State */}
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="flex">
+            <svg className="w-5 h-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.664-.833-2.464 0L4.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+            <div>
+              <h3 className="text-sm font-medium text-red-800">Failed to load workers</h3>
+              <p className="text-sm text-red-700 mt-1">{error}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Workers Table */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        {isLoading ? (
+          <div className="p-8 text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="text-gray-500 mt-2">Loading workers...</p>
+          </div>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Worker
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Contact
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Joined
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {filteredWorkers.length === 0 ? (
                     <tr>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                      <td colSpan={5} className="px-6 py-4 text-center text-gray-500">
+                        {searchTerm || statusFilter !== 'all' ? 'No workers match your filters' : 'No workers found'}
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {workers.map((worker) => (
-                      <tr key={worker.id}>
+                  ) : (
+                    filteredWorkers.map((worker) => (
+                      <tr key={worker.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{worker.firstName} {worker.lastName}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <div>{worker.email}</div>
-                          <div>{worker.phone}</div>
+                          <div className="flex items-center">
+                            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                              <span className="text-sm font-medium text-blue-600">
+                                {worker.firstName?.charAt(0) || ''}{worker.lastName?.charAt(0) || ''}
+                              </span>
+                            </div>
+                            <div className="ml-4">
+                              <div className="text-sm font-medium text-gray-900">
+                                {worker.firstName || ''} {worker.lastName || ''}
+                              </div>
+                              <div className="text-sm text-gray-500">
+                                ID: {worker.id}
+                              </div>
+                            </div>
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            worker.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                          }`}>
-                            {worker.status}
+                          <div className="text-sm text-gray-900">{worker.email || 'N/A'}</div>
+                          <div className="text-sm text-gray-500">{worker.phone || 'N/A'}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(worker.status || 'UNKNOWN')}`}>
+                            {worker.status || 'UNKNOWN'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(worker.createdAt).toLocaleDateString()}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-4">
-                          <Link href={`/admin/users/workers/${worker.id}`} className="text-indigo-600 hover:text-indigo-900">
-                            Edit
-                          </Link>
-                          <button onClick={() => openDeleteModal(worker)} className="text-red-600 hover:text-red-900">
-                            Delete
-                          </button>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {worker.createdAt ? formatDate(worker.createdAt) : 'N/A'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                          <div className="flex space-x-2">
+                            <a
+                              href={`/admin/users/workers/${worker.id}`}
+                              className="text-blue-600 hover:text-blue-900"
+                            >
+                              View
+                            </a>
+                            <button
+                              onClick={() => handleDeleteWorker(worker.id)}
+                              className="text-red-600 hover:text-red-900"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </td>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              {/* Pagination Controls and Modal */}
-              {isModalOpen && workerToDelete && (
-                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
-                  <div className="p-8 border w-96 shadow-lg rounded-md bg-white">
-                    <div className="text-center">
-                      <h3 className="text-2xl font-bold text-gray-900">Confirm Deletion</h3>
-                      <p className="text-sm text-gray-500 mt-2">Are you sure you want to delete {workerToDelete.firstName} {workerToDelete.lastName}? This action cannot be undone.</p>
-                      <div className="mt-4 flex justify-center space-x-4">
-                        <button onClick={closeDeleteModal} className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">Cancel</button>
-                        <button onClick={handleDeleteWorker} className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Delete</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              <div className="mt-4 flex items-center justify-between">
-                <p className="text-sm text-gray-700">
-                  Showing page {pagination.page} of {pagination.pages}
-                </p>
-                <div className="space-x-2">
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+                <div className="flex-1 flex justify-between sm:hidden">
                   <button
-                    onClick={() => handlePageChange(pagination.page - 1)}
-                    disabled={!pagination.hasPrev}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                    className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Previous
                   </button>
                   <button
-                    onClick={() => handlePageChange(pagination.page + 1)}
-                    disabled={!pagination.hasNext}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                    disabled={currentPage === totalPages}
+                    className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Next
                   </button>
                 </div>
+                <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm text-gray-700">
+                      Showing page <span className="font-medium">{currentPage}</span> of{' '}
+                      <span className="font-medium">{totalPages}</span>
+                    </p>
+                  </div>
+                  <div>
+                    <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                      <button
+                        onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                        disabled={currentPage === 1}
+                        className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Previous
+                      </button>
+                      <button
+                        onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                        disabled={currentPage === totalPages}
+                        className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        Next
+                      </button>
+                    </nav>
+                  </div>
+                </div>
               </div>
-            </>
-          )}
-        </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

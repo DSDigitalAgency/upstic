@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { LoadingButton } from '@/components/ui/loading-button';
-import { getTaxSummary, getRtiP1Data, submitRti, TaxSummary, RtiData } from '@/lib/payroll';
+import { getTaxReports } from '@/demo/func/payroll';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +13,21 @@ interface Submission {
   type: 'RTI' | 'P60' | 'CIS';
   status: 'Success' | 'Pending' | 'Failed';
   reference: string;
+}
+
+interface TaxSummary {
+  period: string;
+  totalTax: number;
+  workersCount: number;
+  status: string;
+  totalNI?: number;
+  submissions?: number;
+}
+
+interface RtiData {
+  status: string;
+  details: string;
+  submissionId: string;
 }
 
 export default function TaxAndRtiPage() {
@@ -29,13 +44,23 @@ export default function TaxAndRtiPage() {
     const fetchData = async () => {
       try {
         setLoadingSummary(true);
-        const summaryData = await getTaxSummary();
-        if (summaryData.success && summaryData.data && typeof summaryData.data === 'object') {
-          setTaxSummary(summaryData.data);
+        const summaryData = await getTaxReports();
+        if (summaryData.success && summaryData.data && Array.isArray(summaryData.data.items)) {
+          const firstReport = summaryData.data.items[0];
+          if (firstReport) {
+            setTaxSummary({
+              period: firstReport.period,
+              totalTax: firstReport.totalTax,
+              workersCount: firstReport.workersCount,
+              status: firstReport.status,
+              totalNI: firstReport.totalTax * 0.12,
+              submissions: firstReport.workersCount
+            });
+          }
         } else {
           setTaxSummary(null);
           if (!summaryData.success) {
-            throw new Error(summaryData.error || 'Failed to fetch tax summary');
+            throw new Error('Failed to fetch tax summary');
           }
         }
       } catch (error) {
@@ -46,15 +71,13 @@ export default function TaxAndRtiPage() {
       
       try {
         setLoadingRti(true);
-        const rtiP1Data = await getRtiP1Data();
-        if (rtiP1Data.success && rtiP1Data.data && typeof rtiP1Data.data === 'object' && 'submissionId' in rtiP1Data.data) {
-          setRtiData(rtiP1Data.data as RtiData);
-        } else {
-          setRtiData(null);
-          if (!rtiP1Data.success) {
-            throw new Error(rtiP1Data.error || 'Failed to fetch RTI data');
-          }
-        }
+        // Removed getRtiP1Data() call
+        // Mock RTI data for now
+        setRtiData({
+          status: 'ready',
+          details: 'RTI data is ready for submission to HMRC. Please review before submitting.',
+          submissionId: 'mock-submission-id-123',
+        });
       } catch (error) {
         setError(error instanceof Error ? error.message : 'An unknown error occurred');
       } finally {
@@ -79,19 +102,13 @@ export default function TaxAndRtiPage() {
     setError(null);
     setSuccess(null);
     try {
-      const result = await submitRti(rtiData);
-      if (result.success) {
-        setSuccess('RTI submitted successfully to HMRC!');
-        // Refresh data after submission
-        const rtiP1Data = await getRtiP1Data();
-        if (rtiP1Data.success && rtiP1Data.data && typeof rtiP1Data.data === 'object' && 'submissionId' in rtiP1Data.data) {
-          setRtiData(rtiP1Data.data as RtiData);
-        } else {
-          setRtiData(null);
-        }
-      } else {
-        throw new Error(result.error || 'Failed to submit RTI');
-      }
+      // Mock submission success
+      setSuccess('RTI submitted successfully to HMRC!');
+      setRtiData({
+        status: 'ready',
+        details: 'RTI data is ready for submission to HMRC. Please review before submitting.',
+        submissionId: 'mock-submission-id-123',
+      });
     } catch (error) {
       setError(error instanceof Error ? error.message : 'An unknown error occurred');
     } finally {

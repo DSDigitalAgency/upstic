@@ -1,0 +1,397 @@
+[
+  {
+    "id": "availability-001",
+    "workerId": "worker-001",
+    "availableDays": [
+      {
+        "day": "Monday",
+        "available": true,
+        "shifts": {
+          "morning": true,
+          "afternoon": true,
+          "evening": false,
+          "night": false
+        }
+      },
+      {
+        "day": "Tuesday",
+        "available": true,
+        "shifts": {
+          "morning": true,
+          "afternoon": true,
+          "evening": false,
+          "night": false
+        }
+      },
+      {
+        "day": "Wednesday",
+        "available": true,
+        "shifts": {
+          "morning": true,
+          "afternoon": true,
+          "evening": false,
+          "night": false
+        }
+      },
+      {
+        "day": "Thursday",
+        "available": true,
+        "shifts": {
+          "morning": true,
+          "afternoon": true,
+          "evening": false,
+          "night": false
+        }
+      },
+      {
+        "day": "Friday",
+        "available": true,
+        "shifts": {
+          "morning": true,
+          "afternoon": true,
+          "evening": false,
+          "night": false
+        }
+      },
+      {
+        "day": "Saturday",
+        "available": false,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": false,
+          "night": false
+        }
+      },
+      {
+        "day": "Sunday",
+        "available": false,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": false,
+          "night": false
+        }
+      }
+    ],
+    "availableFromDate": "2025-07-01",
+    "notes": "Available for day shifts Monday to Friday. Prefer morning and afternoon shifts.",
+    "updatedAt": "2025-07-01T10:30:00Z"
+  },
+  {
+    "id": "availability-002",
+    "workerId": "worker-002",
+    "availableDays": [
+      {
+        "day": "Monday",
+        "available": false,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": false,
+          "night": false
+        }
+      },
+      {
+        "day": "Tuesday",
+        "available": true,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": true,
+          "night": true
+        }
+      },
+      {
+        "day": "Wednesday",
+        "available": true,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": true,
+          "night": true
+        }
+      },
+      {
+        "day": "Thursday",
+        "available": true,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": true,
+          "night": true
+        }
+      },
+      {
+        "day": "Friday",
+        "available": true,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": true,
+          "night": true
+        }
+      },
+      {
+        "day": "Saturday",
+        "available": true,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": true,
+          "night": true
+        }
+      },
+      {
+        "day": "Sunday",
+        "available": true,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": true,
+          "night": true
+        }
+      }
+    ],
+    "availableFromDate": "2025-07-02",
+    "notes": "Available for evening and night shifts Tuesday through Sunday. Experienced in overnight care.",
+    "updatedAt": "2025-07-02T14:45:00Z"
+  },
+  {
+    "id": "availability-003",
+    "workerId": "worker-003",
+    "availableDays": [
+      {
+        "day": "Monday",
+        "available": true,
+        "shifts": {
+          "morning": true,
+          "afternoon": true,
+          "evening": true,
+          "night": false
+        }
+      },
+      {
+        "day": "Tuesday",
+        "available": true,
+        "shifts": {
+          "morning": true,
+          "afternoon": true,
+          "evening": true,
+          "night": false
+        }
+      },
+      {
+        "day": "Wednesday",
+        "available": true,
+        "shifts": {
+          "morning": true,
+          "afternoon": true,
+          "evening": true,
+          "night": false
+        }
+      },
+      {
+        "day": "Thursday",
+        "available": true,
+        "shifts": {
+          "morning": true,
+          "afternoon": true,
+          "evening": true,
+          "night": false
+        }
+      },
+      {
+        "day": "Friday",
+        "available": true,
+        "shifts": {
+          "morning": true,
+          "afternoon": true,
+          "evening": true,
+          "night": false
+        }
+      },
+      {
+        "day": "Saturday",
+        "available": true,
+        "shifts": {
+          "morning": true,
+          "afternoon": true,
+          "evening": false,
+          "night": false
+        }
+      },
+      {
+        "day": "Sunday",
+        "available": true,
+        "shifts": {
+          "morning": true,
+          "afternoon": true,
+          "evening": false,
+          "night": false
+        }
+      }
+    ],
+    "availableFromDate": "2025-07-03",
+    "notes": "Flexible availability for all shifts except night shifts. Available 7 days a week.",
+    "updatedAt": "2025-07-03T09:15:00Z"
+  },
+  {
+    "id": "availability-004",
+    "workerId": "worker-004",
+    "availableDays": [
+      {
+        "day": "Monday",
+        "available": true,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": true,
+          "night": true
+        }
+      },
+      {
+        "day": "Tuesday",
+        "available": true,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": true,
+          "night": true
+        }
+      },
+      {
+        "day": "Wednesday",
+        "available": true,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": true,
+          "night": true
+        }
+      },
+      {
+        "day": "Thursday",
+        "available": true,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": true,
+          "night": true
+        }
+      },
+      {
+        "day": "Friday",
+        "available": true,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": true,
+          "night": true
+        }
+      },
+      {
+        "day": "Saturday",
+        "available": false,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": false,
+          "night": false
+        }
+      },
+      {
+        "day": "Sunday",
+        "available": false,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": false,
+          "night": false
+        }
+      }
+    ],
+    "availableFromDate": "2025-07-04",
+    "notes": "Available for evening and night shifts Monday to Friday only. Specialized in palliative care.",
+    "updatedAt": "2025-07-04T16:20:00Z"
+  },
+  {
+    "id": "availability-005",
+    "workerId": "worker-005",
+    "availableDays": [
+      {
+        "day": "Monday",
+        "available": false,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": false,
+          "night": false
+        }
+      },
+      {
+        "day": "Tuesday",
+        "available": true,
+        "shifts": {
+          "morning": true,
+          "afternoon": true,
+          "evening": false,
+          "night": false
+        }
+      },
+      {
+        "day": "Wednesday",
+        "available": true,
+        "shifts": {
+          "morning": true,
+          "afternoon": true,
+          "evening": false,
+          "night": false
+        }
+      },
+      {
+        "day": "Thursday",
+        "available": true,
+        "shifts": {
+          "morning": true,
+          "afternoon": true,
+          "evening": false,
+          "night": false
+        }
+      },
+      {
+        "day": "Friday",
+        "available": true,
+        "shifts": {
+          "morning": true,
+          "afternoon": true,
+          "evening": false,
+          "night": false
+        }
+      },
+      {
+        "day": "Saturday",
+        "available": true,
+        "shifts": {
+          "morning": true,
+          "afternoon": true,
+          "evening": false,
+          "night": false
+        }
+      },
+      {
+        "day": "Sunday",
+        "available": false,
+        "shifts": {
+          "morning": false,
+          "afternoon": false,
+          "evening": false,
+          "night": false
+        }
+      }
+    ],
+    "availableFromDate": "2025-07-05",
+    "notes": "Available for day shifts Tuesday to Saturday. Experienced in pediatric care.",
+    "updatedAt": "2025-07-05T11:00:00Z"
+  }
+] 

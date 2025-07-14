@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { getRecommendedJobs, applyForJob } from '@/lib/worker';
+import { getRecommendedJobs } from '@/lib/worker';
 import { Job } from '@/lib/api';
 import Link from 'next/link';
 
@@ -37,27 +37,6 @@ export default function RecommendedJobsPage() {
 
     fetchRecommendedJobs();
   }, [user, page]);
-
-  const handleApply = async (jobId: string) => {
-    if (!user?.id) return;
-    
-    try {
-      const response = await applyForJob(user.id, jobId);
-      if (response.success) {
-        // Update the UI to show the job has been applied for
-        setJobs(prevJobs => 
-          prevJobs.map(job => 
-            job.id === jobId ? { ...job, status: 'APPLIED' } : job
-          )
-        );
-      } else {
-        setError(response.error || 'Failed to apply for job');
-      }
-    } catch (err) {
-      setError('An unexpected error occurred');
-      console.error(err);
-    }
-  };
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -180,18 +159,23 @@ export default function RecommendedJobsPage() {
                 </div>
               </div>
               
-              <div className="mt-6 flex justify-end">
-                <button
-                  onClick={() => handleApply(job.id)}
-                  disabled={job.status === 'APPLIED'}
+              <div className="mt-6 flex justify-end space-x-3">
+                <Link
+                  href={`/worker/jobs/${job.id}`}
+                  className="px-5 py-2.5 rounded-lg font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+                >
+                  View Details
+                </Link>
+                <Link
+                  href={`/worker/jobs/${job.id}?apply=true`}
                   className={`px-5 py-2.5 rounded-lg font-medium ${
                     job.status === 'APPLIED'
-                      ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
+                      ? 'bg-gray-100 text-gray-500 cursor-not-allowed pointer-events-none'
                       : 'bg-blue-600 text-white hover:bg-blue-700'
                   } transition-colors`}
                 >
-                  {job.status === 'APPLIED' ? 'Applied' : 'Apply Now'}
-                </button>
+                  {job.status === 'APPLIED' ? 'Applied' : 'Apply with Details'}
+                </Link>
               </div>
             </div>
           ))}

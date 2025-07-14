@@ -1,0 +1,72 @@
+[
+  {
+    "id": "client-001",
+    "userId": "demo-003",
+    "companyName": "Royal London Hospital",
+    "email": "client@upstic.com",
+    "phone": "+44555666777",
+    "address": "Whitechapel Rd, Whitechapel, London E1 1FR",
+    "status": "ACTIVE",
+    "createdAt": "2025-06-25T08:00:00Z",
+    "updatedAt": "2025-07-13T11:30:00Z",
+    "description": "One of London's leading teaching hospitals providing comprehensive local healthcare to a diverse community.",
+    "industry": "HOSPITAL",
+    "subscriptionPlan": "PREMIUM"
+  },
+  {
+    "id": "client-002",
+    "userId": "demo-008",
+    "companyName": "Manchester General Clinic",
+    "email": "hr@manchesterclinic.com",
+    "phone": "+441612345678",
+    "address": "Oxford Rd, Manchester M13 9WL",
+    "status": "ACTIVE",
+    "createdAt": "2025-06-20T10:00:00Z",
+    "updatedAt": "2025-07-13T14:15:00Z",
+    "description": "Modern medical clinic providing primary care and specialist services to the Manchester community.",
+    "industry": "CLINIC",
+    "subscriptionPlan": "STANDARD"
+  },
+  {
+    "id": "client-003",
+    "userId": "demo-009",
+    "companyName": "Birmingham Care Home",
+    "email": "admin@birminghamcare.co.uk",
+    "phone": "+441214567890",
+    "address": "Edgbaston Rd, Birmingham B15 2TT",
+    "status": "TRIAL",
+    "createdAt": "2025-06-15T09:30:00Z",
+    "updatedAt": "2025-07-13T11:45:00Z",
+    "description": "Residential care home providing 24/7 care for elderly residents with various care needs.",
+    "industry": "CARE_HOME",
+    "subscriptionPlan": "BASIC"
+  },
+  {
+    "id": "client-004",
+    "userId": "demo-010",
+    "companyName": "Liverpool Mental Health Trust",
+    "email": "recruitment@liverpoolmht.nhs.uk",
+    "phone": "+441517123456",
+    "address": "Mossley Hill Rd, Liverpool L18 8DB",
+    "status": "ACTIVE",
+    "createdAt": "2025-06-10T13:45:00Z",
+    "updatedAt": "2025-07-13T16:30:00Z",
+    "description": "Specialist mental health trust providing comprehensive psychiatric and psychological services.",
+    "industry": "HOSPITAL",
+    "subscriptionPlan": "PREMIUM"
+  },
+  {
+    "id": "client-005",
+    "userId": "demo-011",
+    "companyName": "Leeds Community Healthcare",
+    "email": "hr@leedscommunity.nhs.uk",
+    "phone": "+441133456789",
+    "address": "St James's University Hospital, Leeds LS9 7TF",
+    "status": "SUSPENDED",
+    "createdAt": "2025-06-05T08:15:00Z",
+    "updatedAt": "2025-07-13T12:20:00Z",
+    "description": "Community healthcare provider delivering integrated health and social care services across Leeds.",
+    "industry": "CLINIC",
+    "subscriptionPlan": "STANDARD"
+  }
+] 

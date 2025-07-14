@@ -1,0 +1,46 @@
+[
+  {
+    "id": "app-1001",
+    "jobId": "job-1001",
+    "workerId": "worker-001",
+    "status": "PENDING",
+    "coverLetter": "I am very interested in this night shift nurse position. I have 5 years of experience in similar roles.",
+    "expectedRate": 32,
+    "availability": "Immediate",
+    "appliedAt": "2025-07-05T09:00:00Z",
+    "reviewedAt": null
+  },
+  {
+    "id": "app-1002",
+    "jobId": "job-1002",
+    "workerId": "worker-002",
+    "status": "ACCEPTED",
+    "coverLetter": "Healthcare assistant with 3 years of experience, available for flexible shifts.",
+    "expectedRate": 18,
+    "availability": "Next week",
+    "appliedAt": "2025-07-06T10:30:00Z",
+    "reviewedAt": "2025-07-07T14:00:00Z"
+  },
+  {
+    "id": "app-1003",
+    "jobId": "job-1003",
+    "workerId": "worker-003",
+    "status": "REJECTED",
+    "coverLetter": "Locum physiotherapist with NHS experience, looking for short-term contracts.",
+    "expectedRate": 28,
+    "availability": "2 weeks notice",
+    "appliedAt": "2025-07-07T12:00:00Z",
+    "reviewedAt": "2025-07-08T09:30:00Z"
+  },
+  {
+    "id": "app-1004",
+    "jobId": "job-1001",
+    "workerId": "worker-002",
+    "status": "ASSIGNMENT_CREATED",
+    "coverLetter": "I am available for night shifts and have all required compliance documents.",
+    "expectedRate": 33,
+    "availability": "Immediate",
+    "appliedAt": "2025-07-08T15:00:00Z",
+    "reviewedAt": "2025-07-09T10:00:00Z"
+  }
+] 

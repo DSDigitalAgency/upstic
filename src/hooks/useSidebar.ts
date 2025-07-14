@@ -1,13 +1,21 @@
-import { create } from 'zustand';
+'use client';
 
-interface SidebarStore {
-  isCollapsed: boolean;
-  toggleCollapsed: () => void;
-  setCollapsed: (collapsed: boolean) => void;
-}
+import { useState } from 'react';
 
-export const useSidebar = create<SidebarStore>((set) => ({
-  isCollapsed: false,
-  toggleCollapsed: () => set((state) => ({ isCollapsed: !state.isCollapsed })),
-  setCollapsed: (collapsed) => set({ isCollapsed: collapsed }),
-})); 
+export function useSidebar() {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
+  const toggleCollapsed = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+
+  return {
+    isCollapsed,
+    toggleSidebar,
+    toggleCollapsed,
+  };
+} 

@@ -1,0 +1,122 @@
+[
+  {
+    "id": "taxdoc-001",
+    "workerId": "worker-001",
+    "name": "P60 - End of Year Certificate",
+    "year": 2023,
+    "issuedAt": "2025-06-25",
+    "url": "/mock/taxdocs/p60-2023-worker-001.pdf"
+  },
+  {
+    "id": "taxdoc-002",
+    "workerId": "worker-001",
+    "name": "P45 - Leaving Work",
+    "year": 2022,
+    "issuedAt": "2025-06-28",
+    "url": "/mock/taxdocs/p45-2022-worker-001.pdf"
+  },
+  {
+    "id": "taxdoc-003",
+    "workerId": "worker-001",
+    "name": "Payslip - March 2024",
+    "year": 2024,
+    "issuedAt": "2025-06-29",
+    "url": "/mock/taxdocs/payslip-mar-2024-worker-001.pdf"
+  },
+  {
+    "id": "taxdoc-004",
+    "workerId": "worker-002",
+    "name": "P60 - End of Year Certificate",
+    "year": 2023,
+    "issuedAt": "2025-06-25",
+    "url": "/mock/taxdocs/p60-2023-worker-002.pdf"
+  },
+  {
+    "id": "taxdoc-005",
+    "workerId": "worker-002",
+    "name": "P45 - Leaving Work",
+    "year": 2022,
+    "issuedAt": "2025-06-28",
+    "url": "/mock/taxdocs/p45-2022-worker-002.pdf"
+  },
+  {
+    "id": "taxdoc-006",
+    "workerId": "worker-002",
+    "name": "Payslip - March 2024",
+    "year": 2024,
+    "issuedAt": "2025-06-29",
+    "url": "/mock/taxdocs/payslip-mar-2024-worker-002.pdf"
+  },
+  {
+    "id": "taxdoc-007",
+    "workerId": "worker-003",
+    "name": "P60 - End of Year Certificate",
+    "year": 2023,
+    "issuedAt": "2025-06-25",
+    "url": "/mock/taxdocs/p60-2023-worker-003.pdf"
+  },
+  {
+    "id": "taxdoc-008",
+    "workerId": "worker-003",
+    "name": "P45 - Leaving Work",
+    "year": 2022,
+    "issuedAt": "2025-06-28",
+    "url": "/mock/taxdocs/p45-2022-worker-003.pdf"
+  },
+  {
+    "id": "taxdoc-009",
+    "workerId": "worker-003",
+    "name": "Payslip - March 2024",
+    "year": 2024,
+    "issuedAt": "2025-06-29",
+    "url": "/mock/taxdocs/payslip-mar-2024-worker-003.pdf"
+  },
+  {
+    "id": "taxdoc-010",
+    "workerId": "worker-004",
+    "name": "P60 - End of Year Certificate",
+    "year": 2023,
+    "issuedAt": "2025-06-25",
+    "url": "/mock/taxdocs/p60-2023-worker-004.pdf"
+  },
+  {
+    "id": "taxdoc-011",
+    "workerId": "worker-004",
+    "name": "P45 - Leaving Work",
+    "year": 2022,
+    "issuedAt": "2025-06-28",
+    "url": "/mock/taxdocs/p45-2022-worker-004.pdf"
+  },
+  {
+    "id": "taxdoc-012",
+    "workerId": "worker-004",
+    "name": "Payslip - March 2024",
+    "year": 2024,
+    "issuedAt": "2025-06-29",
+    "url": "/mock/taxdocs/payslip-mar-2024-worker-004.pdf"
+  },
+  {
+    "id": "taxdoc-013",
+    "workerId": "worker-005",
+    "name": "P60 - End of Year Certificate",
+    "year": 2023,
+    "issuedAt": "2025-06-25",
+    "url": "/mock/taxdocs/p60-2023-worker-005.pdf"
+  },
+  {
+    "id": "taxdoc-014",
+    "workerId": "worker-005",
+    "name": "P45 - Leaving Work",
+    "year": 2022,
+    "issuedAt": "2025-06-28",
+    "url": "/mock/taxdocs/p45-2022-worker-005.pdf"
+  },
+  {
+    "id": "taxdoc-015",
+    "workerId": "worker-005",
+    "name": "Payslip - March 2024",
+    "year": 2024,
+    "issuedAt": "2025-06-29",
+    "url": "/mock/taxdocs/payslip-mar-2024-worker-005.pdf"
+  }
+] 

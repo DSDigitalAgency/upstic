@@ -1,28 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { getAllJobs, applyForJob } from '@/lib/worker';
-import { Job } from '@/lib/api';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { getAllJobs } from '@/lib/worker';
+import { Job } from '@/lib/api';
 
 export default function WorkerJobsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
-  const { user } = useAuth();
 
-  const fetchJobs = async (query = searchQuery, currentPage = page) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const fetchJobs = useCallback(async (_query = searchQuery, currentPage = page) => {
     setIsLoading(true);
     try {
-      const response = await getAllJobs({ 
-        page: currentPage, 
+      const response = await getAllJobs({
+        page: currentPage,
         limit: 10,
-        search: query || undefined
       });
       if (response.success && response.data) {
         setJobs(response.data.items || []);
@@ -36,50 +33,20 @@ export default function WorkerJobsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [searchQuery, page]);
 
   useEffect(() => {
     fetchJobs();
-  }, [page]);
+  }, [page, fetchJobs]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    setSearchQuery(query);
-    
-    // Clear existing timeout
-    if (searchTimeout) {
-      clearTimeout(searchTimeout);
+    setSearchQuery(e.target.value);
+    if (e.target.value.trim() === '') {
+      fetchJobs('', 1);
     }
-    
-    // Set new timeout for debouncing
-    const timeout = setTimeout(() => {
-      setPage(1); // Reset to first page when searching
-      fetchJobs(query, 1);
-    }, 500);
-    
-    setSearchTimeout(timeout);
   };
 
-  const handleApply = async (jobId: string) => {
-    if (!user?.id) return;
-    
-    try {
-      const response = await applyForJob(user.id, jobId);
-      if (response.success) {
-        // Update the UI to show the job has been applied for
-        setJobs(prevJobs => 
-          prevJobs.map(job => 
-            job.id === jobId ? { ...job, status: 'APPLIED' } : job
-          )
-        );
-      } else {
-        setError(response.error || 'Failed to apply for job');
-      }
-    } catch (err) {
-      setError('An unexpected error occurred');
-      console.error(err);
-    }
-  };
+
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -141,8 +108,8 @@ export default function WorkerJobsPage() {
           </svg>
           <h3 className="mt-4 text-lg font-medium text-gray-900">No jobs found</h3>
           <p className="mt-2 text-base text-gray-600">
-            {searchQuery 
-              ? `No jobs matching "${searchQuery}". Try a different search term.` 
+            {searchQuery
+              ? `No jobs matching "${searchQuery}". Try a different search term.`
               : "Check back later for new opportunities."}
           </p>
         </div>
@@ -161,7 +128,7 @@ export default function WorkerJobsPage() {
                   </span>
                 </div>
               </div>
-              
+
               <div className="mt-4 flex flex-wrap items-center text-sm text-gray-600 gap-4">
                 <div className="flex items-center">
                   <svg className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -183,11 +150,11 @@ export default function WorkerJobsPage() {
                   £{job.salaryMin} - £{job.salaryMax} per hour
                 </div>
               </div>
-              
+
               <div className="mt-4">
                 <p className="text-gray-700 line-clamp-2">{job.description}</p>
               </div>
-              
+
               <div className="mt-4 flex flex-wrap gap-2">
                 {job.skills && job.skills.length > 0 ? (
                   <>
@@ -206,19 +173,20 @@ export default function WorkerJobsPage() {
                   <span className="text-sm text-gray-500">No skills specified</span>
                 )}
               </div>
-              
-              <div className="mt-6 flex justify-end">
-                <button
-                  onClick={() => handleApply(job.id)}
-                  disabled={job.status === 'APPLIED'}
-                  className={`px-5 py-2.5 rounded-lg font-medium ${
-                    job.status === 'APPLIED'
-                      ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
-                      : 'bg-blue-600 text-white hover:bg-blue-700'
-                  } transition-colors`}
+
+              <div className="mt-6 flex justify-end space-x-3">
+                <Link
+                  href={`/worker/jobs/${job.id}`}
+                  className="px-5 py-2.5 rounded-lg font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
                 >
-                  {job.status === 'APPLIED' ? 'Applied' : 'Apply Now'}
-                </button>
+                  View Details
+                </Link>
+                <Link
+                  href={`/worker/jobs/${job.id}?apply=true`}
+                  className="px-5 py-2.5 rounded-lg font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+                >
+                  Apply with Details
+                </Link>
               </div>
             </div>
           ))}
@@ -236,7 +204,7 @@ export default function WorkerJobsPage() {
             >
               Previous
             </button>
-            
+
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
               <button
                 key={pageNum}
@@ -250,7 +218,7 @@ export default function WorkerJobsPage() {
                 {pageNum}
               </button>
             ))}
-            
+
             <button
               onClick={() => handlePageChange(page + 1)}
               disabled={page === totalPages}

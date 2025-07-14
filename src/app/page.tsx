@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
 import { LoadingButton } from '@/components/ui/loading-button';
@@ -20,7 +21,21 @@ export default function Home() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState('');
   
-  const { login, register, isLoading } = useAuth();
+  const { login, register, isLoading, user, isAuthenticated } = useAuth();
+  const router = useRouter();
+
+  // Redirect authenticated users to their appropriate portal
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && user) {
+      const roleRoutes = {
+        admin: '/admin',
+        client: '/client',
+        worker: '/worker'
+      };
+      const redirectPath = roleRoutes[user.role as keyof typeof roleRoutes] || '/';
+      router.push(redirectPath);
+    }
+  }, [isLoading, isAuthenticated, user, router]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -35,7 +50,7 @@ export default function Home() {
     // Password validation
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
+    } else if (isSignup && formData.password.length < 8) {
       newErrors.password = 'Password must be at least 8 characters long';
     }
 
@@ -264,7 +279,7 @@ export default function Home() {
                   />
 
                   <div>
-                    <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="role" className="block text-sm font-medium text-gray-900 mb-2">
                       Account Type
                     </label>
                     <select
@@ -273,7 +288,7 @@ export default function Home() {
                       value={formData.role}
                       onChange={handleInputChange}
                       disabled={isLoading}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
                     >
                       <option value="worker">Healthcare Professional</option>
                       <option value="client">Healthcare Facility</option>

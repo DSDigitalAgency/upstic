@@ -22,6 +22,9 @@ interface Application {
   updatedAt: string;
   interviewDate?: string;
   notes?: string;
+  coverLetter?: string;
+  expectedRate?: number;
+  availability?: string[];
 }
 
 export default function ApplicationsPage() {
@@ -40,8 +43,8 @@ export default function ApplicationsPage() {
       try {
         const response = await getWorkerApplications(user.id);
         if (response.success && response.data) {
-          setApplications(response.data.items || []);
-          setTotalPages(response.data.pages || 1);
+          setApplications(response.data as Application[] || []);
+          setTotalPages(1);
         } else {
           setError(response.error || 'Failed to fetch applications');
         }
@@ -124,7 +127,7 @@ export default function ApplicationsPage() {
           </svg>
           <h3 className="mt-4 text-lg font-medium text-gray-900">No applications found</h3>
           <p className="mt-2 text-base text-gray-600">
-            You haven't applied to any jobs yet.
+            You haven&apos;t applied to any jobs yet.
           </p>
           <div className="mt-6">
             <Link href="/worker/jobs" className="inline-flex items-center px-5 py-2.5 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
@@ -168,6 +171,14 @@ export default function ApplicationsPage() {
                         </svg>
                         {application.job.location}
                       </p>
+                      {application.expectedRate && (
+                        <p className="mt-2 flex items-center text-sm text-gray-700 sm:mt-0">
+                          <svg className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                          </svg>
+                          <span className="font-medium">£{application.expectedRate}/hr</span>
+                        </p>
+                      )}
                     </div>
                     {application.status === 'INTERVIEW_SCHEDULED' && application.interviewDate && (
                       <div className="mt-3 flex items-center text-sm text-gray-700 sm:mt-0 bg-blue-50 px-3 py-1 rounded-lg">
@@ -180,11 +191,41 @@ export default function ApplicationsPage() {
                       </div>
                     )}
                   </div>
+
+                  {application.availability && application.availability.length > 0 && (
+                    <div className="mt-3 bg-gray-50 p-3 rounded-md">
+                      <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Availability</h4>
+                      <div className="flex flex-wrap gap-1">
+                        {application.availability.map((day) => (
+                          <span key={day} className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                            {day}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {application.coverLetter && (
+                    <div className="mt-3 bg-gray-50 p-3 rounded-md">
+                      <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Cover Letter</h4>
+                      <p className="text-sm text-gray-700">{application.coverLetter}</p>
+                    </div>
+                  )}
+                  
                   {application.notes && (
                     <div className="mt-3 bg-gray-50 p-3 rounded-md">
+                      <h4 className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Additional Notes</h4>
                       <p className="text-sm text-gray-700">{application.notes}</p>
                     </div>
                   )}
+                  <div className="mt-3 flex justify-end">
+                    <Link 
+                      href={`/worker/jobs/${application.job.id}`}
+                      className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                    >
+                      View Job Details
+                    </Link>
+                  </div>
                 </div>
               </li>
             ))}

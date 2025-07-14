@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { getWorkHistory, addWorkHistoryEntry } from '@/lib/worker';
+import { getWorkHistory, addWorkHistoryEntry } from '@/demo/func/worker';
 
 interface WorkHistoryEntry {
   id: string;
@@ -84,7 +84,9 @@ export default function WorkHistoryPage() {
       
       if (response.success && response.data) {
         // Add the new entry to the list
-        setWorkHistory(prev => [response.data, ...prev]);
+        if (response.data) {
+          setWorkHistory(prev => [response.data!, ...prev]);
+        }
         
         // Reset form
         setFormData({
@@ -129,7 +131,7 @@ export default function WorkHistoryPage() {
   return (
     <div>
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Work History</h2>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Work History</h1>
         <p className="text-gray-600">Manage your professional experience and employment history</p>
       </div>
 
@@ -155,59 +157,59 @@ export default function WorkHistoryPage() {
           <form onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               <div>
-                <label htmlFor="employer" className="block text-sm font-medium text-gray-700">Employer</label>
-                <input
-                  type="text"
-                  name="employer"
-                  id="employer"
-                  required
-                  value={formData.employer}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
+                <label htmlFor="employer" className="block text-sm font-medium text-gray-900">Employer</label>
+                                  <input
+                    type="text"
+                    name="employer"
+                    id="employer"
+                    required
+                    value={formData.employer}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-gray-900 bg-white placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500"
+                  />
               </div>
 
               <div>
-                <label htmlFor="position" className="block text-sm font-medium text-gray-700">Position</label>
-                <input
-                  type="text"
-                  name="position"
-                  id="position"
-                  required
-                  value={formData.position}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
+                <label htmlFor="position" className="block text-sm font-medium text-gray-900">Position</label>
+                                  <input
+                    type="text"
+                    name="position"
+                    id="position"
+                    required
+                    value={formData.position}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-gray-900 bg-white placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500"
+                  />
               </div>
 
               <div>
-                <label htmlFor="location" className="block text-sm font-medium text-gray-700">Location</label>
-                <input
-                  type="text"
-                  name="location"
-                  id="location"
-                  required
-                  value={formData.location}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
+                <label htmlFor="location" className="block text-sm font-medium text-gray-900">Location</label>
+                                  <input
+                    type="text"
+                    name="location"
+                    id="location"
+                    required
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-gray-900 bg-white placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500"
+                  />
               </div>
 
               <div>
-                <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">Start Date</label>
-                <input
-                  type="date"
-                  name="startDate"
-                  id="startDate"
-                  required
-                  value={formData.startDate}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
+                <label htmlFor="startDate" className="block text-sm font-medium text-gray-900">Start Date</label>
+                                  <input
+                    type="date"
+                    name="startDate"
+                    id="startDate"
+                    required
+                    value={formData.startDate}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-gray-900 bg-white focus:border-blue-500 focus:ring-blue-500"
+                  />
               </div>
 
               <div>
-                <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">End Date</label>
+                <label htmlFor="endDate" className="block text-sm font-medium text-gray-900">End Date</label>
                 <input
                   type="date"
                   name="endDate"
@@ -230,22 +232,22 @@ export default function WorkHistoryPage() {
                     onChange={handleCheckboxChange}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                  <label htmlFor="isCurrent" className="ml-2 block text-sm text-gray-700">
+                  <label htmlFor="isCurrent" className="ml-2 block text-sm text-gray-900">
                     I currently work here
                   </label>
                 </div>
               </div>
 
               <div className="sm:col-span-2">
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
-                <textarea
-                  name="description"
-                  id="description"
-                  rows={4}
-                  value={formData.description}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                ></textarea>
+                <label htmlFor="description" className="block text-sm font-medium text-gray-900">Description</label>
+                                  <textarea
+                    name="description"
+                    id="description"
+                    rows={4}
+                    value={formData.description}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm text-gray-900 bg-white placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500"
+                  ></textarea>
               </div>
             </div>
 

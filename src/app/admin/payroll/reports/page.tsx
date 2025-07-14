@@ -2,24 +2,40 @@
 
 import { useState } from "react";
 import { LoadingButton } from "@/components/ui/loading-button";
-import { getTaxSummary, TaxSummary } from '@/lib/payroll';
+import { getTaxReports } from '@/demo/func/payroll';
+
+interface TaxReport {
+  period: string;
+  totalTax: number;
+  totalNI: number;
+  submissions: number;
+}
 
 export default function PayrollReportsPage() {
   const [taxLoading, setTaxLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [taxReport, setTaxReport] = useState<TaxSummary | null>(null);
+  const [taxReport, setTaxReport] = useState<TaxReport | null>(null);
 
   const handleGetTaxSummary = async () => {
     setTaxLoading(true);
     setError(null);
     setTaxReport(null);
     try {
-      const response = await getTaxSummary();
+      const response = await getTaxReports();
       if (response.success && response.data) {
-        setTaxReport(response.data);
+        // Transform the response to match our interface
+        const firstReport = response.data.items[0];
+        if (firstReport) {
+          setTaxReport({
+            period: firstReport.period,
+            totalTax: firstReport.totalTax,
+            totalNI: firstReport.totalTax * 0.12, // Estimate NI as 12% of tax
+            submissions: firstReport.workersCount
+          });
+        }
       } else {
-        setError(response.message || 'Failed to fetch tax summary.');
+        setError('Failed to fetch tax summary.');
       }
     } catch (err) {
       setError("An unexpected error occurred while fetching tax summary.");

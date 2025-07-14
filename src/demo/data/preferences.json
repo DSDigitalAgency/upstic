@@ -1,0 +1,102 @@
+[
+  {
+    "id": "pref-001",
+    "workerId": "worker-001",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "PUBLIC",
+      "showContactInfo": true
+    },
+    "preferences": {
+      "preferredShiftType": ["Day", "Night"],
+      "maxTravelDistance": 50,
+      "minimumHourlyRate": 25
+    },
+    "createdAt": "2025-07-05T10:30:00Z",
+    "updatedAt": "2025-07-12T14:45:00Z"
+  },
+  {
+    "id": "pref-002",
+    "workerId": "worker-002",
+    "notifications": {
+      "email": true,
+      "sms": true,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "CONNECTIONS_ONLY",
+      "showContactInfo": false
+    },
+    "preferences": {
+      "preferredShiftType": ["Day", "Evening"],
+      "maxTravelDistance": 30,
+      "minimumHourlyRate": 30
+    },
+    "createdAt": "2025-07-05T09:15:00Z",
+    "updatedAt": "2025-07-12T16:20:00Z"
+  },
+  {
+    "id": "pref-003",
+    "workerId": "worker-003",
+    "notifications": {
+      "email": false,
+      "sms": false,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "PRIVATE",
+      "showContactInfo": false
+    },
+    "preferences": {
+      "preferredShiftType": ["Day"],
+      "maxTravelDistance": 20,
+      "minimumHourlyRate": 20
+    },
+    "createdAt": "2025-07-05T11:45:00Z",
+    "updatedAt": "2025-07-12T13:10:00Z"
+  },
+  {
+    "id": "pref-004",
+    "workerId": "worker-004",
+    "notifications": {
+      "email": true,
+      "sms": true,
+      "push": false
+    },
+    "privacy": {
+      "profileVisibility": "PUBLIC",
+      "showContactInfo": true
+    },
+    "preferences": {
+      "preferredShiftType": ["Night", "Evening"],
+      "maxTravelDistance": 40,
+      "minimumHourlyRate": 28
+    },
+    "createdAt": "2025-07-05T14:20:00Z",
+    "updatedAt": "2025-07-12T10:30:00Z"
+  },
+  {
+    "id": "pref-005",
+    "workerId": "worker-005",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "CONNECTIONS_ONLY",
+      "showContactInfo": true
+    },
+    "preferences": {
+      "preferredShiftType": ["Day", "Evening", "Night"],
+      "maxTravelDistance": 60,
+      "minimumHourlyRate": 22
+    },
+    "createdAt": "2025-07-05T08:30:00Z",
+    "updatedAt": "2025-07-12T15:45:00Z"
+  }
+] 

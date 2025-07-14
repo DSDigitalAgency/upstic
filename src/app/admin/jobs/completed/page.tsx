@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { apiClient, Job } from '@/lib/api';
+import { apiClient, Job, Client } from '@/lib/api';
 import JobsTable from '@/components/JobsTable';
 import { debounce } from 'lodash';
 import { Input } from '@/components/ui/input';
@@ -12,22 +12,25 @@ export default function CompletedJobsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [clients, setClients] = useState<Client[]>([]);
   const router = useRouter();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedFetchJobs = useCallback(
-    debounce(async (currentSearch: string) => {
+    debounce(async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await apiClient.getJobs({
-          search: currentSearch,
-        });
-        if (response.success && response.data) {
-          const completedJobs = response.data.items.filter(job => job.status.toUpperCase() === 'COMPLETED');
+        const [jobsRes, clientsRes] = await Promise.all([
+          apiClient.getJobs({ page: 1, limit: 100 }),
+          apiClient.getClients(),
+        ]);
+        if (jobsRes.success && jobsRes.data && clientsRes.success && clientsRes.data) {
+          const completedJobs = jobsRes.data.items.filter(job => job.status.toLowerCase() === 'completed');
           setJobs(completedJobs);
+          setClients(clientsRes.data);
         } else {
-          setError('Failed to fetch completed jobs.');
+          setError('Failed to fetch completed jobs or clients.');
         }
       } catch (error) {
         console.error('Failed to fetch completed jobs:', error);
@@ -40,11 +43,11 @@ export default function CompletedJobsPage() {
   );
 
   useEffect(() => {
-    debouncedFetchJobs(search);
+    debouncedFetchJobs();
     return () => {
       debouncedFetchJobs.cancel();
     };
-  }, [search, debouncedFetchJobs]);
+  }, [debouncedFetchJobs]);
 
   const handleJobDeleted = (jobId: string) => {
     setJobs(prevJobs => prevJobs.filter(job => job.id !== jobId));
@@ -98,10 +101,10 @@ export default function CompletedJobsPage() {
 
         <JobsTable 
           jobs={jobs} 
+          clients={clients}
           isLoading={isLoading} 
           error={error} 
           onJobDeleted={handleJobDeleted} 
-          onJobStatusChanged={() => {}} 
         />
       </div>
     </div>
