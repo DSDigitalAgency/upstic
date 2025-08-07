@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient, Job, Client } from '@/demo/func/api';
 import { Input } from '@/components/ui/input';
-import { TextArea } from '@/components/ui/textarea';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function NewJobPage() {
   const router = useRouter();
@@ -110,9 +110,9 @@ export default function NewJobPage() {
               <option value="pending">Pending</option>
             </select>
           </div>
-          <TextArea label="Description" name="description" onChange={handleInputChange} required rows={4} />
+          <Textarea label="Description" name="description" onChange={handleInputChange} required rows={4} />
           <div>
-            <TextArea label="Requirements (comma-separated)" name="requirements" onChange={handleInputChange} rows={3} />
+            <Textarea label="Requirements (comma-separated)" name="requirements" onChange={handleInputChange} rows={3} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input label="Start Date" name="startDate" type="date" onChange={handleInputChange} required />

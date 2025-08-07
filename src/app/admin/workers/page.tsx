@@ -91,10 +91,10 @@ export default function WorkersPage() {
       let response;
       switch (action) {
         case 'activate':
-          response = await apiClient.updateWorker(workerId, { status: 'ACTIVE' });
+          response = await apiClient.updateWorker(workerId, { status: 'active' });
           break;
         case 'deactivate':
-          response = await apiClient.updateWorker(workerId, { status: 'INACTIVE' });
+          response = await apiClient.updateWorker(workerId, { status: 'inactive' });
           break;
         case 'delete':
           response = await apiClient.deleteWorker(workerId);
@@ -237,7 +237,7 @@ export default function WorkersPage() {
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Active Workers</h3>
               <p className="text-3xl font-bold text-green-600 mt-2">
-                {workers.filter(w => w.status === 'ACTIVE').length}
+                {workers.filter(w => w.status === 'active').length}
               </p>
             </div>
             <div className="bg-green-100 p-3 rounded-lg">
@@ -253,7 +253,7 @@ export default function WorkersPage() {
             <div>
               <h3 className="text-lg font-semibold text-gray-900">Available Workers</h3>
               <p className="text-3xl font-bold text-yellow-600 mt-2">
-                {workers.filter(w => w.status === 'AVAILABLE').length}
+                {workers.filter(w => w.status === 'active').length}
               </p>
             </div>
             <div className="bg-yellow-100 p-3 rounded-lg">
@@ -375,12 +375,12 @@ export default function WorkersPage() {
                     
                     <div>
                       <p className="text-sm font-medium text-gray-500">Experience</p>
-                      <p className="text-sm text-gray-900">{worker.experience} years</p>
+                      <p className="text-sm text-gray-900">Experience details available in profile</p>
                     </div>
                     
                     <div>
                       <p className="text-sm font-medium text-gray-500">Location</p>
-                      <p className="text-sm text-gray-900">{worker.preferredLocation}</p>
+                      <p className="text-sm text-gray-900">{worker.city || 'Not specified'}</p>
                     </div>
                   </div>
                   
@@ -436,7 +436,7 @@ export default function WorkersPage() {
                     View Profile
                   </button>
                   
-                  {worker.status === 'INACTIVE' && (
+                  {worker.status === 'inactive' && (
                     <button
                       onClick={() => handleWorkerAction(worker.id, 'activate')}
                       className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
@@ -448,7 +448,7 @@ export default function WorkersPage() {
                     </button>
                   )}
                   
-                  {worker.status === 'ACTIVE' && (
+                  {worker.status === 'active' && (
                     <button
                       onClick={() => handleWorkerAction(worker.id, 'deactivate')}
                       className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"

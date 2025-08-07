@@ -320,7 +320,7 @@ export default function AdminDashboard() {
                     <p className="text-xs text-gray-500 truncate">{worker.email || ''}</p>
                   </div>
                   <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                    worker.status === 'ACTIVE' 
+                    worker.status === 'active' 
                       ? 'bg-green-100 text-green-800' 
                       : 'bg-yellow-100 text-yellow-800'
                   }`}>

@@ -11,10 +11,9 @@ interface WorkerProfile {
   firstName: string;
   lastName: string;
   phone?: string;
+  city?: string;
   skills: string[];
-  experience: number;
-  preferredLocation: string;
-  status: string;
+  status: 'pending' | 'approved' | 'rejected' | 'active' | 'inactive';
   rating: number;
   completedJobs: number;
   createdAt: string;
@@ -93,7 +92,7 @@ export default function ProfileSettings() {
     setSuccessMessage(null);
     
     try {
-      const response = await apiClient.updateWorker(profile.id, formData);
+      const response = await apiClient.updateWorker(profile.id, formData as Partial<import('@/demo/func/api').Worker>);
       if (response.success && response.data) {
         setProfile(response.data);
         setFormData(response.data);
@@ -264,12 +263,12 @@ export default function ProfileSettings() {
               {isEditing ? (
                 <input
                   type="text"
-                  value={formData.preferredLocation || ''}
+                  value={formData.city || ''}
                   onChange={(e) => handleInputChange('preferredLocation', e.target.value)}
                   className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               ) : (
-                <p className="text-sm text-gray-900">{profile?.preferredLocation}</p>
+                <p className="text-sm text-gray-900">{profile?.city || 'Not specified'}</p>
               )}
             </div>
 
@@ -282,12 +281,12 @@ export default function ProfileSettings() {
                   type="number"
                   min="0"
                   max="50"
-                  value={formData.experience || 0}
+                  value="Experience details available in profile"
                   onChange={(e) => handleInputChange('experience', parseInt(e.target.value) || 0)}
                   className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               ) : (
-                <p className="text-sm text-gray-900">{profile?.experience} years</p>
+                <p className="text-sm text-gray-900">Experience details available in profile</p>
               )}
             </div>
           </div>
@@ -364,7 +363,7 @@ export default function ProfileSettings() {
               <div className="text-sm text-gray-600">Completed Jobs</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">{profile?.experience || 0}</div>
+              <div className="text-2xl font-bold text-purple-600">Experience details available</div>
               <div className="text-sm text-gray-600">Years Experience</div>
             </div>
           </div>
@@ -383,9 +382,9 @@ export default function ProfileSettings() {
                 Account Status
               </label>
               <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                profile?.status === 'ACTIVE' 
+                                profile?.status === 'active'
                   ? 'bg-green-100 text-green-800'
-                  : profile?.status === 'INACTIVE'
+                  : profile?.status === 'inactive'
                   ? 'bg-red-100 text-red-800'
                   : 'bg-yellow-100 text-yellow-800'
               }`}>

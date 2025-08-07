@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { apiClient, Worker, Job } from '@/lib/api';
 import { Input } from '@/components/ui/input';
-import { TextArea } from '@/components/ui/textarea';
+import { Textarea } from '@/components/ui/textarea';
 import { LoadingButton } from '@/components/ui/loading-button';
 
 interface AssignmentFormData {
@@ -330,7 +330,7 @@ export default function AssignJobPage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Notes
               </label>
-              <TextArea
+              <Textarea
                 name="notes"
                 value={formData.notes}
                 onChange={handleInputChange}

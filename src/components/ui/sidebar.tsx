@@ -37,6 +37,7 @@ const sidebarItems: SidebarItem[] = [
     ),
     children: [
       { id: 'workers', label: 'Worker Management', href: '/admin/workers', icon: null },
+      { id: 'workers-applications', label: 'Worker Applications', href: '/admin/workers/applications', icon: null },
       { id: 'clients', label: 'Client Management', href: '/admin/clients', icon: null },
     ],
   },
@@ -87,6 +88,7 @@ const sidebarItems: SidebarItem[] = [
     ),
     children: [
       { id: 'compliance-documents', label: 'Documents', href: '/admin/compliance/documents', icon: null },
+      { id: 'documents', label: 'Worker Documents', href: '/admin/documents', icon: null },
       { id: 'compliance-expiry', label: 'Expiry Tracking', href: '/admin/compliance/expiry', icon: null },
       { id: 'compliance-audits', label: 'Audit Logs', href: '/admin/compliance/audits', icon: null },
     ],

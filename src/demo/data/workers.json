@@ -6,10 +6,15 @@
     "firstName": "Demo",
     "lastName": "Worker",
     "phone": "+44123456780",
-    "skills": ["Nursing", "Elderly Care", "Medication Administration", "First Aid"],
+    "skills": [
+      "Nursing",
+      "Elderly Care",
+      "Medication Administration",
+      "First Aid"
+    ],
     "experience": 5,
     "preferredLocation": "London",
-    "status": "ACTIVE",
+    "status": "approved",
     "rating": 4.8,
     "completedJobs": 24,
     "createdAt": "2025-07-05T10:30:00Z",
@@ -22,10 +27,14 @@
     "firstName": "Sarah",
     "lastName": "Johnson",
     "phone": "+44123456781",
-    "skills": ["ICU Nursing", "Critical Care", "Ventilator Management"],
+    "skills": [
+      "ICU Nursing",
+      "Critical Care",
+      "Ventilator Management"
+    ],
     "experience": 8,
     "preferredLocation": "Manchester",
-    "status": "ACTIVE",
+    "status": "approved",
     "rating": 4.9,
     "completedJobs": 31,
     "createdAt": "2025-07-05T09:15:00Z",
@@ -38,10 +47,14 @@
     "firstName": "Michael",
     "lastName": "Chen",
     "phone": "+44123456782",
-    "skills": ["Pediatric Nursing", "Child Care", "Family Support"],
+    "skills": [
+      "Pediatric Nursing",
+      "Child Care",
+      "Family Support"
+    ],
     "experience": 6,
     "preferredLocation": "Birmingham",
-    "status": "INACTIVE",
+    "status": "inactive",
     "rating": 4.7,
     "completedJobs": 18,
     "createdAt": "2025-07-05T11:45:00Z",
@@ -54,10 +67,14 @@
     "firstName": "Emma",
     "lastName": "Davis",
     "phone": "+44123456783",
-    "skills": ["Mental Health Nursing", "Psychiatric Care", "Crisis Intervention"],
+    "skills": [
+      "Mental Health Nursing",
+      "Psychiatric Care",
+      "Crisis Intervention"
+    ],
     "experience": 7,
     "preferredLocation": "Liverpool",
-    "status": "ACTIVE",
+    "status": "approved",
     "rating": 4.6,
     "completedJobs": 22,
     "createdAt": "2025-07-05T14:20:00Z",
@@ -70,13 +87,1637 @@
     "firstName": "David",
     "lastName": "Wilson",
     "phone": "+44123456784",
-    "skills": ["Geriatric Care", "Dementia Care", "Palliative Care"],
+    "skills": [
+      "Geriatric Care",
+      "Dementia Care",
+      "Palliative Care"
+    ],
     "experience": 4,
     "preferredLocation": "Leeds",
-    "status": "AVAILABLE",
+    "status": "approved",
     "rating": 4.5,
     "completedJobs": 15,
     "createdAt": "2025-07-05T08:30:00Z",
     "updatedAt": "2025-07-12T15:45:00Z"
+  },
+  {
+    "id": "worker-006",
+    "userId": "user_1754379321256",
+    "email": "test1@worker.com",
+    "firstName": "test1",
+    "lastName": "worker",
+    "phone": "6304895330",
+    "skills": [
+      "Nursing",
+      "Patient Care",
+      "First Aid"
+    ],
+    "experience": 3,
+    "preferredLocation": "London",
+    "status": "approved",
+    "rating": 0,
+    "completedJobs": 0,
+    "createdAt": "2025-08-05T07:35:21.256Z",
+    "updatedAt": "2025-08-07T07:45:03.118Z",
+    "dateOfBirth": "1990-05-15",
+    "address": "123 Test Street, London, UK",
+    "city": "London",
+    "state": "England",
+    "zipCode": "SW1A 1AA",
+    "nationalInsurance": "AB123456C",
+    "education": [
+      {
+        "degree": "Bachelor of Science in Nursing",
+        "institution": "University of London",
+        "graduationYear": "2018",
+        "fieldOfStudy": "Nursing"
+      }
+    ],
+    "workHistory": [
+      {
+        "employer": "London General Hospital",
+        "position": "Registered Nurse",
+        "location": "London, UK",
+        "startDate": "2018-06-01",
+        "endDate": "2021-12-31",
+        "isCurrent": false,
+        "description": "Provided patient care in medical-surgical unit"
+      }
+    ],
+    "certifications": [
+      {
+        "name": "Registered Nurse License",
+        "issuingBody": "Nursing and Midwifery Council",
+        "issueDate": "2018-05-15",
+        "expiryDate": "2025-05-15",
+        "certificateNumber": "RN123456",
+        "certificateFile": "registered_nurse_license.pdf"
+      }
+    ],
+    "licenses": [
+      {
+        "name": "Basic Life Support",
+        "issuingBody": "British Heart Foundation",
+        "issueDate": "2020-03-10",
+        "expiryDate": "2023-03-10",
+        "licenseNumber": "BLS789012",
+        "licenseFile": "basic_life_support_certificate.pdf"
+      }
+    ],
+    "references": [
+      {
+        "name": "Dr. Sarah Johnson",
+        "relationship": "Supervisor",
+        "company": "London General Hospital",
+        "position": "Head Nurse",
+        "email": "sarah.johnson@lgh.nhs.uk",
+        "phone": "+44123456789",
+        "isProfessional": true,
+        "yearsKnown": "3"
+      }
+    ],
+    "emergencyContact": {
+      "name": "John Smith",
+      "phone": "07123456789",
+      "relationship": "Spouse",
+      "email": "john.smith@email.com"
+    },
+    "bankDetails": {
+      "bankName": "Barclays Bank",
+      "accountNumber": "12345678",
+      "routingNumber": "20-00-00",
+      "accountType": "Current"
+    },
+    "preferences": {
+      "preferredLocations": [
+        "London",
+        "Manchester"
+      ],
+      "hourlyRate": "25",
+      "maxTravelDistance": 50,
+      "notifications": {
+        "email": true,
+        "sms": true,
+        "push": false
+      }
+    },
+    "declarations": {
+      "gdprConsent": true,
+      "workPolicies": true,
+      "dataProcessing": true,
+      "backgroundCheck": true,
+      "healthDeclaration": true,
+      "termsAccepted": true
+    },
+    "documents": {
+      "cv": "cv_document.pdf",
+      "rightToWork": "right_to_work_document.pdf",
+      "proofOfAddress": "proof_of_address_document.pdf",
+      "photo": "profile_photo.jpg",
+      "certificateOfSponsorship": null,
+      "qualificationCertificates": "qualification_certificates.pdf",
+      "dbsCertificate": null,
+      "dbsUpdateService": null,
+      "immunizationRecords": null,
+      "occupationalHealth": null
+    }
+  },
+  {
+    "id": "worker_1754556891239",
+    "userId": "user_1754551029890",
+    "email": "sarah.thompson@email.com",
+    "firstName": "Sarah ",
+    "lastName": "Thompson",
+    "phone": "+44 7700 900123",
+    "dateOfBirth": "1999-01-01",
+    "address": "kjsdhvf skjfb shskj ",
+    "city": "NY",
+    "state": "Ny",
+    "zipCode": "50000",
+    "nationalInsurance": "AB123456789",
+    "education": [
+      {
+        "degree": "sdf sf sd",
+        "institution": "wsf sf ",
+        "graduationYear": "2020",
+        "fieldOfStudy": "gf sf "
+      }
+    ],
+    "workHistory": [
+      {
+        "employer": "dfgj, hds",
+        "position": "sdh fsfb",
+        "location": "lsh ",
+        "startDate": "2020-01-10",
+        "endDate": "2025-12-12",
+        "isCurrent": false,
+        "description": "fg sdf weqf asef ",
+        "dbsNumber": "123456789",
+        "dbsPosition": "fs ef",
+        "dbsExpiryDate": "2025-01-01",
+        "dbsCheckDate": "2025-12-12"
+      }
+    ],
+    "skills": [
+      "vvzxcvs"
+    ],
+    "certifications": [
+      {
+        "name": "sdf f",
+        "issuingBody": "sdf s",
+        "issueDate": "2025-01-01",
+        "expiryDate": "2025-12-12",
+        "certificateNumber": "123456789",
+        "certificateFile": {}
+      }
+    ],
+    "licenses": [
+      {
+        "name": "yt hf",
+        "issuingBody": "gd ",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2025-12-12",
+        "licenseNumber": "123456789",
+        "licenseFile": {}
+      }
+    ],
+    "references": [
+      {
+        "name": "jf g",
+        "relationship": " fhf ",
+        "company": "qy gjtf",
+        "position": "fgjf ",
+        "email": "jgfhfngf@hghf.com",
+        "phone": "123456789",
+        "isProfessional": true,
+        "yearsKnown": "5"
+      }
+    ],
+    "emergencyContact": {
+      "name": "gf s ",
+      "relationship": "parent",
+      "phone": "123456789",
+      "email": "gfgs@mail.com"
+    },
+    "bankDetails": {
+      "bankName": "gfgr gdngf",
+      "accountNumber": "12345678",
+      "routingNumber": "123456789",
+      "accountType": "savings"
+    },
+    "documents": {
+      "cv": {},
+      "rightToWork": {},
+      "certificateOfSponsorship": null,
+      "proofOfAddress": {},
+      "qualificationCertificates": null,
+      "dbsCertificate": null,
+      "dbsUpdateService": null,
+      "immunizationRecords": null,
+      "occupationalHealth": null,
+      "photo": {}
+    },
+    "declarations": {
+      "gdprConsent": true,
+      "workPolicies": true,
+      "dataProcessing": true,
+      "backgroundCheck": true,
+      "healthDeclaration": true,
+      "termsAccepted": true
+    },
+    "preferences": {
+      "preferredShifts": [
+        "Day",
+        "Night"
+      ],
+      "preferredLocations": [
+        "Central London",
+        "North London",
+        "South London"
+      ],
+      "hourlyRate": "25",
+      "maxTravelDistance": 50,
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": true
+      }
+    },
+    "status": "pending",
+    "rating": 0,
+    "completedJobs": 0,
+    "createdAt": "2025-08-07T08:54:51.239Z",
+    "updatedAt": "2025-08-07T08:54:51.239Z"
+  },
+  {
+    "id": "worker_1754567373788",
+    "userId": "user_1754567088992",
+    "email": "newworker@mail.com",
+    "firstName": "Sarah",
+    "lastName": "Johnson",
+    "phone": "(555) 987-6543",
+    "dateOfBirth": "1999-01-01",
+    "address": "`sdf af",
+    "city": "df ",
+    "state": "sdfsdf",
+    "zipCode": "50000",
+    "nationalInsurance": "AB123456789",
+    "education": [
+      {
+        "degree": "Healthcare Assistant Certificate",
+        "institution": "Unknown Institution",
+        "graduationYear": "2020",
+        "fieldOfStudy": "s fsdfg sd"
+      },
+      {
+        "degree": "High School Diploma",
+        "institution": "Unknown Institution",
+        "graduationYear": "2020",
+        "fieldOfStudy": "sdf df "
+      }
+    ],
+    "workHistory": [
+      {
+        "employer": "Unknown Company",
+        "position": "Healthcare Assistant",
+        "location": "af af ",
+        "startDate": "2020-01-01",
+        "endDate": "2025-12-12",
+        "isCurrent": false,
+        "description": "sdfadf as",
+        "dbsNumber": "123456789",
+        "dbsPosition": "sdf da",
+        "dbsExpiryDate": "2025-12-12",
+        "dbsCheckDate": "2025-12-12"
+      },
+      {
+        "employer": "Unknown Company",
+        "position": "Care Assistant",
+        "location": "sdf adf",
+        "startDate": "2020-01-01",
+        "endDate": "2025-12-12",
+        "isCurrent": false,
+        "description": "sdfadf sadfg aed",
+        "dbsNumber": "123456789",
+        "dbsPosition": "sdf f s",
+        "dbsExpiryDate": "2025-12-12",
+        "dbsCheckDate": "2020-12-12"
+      }
+    ],
+    "skills": [
+      "Healthcare Assistant",
+      "Patient Care",
+      "Dementia Care",
+      "Medication Administration"
+    ],
+    "certifications": [
+      {
+        "name": "Healthcare Assistant License",
+        "issuingBody": "sdfsdfsad",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "certificateNumber": "1234565789",
+        "certificateFile": {}
+      },
+      {
+        "name": "First Aid and CPR",
+        "issuingBody": "s gdfg asf ge",
+        "issueDate": "2020-12-12",
+        "expiryDate": "2025-12-12",
+        "certificateNumber": "123456789",
+        "certificateFile": {}
+      }
+    ],
+    "licenses": [
+      {
+        "name": "sdf sdfs ",
+        "issuingBody": "sdf sdf sd f",
+        "issueDate": "2020-12-12",
+        "expiryDate": "2025-12-12",
+        "licenseNumber": "123456789",
+        "licenseFile": {}
+      }
+    ],
+    "references": [
+      {
+        "name": "sdrf sdfsd",
+        "relationship": "df sdfs",
+        "company": "dfs fs",
+        "position": "sdf sdf",
+        "email": "sdfsdf@adfsd.com",
+        "phone": "1234567890",
+        "isProfessional": true,
+        "yearsKnown": "2"
+      }
+    ],
+    "emergencyContact": {
+      "name": "sd fsdf se",
+      "relationship": "parent",
+      "phone": "1232455678789",
+      "email": "sdfa@sfsaed.com"
+    },
+    "bankDetails": {
+      "bankName": "sfd fsdf s",
+      "accountNumber": "123456789",
+      "routingNumber": "123456789",
+      "accountType": "Saving"
+    },
+    "documents": {
+      "cv": {},
+      "rightToWork": {},
+      "certificateOfSponsorship": null,
+      "proofOfAddress": {},
+      "qualificationCertificates": null,
+      "dbsCertificate": null,
+      "dbsUpdateService": null,
+      "immunizationRecords": null,
+      "occupationalHealth": null,
+      "photo": {}
+    },
+    "declarations": {
+      "gdprConsent": true,
+      "workPolicies": true,
+      "dataProcessing": true,
+      "backgroundCheck": true,
+      "healthDeclaration": true,
+      "termsAccepted": true
+    },
+    "preferences": {
+      "preferredShifts": [
+        "Day",
+        "Night"
+      ],
+      "preferredLocations": [
+        "North London",
+        "South London"
+      ],
+      "hourlyRate": "30",
+      "maxTravelDistance": 50,
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": true
+      }
+    },
+    "status": "pending",
+    "rating": 0,
+    "completedJobs": 0,
+    "createdAt": "2025-08-07T11:49:33.788Z",
+    "updatedAt": "2025-08-07T11:49:33.788Z"
+  },
+  {
+    "id": "worker_1754570117237",
+    "userId": "user_1754569863835",
+    "email": "test@wroker12.com",
+    "firstName": "Test",
+    "lastName": "Worker12",
+    "phone": "123456789",
+    "dateOfBirth": "1999-01-01",
+    "address": "sfd gsafg afg a",
+    "city": "sfdgsf",
+    "state": "dwfsfsd",
+    "zipCode": "500000",
+    "nationalInsurance": "AB123456789",
+    "education": [
+      {
+        "degree": "Healthcare Assistant Certificate",
+        "institution": "Unknown Institution",
+        "graduationYear": "2020",
+        "fieldOfStudy": "sdf sdf "
+      },
+      {
+        "degree": "High School Diploma",
+        "institution": "Unknown Institution",
+        "graduationYear": "2020",
+        "fieldOfStudy": "dfghd fgr g"
+      }
+    ],
+    "workHistory": [
+      {
+        "employer": "Unknown Company",
+        "position": "Healthcare Assistant",
+        "location": "dfg srdtg rwt ",
+        "startDate": "2020-01-01",
+        "endDate": "2020-12-12",
+        "isCurrent": false,
+        "description": "sfg rg srg sr ",
+        "dbsNumber": "123456789",
+        "dbsPosition": "xfg sxfg ",
+        "dbsExpiryDate": "2025-12-12",
+        "dbsCheckDate": "2025-01-01"
+      },
+      {
+        "employer": "Unknown Company",
+        "position": "Care Assistant",
+        "location": "xfg sg ",
+        "startDate": "2025-01-01",
+        "endDate": "2025-12-12",
+        "isCurrent": false,
+        "description": "df grg rg wet ",
+        "dbsNumber": "123456789",
+        "dbsPosition": "1asdfa w",
+        "dbsExpiryDate": "2025-12-12",
+        "dbsCheckDate": "2025-01-10"
+      }
+    ],
+    "skills": [
+      "Healthcare Assistant",
+      "Patient Care",
+      "Dementia Care",
+      "Medication Administration"
+    ],
+    "certifications": [
+      {
+        "name": "Healthcare Assistant License",
+        "issuingBody": "dfg fsdg erg",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2025-12-12",
+        "certificateNumber": "1212121221",
+        "certificateFile": {}
+      },
+      {
+        "name": "First Aid and CPR",
+        "issuingBody": "fs fgh er er",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "certificateNumber": "123456789",
+        "certificateFile": {}
+      }
+    ],
+    "licenses": [
+      {
+        "name": "12831bwdnf wadfh kqe fhwqef, shf jsdbf",
+        "issuingBody": "NY",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2025-12-12",
+        "licenseNumber": "123456789",
+        "licenseFile": {}
+      }
+    ],
+    "references": [
+      {
+        "name": "sdr ggh aer g",
+        "relationship": "sd f sf ",
+        "company": "sdf sdf sd",
+        "position": "dsf sdf sd",
+        "email": "sdf@sfdsafdf.com",
+        "phone": "123456789",
+        "isProfessional": true,
+        "yearsKnown": "2"
+      }
+    ],
+    "emergencyContact": {
+      "name": "sfg sfg",
+      "relationship": "sdfs dfsdf",
+      "phone": "123456789",
+      "email": "wsfsdf@wsfsdf.com"
+    },
+    "bankDetails": {
+      "bankName": "sfsf sfsdfsdf",
+      "accountNumber": "123456789",
+      "routingNumber": "1423456789",
+      "accountType": "savinhgqa"
+    },
+    "documents": {
+      "cv": {},
+      "rightToWork": {},
+      "certificateOfSponsorship": null,
+      "proofOfAddress": {},
+      "qualificationCertificates": null,
+      "dbsCertificate": null,
+      "dbsUpdateService": null,
+      "immunizationRecords": null,
+      "occupationalHealth": null,
+      "photo": {}
+    },
+    "declarations": {
+      "gdprConsent": true,
+      "workPolicies": true,
+      "dataProcessing": true,
+      "backgroundCheck": true,
+      "healthDeclaration": true,
+      "termsAccepted": true
+    },
+    "preferences": {
+      "preferredShifts": [
+        "Night",
+        "Day"
+      ],
+      "preferredLocations": [
+        "Central London",
+        "North London"
+      ],
+      "hourlyRate": "30",
+      "maxTravelDistance": 50,
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": true
+      }
+    },
+    "status": "approved",
+    "rating": 0,
+    "completedJobs": 0,
+    "createdAt": "2025-08-07T12:35:17.237Z",
+    "updatedAt": "2025-08-07T12:37:44.294Z"
+  },
+  {
+    "id": "worker_1754570681741",
+    "userId": "user_1754570382615",
+    "email": "test@worker11.com",
+    "firstName": "Test",
+    "lastName": "Worker11",
+    "phone": "123456789",
+    "dateOfBirth": "2000-01-01",
+    "address": "sftg sdf srf sdf sf srfg sr",
+    "city": "srdtgf rset dsgf",
+    "state": "wserf we tfsrf ",
+    "zipCode": "50000",
+    "nationalInsurance": "AB123456789",
+    "education": [
+      {
+        "degree": "Healthcare Assistant Certificate",
+        "institution": "Unknown Institution",
+        "graduationYear": "2020",
+        "fieldOfStudy": "ghf thftgh"
+      },
+      {
+        "degree": "High School Diploma",
+        "institution": "Unknown Institution",
+        "graduationYear": "2020",
+        "fieldOfStudy": "dfg dth fghfg hb"
+      }
+    ],
+    "workHistory": [
+      {
+        "employer": "Unknown Company",
+        "position": "Healthcare Assistant",
+        "location": "th tdg dt",
+        "startDate": "2020-01-01",
+        "endDate": "2020-12-12",
+        "isCurrent": false,
+        "description": "e r gdrg ergdf vdf g",
+        "dbsNumber": "123456789",
+        "dbsPosition": "fgdfgfd",
+        "dbsExpiryDate": "2020-12-12",
+        "dbsCheckDate": "2020-01-01"
+      },
+      {
+        "employer": "Unknown Company",
+        "position": "Care Assistant",
+        "location": "frg srgferg erg ",
+        "startDate": "2020-01-01",
+        "endDate": "2020-12-12",
+        "isCurrent": false,
+        "description": "dfgsfg rg",
+        "dbsNumber": "123456789",
+        "dbsPosition": "dfgdfg dfg ",
+        "dbsExpiryDate": "2020-12-12",
+        "dbsCheckDate": "2020-01-01"
+      }
+    ],
+    "skills": [
+      "Healthcare Assistant",
+      "Patient Care",
+      "Dementia Care",
+      "Medication Administration"
+    ],
+    "certifications": [
+      {
+        "name": "Healthcare Assistant License",
+        "issuingBody": "sfdg edtgdf",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "certificateNumber": "123456789",
+        "certificateFile": {}
+      },
+      {
+        "name": "First Aid and CPR",
+        "issuingBody": "dft cefg erg",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "certificateNumber": "123456789",
+        "certificateFile": {}
+      }
+    ],
+    "licenses": [
+      {
+        "name": "dfs fsdf sdf ",
+        "issuingBody": "dfs  sfdg ",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "licenseNumber": "123456789",
+        "licenseFile": {}
+      }
+    ],
+    "references": [
+      {
+        "name": "sdfsdf",
+        "relationship": "sdfsdf ",
+        "company": "sdf sdf ",
+        "position": "sf sdf s",
+        "email": "sadfsdfsd@wserwqere.com",
+        "phone": "123456789",
+        "isProfessional": true,
+        "yearsKnown": "2"
+      }
+    ],
+    "emergencyContact": {
+      "name": "adfadsf sadfa df ",
+      "relationship": "paernt",
+      "phone": "123456789",
+      "email": "asdas@asds.com"
+    },
+    "bankDetails": {
+      "bankName": "asda dfaef adf ",
+      "accountNumber": "123456789",
+      "routingNumber": "123456789",
+      "accountType": "sdf sdaf sd"
+    },
+    "documents": {
+      "cv": {},
+      "rightToWork": {},
+      "certificateOfSponsorship": null,
+      "proofOfAddress": {},
+      "qualificationCertificates": null,
+      "dbsCertificate": null,
+      "dbsUpdateService": null,
+      "immunizationRecords": null,
+      "occupationalHealth": null,
+      "photo": {}
+    },
+    "declarations": {
+      "gdprConsent": true,
+      "workPolicies": true,
+      "dataProcessing": true,
+      "backgroundCheck": true,
+      "healthDeclaration": true,
+      "termsAccepted": true
+    },
+    "preferences": {
+      "preferredShifts": [
+        "Day",
+        "Night"
+      ],
+      "preferredLocations": [
+        "North London"
+      ],
+      "hourlyRate": "30",
+      "maxTravelDistance": 50,
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": true
+      }
+    },
+    "status": "pending",
+    "rating": 0,
+    "completedJobs": 0,
+    "createdAt": "2025-08-07T12:44:41.741Z",
+    "updatedAt": "2025-08-07T12:44:41.741Z"
+  },
+  {
+    "id": "worker_1754573265070",
+    "userId": "user_1754572642257",
+    "email": "test@worker13.com",
+    "firstName": "test",
+    "lastName": "worker13",
+    "phone": "123456789",
+    "dateOfBirth": "2000-01-01",
+    "address": "sdf dsaf sdf sdf ",
+    "city": "sdfs df",
+    "state": "asdf sfg ",
+    "zipCode": "500000",
+    "nationalInsurance": "AB123456789",
+    "education": [
+      {
+        "degree": "Healthcare Assistant Certificate",
+        "institution": "Unknown Institution",
+        "graduationYear": "2020",
+        "fieldOfStudy": "wdsf sfd "
+      },
+      {
+        "degree": "High School Diploma",
+        "institution": "Unknown Institution",
+        "graduationYear": "2020",
+        "fieldOfStudy": "sdf sdf s"
+      }
+    ],
+    "workHistory": [
+      {
+        "employer": "Unknown Company",
+        "position": "Healthcare Assistant",
+        "location": "dfs sdf",
+        "startDate": "2020-01-01",
+        "endDate": "2020-12-12",
+        "isCurrent": false,
+        "description": "dfg sdf sfgs dfsd fsdf ",
+        "dbsNumber": "123456789",
+        "dbsPosition": "sdf sf ",
+        "dbsExpiryDate": "2020-12-12",
+        "dbsCheckDate": "2020-01-01"
+      },
+      {
+        "employer": "Unknown Company",
+        "position": "Care Assistant",
+        "location": "sdf sdf sfs ",
+        "startDate": "2020-01-01",
+        "endDate": "2020-12-12",
+        "isCurrent": false,
+        "description": "sdf df sf",
+        "dbsNumber": "123456789",
+        "dbsPosition": "dff hf sj",
+        "dbsExpiryDate": "2020-12-12",
+        "dbsCheckDate": "2020-01-01"
+      }
+    ],
+    "skills": [
+      "Healthcare Assistant",
+      "Patient Care",
+      "Dementia Care",
+      "Medication Administration"
+    ],
+    "certifications": [
+      {
+        "name": "Healthcare Assistant License",
+        "issuingBody": "dcg sffgs",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "certificateNumber": "123456789",
+        "certificateFile": {}
+      },
+      {
+        "name": "First Aid and CPR",
+        "issuingBody": "sdjfg sjgf",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "certificateNumber": "123456789",
+        "certificateFile": {}
+      }
+    ],
+    "licenses": [
+      {
+        "name": "sf f sdfsf s",
+        "issuingBody": "dfgs g dbd f ",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "licenseNumber": "123456789",
+        "licenseFile": {}
+      }
+    ],
+    "references": [
+      {
+        "name": "xcfg d gdsfg dfg",
+        "relationship": "dgds rgdf g",
+        "company": "dfgdfg dfg",
+        "position": "sdfgsdfgs",
+        "email": "sdfsdf@sdfsdaf.com",
+        "phone": "123456789",
+        "isProfessional": true,
+        "yearsKnown": "2"
+      }
+    ],
+    "emergencyContact": {
+      "name": "dsf df sdf ",
+      "relationship": "sadfd",
+      "phone": "122346789",
+      "email": "sfdf@asda.com"
+    },
+    "bankDetails": {
+      "bankName": "sf sf sdf s",
+      "accountNumber": "123456789",
+      "routingNumber": "123456789",
+      "accountType": "saving"
+    },
+    "documents": {
+      "cv": {},
+      "rightToWork": {},
+      "certificateOfSponsorship": null,
+      "proofOfAddress": {},
+      "qualificationCertificates": null,
+      "dbsCertificate": null,
+      "dbsUpdateService": null,
+      "immunizationRecords": null,
+      "occupationalHealth": null,
+      "photo": {}
+    },
+    "declarations": {
+      "gdprConsent": true,
+      "workPolicies": true,
+      "dataProcessing": true,
+      "backgroundCheck": true,
+      "healthDeclaration": true,
+      "termsAccepted": true
+    },
+    "preferences": {
+      "preferredShifts": [
+        "Night",
+        "Day"
+      ],
+      "preferredLocations": [
+        "West London",
+        "Outside London"
+      ],
+      "hourlyRate": "40",
+      "maxTravelDistance": 50,
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": true
+      }
+    },
+    "status": "rejected",
+    "rating": 0,
+    "completedJobs": 0,
+    "createdAt": "2025-08-07T13:27:45.070Z",
+    "updatedAt": "2025-08-07T13:30:40.470Z",
+    "rejectionReason": "Test reject "
+  },
+  {
+    "id": "worker_1754575163351",
+    "userId": "user_1754572642257",
+    "email": "test@worker13.com",
+    "firstName": "test",
+    "lastName": "worker13",
+    "phone": "123456789",
+    "dateOfBirth": "2000-01-01",
+    "address": "sdf egdsf",
+    "city": "asfds dfs",
+    "state": "SDFF SDF ",
+    "zipCode": "500000",
+    "nationalInsurance": "AB123456789",
+    "education": [
+      {
+        "degree": "SF SDFSD FSD F",
+        "institution": "SDF SDF SDF SDF ",
+        "graduationYear": "2020",
+        "fieldOfStudy": "SDF SDF SD "
+      }
+    ],
+    "workHistory": [
+      {
+        "employer": "SDF SAEF",
+        "position": "SDF SDF",
+        "location": "WSDF SDF",
+        "startDate": "2020-01-01",
+        "endDate": "2020-12-12",
+        "isCurrent": false,
+        "description": "SDF SF SRF S",
+        "dbsNumber": "123456789",
+        "dbsPosition": "SDF SDF ",
+        "dbsExpiryDate": "2020-12-12",
+        "dbsCheckDate": "2020-01-01"
+      }
+    ],
+    "skills": [
+      "SDF SDF SDF SD",
+      "SFDF SDF SDF",
+      "SF SD DF SDF"
+    ],
+    "certifications": [
+      {
+        "name": "SDF SDFS",
+        "issuingBody": "SDF SD",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "certificateNumber": "123456789",
+        "certificateFile": {}
+      }
+    ],
+    "licenses": [
+      {
+        "name": "FSD FDF S",
+        "issuingBody": "SDF SDF SDF ",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "licenseNumber": "123456789",
+        "licenseFile": {}
+      }
+    ],
+    "references": [
+      {
+        "name": "DS FSDF SDF ",
+        "relationship": "SDRFWSF",
+        "company": "DFSD FSD ",
+        "position": "SDFSFGSDF",
+        "email": "FSDFSDF@sdfsdf.com",
+        "phone": "1234567890",
+        "isProfessional": true,
+        "yearsKnown": "3"
+      }
+    ],
+    "emergencyContact": {
+      "name": "sdf df adf sd",
+      "relationship": "sadsd",
+      "phone": "1234567890",
+      "email": "asdasd@sadfsa.com"
+    },
+    "bankDetails": {
+      "bankName": "sadas dasd asd ",
+      "accountNumber": "123456789",
+      "routingNumber": "123456789",
+      "accountType": "sadf adsf a"
+    },
+    "documents": {
+      "cv": null,
+      "rightToWork": {},
+      "certificateOfSponsorship": null,
+      "proofOfAddress": {},
+      "qualificationCertificates": null,
+      "dbsCertificate": null,
+      "dbsUpdateService": null,
+      "immunizationRecords": null,
+      "occupationalHealth": null,
+      "photo": {}
+    },
+    "declarations": {
+      "gdprConsent": true,
+      "workPolicies": true,
+      "dataProcessing": true,
+      "backgroundCheck": true,
+      "healthDeclaration": true,
+      "termsAccepted": true
+    },
+    "preferences": {
+      "preferredShifts": [
+        "Weekend",
+        "Night"
+      ],
+      "preferredLocations": [
+        "East London"
+      ],
+      "hourlyRate": "409",
+      "maxTravelDistance": 50,
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": true
+      }
+    },
+    "status": "rejected",
+    "rating": 0,
+    "completedJobs": 0,
+    "createdAt": "2025-08-07T13:59:23.351Z",
+    "updatedAt": "2025-08-07T14:01:01.633Z",
+    "rejectionReason": ""
+  },
+  {
+    "id": "worker_1754577586391",
+    "userId": "user_1754577355609",
+    "email": "test@worker14.com",
+    "firstName": "Test",
+    "lastName": "Worker14",
+    "phone": "123456789",
+    "dateOfBirth": "2000-01-01",
+    "address": "sdhfg sdjfbs d",
+    "city": "sdf sd",
+    "state": "sd fads",
+    "zipCode": "500000",
+    "nationalInsurance": "AB123456789",
+    "education": [
+      {
+        "degree": "Healthcare Assistant Certificate",
+        "institution": "Unknown Institution",
+        "graduationYear": "2020",
+        "fieldOfStudy": "sfd fsdf sd"
+      },
+      {
+        "degree": "High School Diploma",
+        "institution": "Unknown Institution",
+        "graduationYear": "2020",
+        "fieldOfStudy": "sdf sadf sd"
+      }
+    ],
+    "workHistory": [
+      {
+        "employer": "sdf sdf ",
+        "position": "Healthcare Assistant",
+        "location": "s fsdf ",
+        "startDate": "2020-01-01",
+        "endDate": "2020-12-12",
+        "isCurrent": false,
+        "description": "sd fsdf sdf sd",
+        "dbsNumber": "123456789",
+        "dbsPosition": "sd fsdf sdf ",
+        "dbsExpiryDate": "2020-12-12",
+        "dbsCheckDate": "2020-01-01"
+      },
+      {
+        "employer": "Unknown Company",
+        "position": "Care Assistant",
+        "location": "sd fsdf sd",
+        "startDate": "2020-01-01",
+        "endDate": "2020-12-12",
+        "isCurrent": false,
+        "description": "s fdf sdf sdf s",
+        "dbsNumber": "123456789",
+        "dbsPosition": "swdfsdf sdf ",
+        "dbsExpiryDate": "2020-12-12",
+        "dbsCheckDate": "2020-01-01"
+      }
+    ],
+    "skills": [
+      "Healthcare Assistant",
+      "Patient Care",
+      "Dementia Care",
+      "Medication Administration"
+    ],
+    "certifications": [
+      {
+        "name": "Healthcare Assistant License",
+        "issuingBody": "dfg fg g ",
+        "issueDate": "2020-10-01",
+        "expiryDate": "2020-12-12",
+        "certificateNumber": "1236456789",
+        "certificateFile": {}
+      },
+      {
+        "name": "First Aid and CPR",
+        "issuingBody": "sdf sdf sf s",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "certificateNumber": "123456789",
+        "certificateFile": {}
+      }
+    ],
+    "licenses": [
+      {
+        "name": "sdf sdff sdf sdf ",
+        "issuingBody": "sdf sg dfsgsf gsf",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "licenseNumber": "123456789",
+        "licenseFile": {}
+      }
+    ],
+    "references": [
+      {
+        "name": "dgh gfh sdtgh sgh sg",
+        "relationship": "dfg sdfg sdhg ",
+        "company": "sh sh sg",
+        "position": "sdf gsdf g",
+        "email": "wdsafsdf@sdfsd.vom",
+        "phone": "123456789",
+        "isProfessional": true,
+        "yearsKnown": "23"
+      }
+    ],
+    "emergencyContact": {
+      "name": "fghgd hsdg sd",
+      "relationship": "sfdfsdf",
+      "phone": "123456789",
+      "email": "sgdfsdf@sfdfs.com"
+    },
+    "bankDetails": {
+      "bankName": "sfdfsdf sd",
+      "accountNumber": "123456789",
+      "routingNumber": "123456789",
+      "accountType": "sfgs f"
+    },
+    "documents": {
+      "cv": "/uploads/resumes/resume_1754577355608_Sarah Thompson.docx",
+      "rightToWork": {},
+      "certificateOfSponsorship": null,
+      "proofOfAddress": {},
+      "qualificationCertificates": null,
+      "dbsCertificate": null,
+      "dbsUpdateService": null,
+      "immunizationRecords": null,
+      "occupationalHealth": null,
+      "photo": {}
+    },
+    "declarations": {
+      "gdprConsent": true,
+      "workPolicies": true,
+      "dataProcessing": true,
+      "backgroundCheck": true,
+      "healthDeclaration": true,
+      "termsAccepted": true
+    },
+    "preferences": {
+      "preferredShifts": [
+        "Night"
+      ],
+      "preferredLocations": [
+        "South London",
+        "East London"
+      ],
+      "hourlyRate": "45",
+      "maxTravelDistance": 50,
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": true
+      }
+    },
+    "status": "pending",
+    "rating": 0,
+    "completedJobs": 0,
+    "createdAt": "2025-08-07T14:39:46.391Z",
+    "updatedAt": "2025-08-07T14:39:46.391Z"
+  },
+  {
+    "id": "worker_1754583825742",
+    "userId": "user_1754583560363",
+    "email": "test@worker15.com",
+    "firstName": "test",
+    "lastName": "worker15",
+    "phone": "123456789",
+    "dateOfBirth": "2000-01-01",
+    "address": "dfs dfsfg srg dfg",
+    "city": "sdg",
+    "state": "fgfd",
+    "zipCode": "500000",
+    "nationalInsurance": "AB123456",
+    "education": [
+      {
+        "degree": "Healthcare Assistant Certificate",
+        "institution": "Unknown Institution",
+        "graduationYear": "2020",
+        "fieldOfStudy": "xcfgh sgh bsg"
+      },
+      {
+        "degree": "High School Diploma",
+        "institution": "Unknown Institution",
+        "graduationYear": "2020",
+        "fieldOfStudy": "dgs fhg th"
+      }
+    ],
+    "workHistory": [
+      {
+        "employer": "Unknown Company",
+        "position": "Healthcare Assistant",
+        "location": "sdfg dfgdf ",
+        "startDate": "2020-01-01",
+        "endDate": "2020-12-12",
+        "isCurrent": false,
+        "description": "df gsdfg sdgh",
+        "dbsNumber": "123456789",
+        "dbsPosition": "dgfz fshtr ",
+        "dbsExpiryDate": "2020-12-12",
+        "dbsCheckDate": "2020-01-01"
+      },
+      {
+        "employer": "Unknown Company",
+        "position": "Care Assistant",
+        "location": "dsfg vth rth",
+        "startDate": "2020-01-10",
+        "endDate": "2020-12-12",
+        "isCurrent": false,
+        "description": "dfg sdgser",
+        "dbsNumber": "123456",
+        "dbsPosition": "dfs hg",
+        "dbsExpiryDate": "2020-12-12",
+        "dbsCheckDate": "2020-01-01"
+      }
+    ],
+    "skills": [
+      "Healthcare Assistant",
+      "Patient Care",
+      "Dementia Care",
+      "Medication Administration"
+    ],
+    "certifications": [
+      {
+        "name": "Healthcare Assistant License",
+        "issuingBody": "xghd thrt",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "certificateNumber": "123456789",
+        "certificateFile": "/uploads/documents/worker_1754583825742/certification_1754583826133.docx"
+      },
+      {
+        "name": "First Aid and CPR",
+        "issuingBody": "tsy rthdrth s",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "certificateNumber": "123456",
+        "certificateFile": "/uploads/documents/worker_1754583825742/certification_1754583826215.docx"
+      }
+    ],
+    "licenses": [
+      {
+        "name": "esr tsg stdg",
+        "issuingBody": "df srg",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "licenseNumber": "123456",
+        "licenseFile": "/uploads/documents/worker_1754583825742/certification_1754583826278.docx"
+      }
+    ],
+    "references": [
+      {
+        "name": "rwaf werfwe f",
+        "relationship": "fdf s",
+        "company": "fg srf",
+        "position": "feg srtf",
+        "email": "sdff@sdfsdf.com",
+        "phone": "1234567898",
+        "isProfessional": true,
+        "yearsKnown": "5"
+      }
+    ],
+    "emergencyContact": {
+      "name": "sdfg dfg ",
+      "relationship": "sfsdfsdf",
+      "phone": "123456789",
+      "email": "sfdfs@sadsdf.com"
+    },
+    "bankDetails": {
+      "bankName": "sfdfsdfsdf",
+      "accountNumber": "123456789",
+      "routingNumber": "123456789",
+      "accountType": "sfdfsfsd"
+    },
+    "documents": {
+      "cv": "/uploads/documents/worker_1754583825742/compliance_1754583825806.docx",
+      "rightToWork": "/uploads/documents/worker_1754583825742/compliance_1754583825965.docx",
+      "certificateOfSponsorship": null,
+      "proofOfAddress": "/uploads/documents/worker_1754583825742/compliance_1754583826020.docx",
+      "qualificationCertificates": null,
+      "dbsCertificate": null,
+      "dbsUpdateService": null,
+      "immunizationRecords": null,
+      "occupationalHealth": null,
+      "photo": "/uploads/documents/worker_1754583825742/compliance_1754583826079.jpeg"
+    },
+    "declarations": {
+      "gdprConsent": true,
+      "workPolicies": true,
+      "dataProcessing": true,
+      "backgroundCheck": true,
+      "healthDeclaration": true,
+      "termsAccepted": true
+    },
+    "preferences": {
+      "preferredShifts": [
+        "Night"
+      ],
+      "preferredLocations": [
+        "West London"
+      ],
+      "hourlyRate": "34",
+      "maxTravelDistance": 50,
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": true
+      }
+    },
+    "status": "pending",
+    "rating": 0,
+    "completedJobs": 0,
+    "createdAt": "2025-08-07T16:23:45.742Z",
+    "updatedAt": "2025-08-07T16:23:45.743Z"
+  },
+  {
+    "id": "worker_1754596290035",
+    "userId": "user_1754596040209",
+    "email": "test@worker16.com",
+    "firstName": "Test",
+    "lastName": "Worker16",
+    "phone": "123456789",
+    "dateOfBirth": "2000-01-01",
+    "address": "sd sf wtws ",
+    "city": "dfgdf",
+    "state": "sdfdf",
+    "zipCode": "50000",
+    "nationalInsurance": "AB123456",
+    "education": [
+      {
+        "degree": "Healthcare Assistant Certificate",
+        "institution": "Unknown Institution",
+        "graduationYear": "2020",
+        "fieldOfStudy": "dfgfgdfg"
+      },
+      {
+        "degree": "High School Diploma",
+        "institution": "Unknown Institution",
+        "graduationYear": "2020",
+        "fieldOfStudy": "wsdf sdf sd"
+      }
+    ],
+    "workHistory": [
+      {
+        "employer": "Unknown Company",
+        "position": "Healthcare Assistant",
+        "location": "dsf sdfsd f",
+        "startDate": "2020-01-01",
+        "endDate": "2020-12-12",
+        "isCurrent": false,
+        "description": "sdf sg srf s",
+        "dbsNumber": "123456789",
+        "dbsPosition": "sdfsd fsdf s",
+        "dbsExpiryDate": "2020-12-12",
+        "dbsCheckDate": "2020-01-01"
+      },
+      {
+        "employer": "Unknown Company",
+        "position": "Care Assistant",
+        "location": "ws rsdrf sdf",
+        "startDate": "2020-01-01",
+        "endDate": "2020-12-12",
+        "isCurrent": false,
+        "description": "sa sadf ",
+        "dbsNumber": "123456789",
+        "dbsPosition": "sf df d",
+        "dbsExpiryDate": "2020-12-12",
+        "dbsCheckDate": "2020-01-01"
+      }
+    ],
+    "skills": [
+      "Healthcare Assistant",
+      "Patient Care",
+      "Dementia Care",
+      "Medication Administration"
+    ],
+    "certifications": [
+      {
+        "name": "Healthcare Assistant License",
+        "issuingBody": "sdf sg s",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "certificateNumber": "1234756",
+        "certificateFile": null
+      },
+      {
+        "name": "First Aid and CPR",
+        "issuingBody": "swed sg df",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "certificateNumber": "123456789",
+        "certificateFile": null
+      }
+    ],
+    "licenses": [
+      {
+        "name": "dfs df sdf sad f",
+        "issuingBody": "fhgs hgr gsf",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "licenseNumber": "123456789",
+        "licenseFile": null
+      }
+    ],
+    "references": [
+      {
+        "name": "fd gs gd",
+        "relationship": "sdf sf",
+        "company": "dsf dsfsd",
+        "position": "sdf sdfs",
+        "email": "sdfsdfs@sfsf.com",
+        "phone": "123456789",
+        "isProfessional": true,
+        "yearsKnown": "6"
+      }
+    ],
+    "emergencyContact": {
+      "name": "sdf sdfsd fsd",
+      "relationship": "asda sd",
+      "phone": "123456789",
+      "email": "sdfsf@sada.com"
+    },
+    "bankDetails": {
+      "bankName": "asdasd asd a",
+      "accountNumber": "123456789",
+      "routingNumber": "123456789a",
+      "accountType": "sdas a"
+    },
+    "documents": {
+      "cv": null,
+      "rightToWork": null,
+      "certificateOfSponsorship": null,
+      "proofOfAddress": null,
+      "qualificationCertificates": null,
+      "dbsCertificate": null,
+      "dbsUpdateService": null,
+      "immunizationRecords": null,
+      "occupationalHealth": null,
+      "photo": null
+    },
+    "declarations": {
+      "gdprConsent": true,
+      "workPolicies": true,
+      "dataProcessing": true,
+      "backgroundCheck": true,
+      "healthDeclaration": true,
+      "termsAccepted": true
+    },
+    "preferences": {
+      "preferredShifts": [
+        "Day",
+        "Weekend"
+      ],
+      "preferredLocations": [
+        "North London",
+        "South London"
+      ],
+      "hourlyRate": "34",
+      "maxTravelDistance": 50,
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": true
+      }
+    },
+    "status": "pending",
+    "rating": 0,
+    "completedJobs": 0,
+    "createdAt": "2025-08-07T19:51:30.035Z",
+    "updatedAt": "2025-08-07T19:51:30.035Z"
+  },
+  {
+    "id": "worker_1754598520987",
+    "userId": "user_1754598299931",
+    "email": "test@worker17.com",
+    "firstName": "test",
+    "lastName": "worker17",
+    "phone": "123456789",
+    "dateOfBirth": "1999-01-01",
+    "address": "sdf sdf sdfsd",
+    "city": "sdfsdf",
+    "state": "sdfsdf",
+    "zipCode": "500000",
+    "nationalInsurance": "AB123456",
+    "education": [
+      {
+        "degree": "Healthcare Assistant Certificate",
+        "institution": "Unknown Institution",
+        "graduationYear": "2020",
+        "fieldOfStudy": "f fsdf sdf"
+      },
+      {
+        "degree": "High School Diploma",
+        "institution": "Unknown Institution",
+        "graduationYear": "2020",
+        "fieldOfStudy": "wer wtwer wer"
+      }
+    ],
+    "workHistory": [
+      {
+        "employer": "Unknown Company",
+        "position": "Healthcare Assistant",
+        "location": "sdfsf sd",
+        "startDate": "2020-01-01",
+        "endDate": "2020-12-12",
+        "isCurrent": false,
+        "description": "asad s sd asd ",
+        "dbsNumber": "123456789",
+        "dbsPosition": "asda sda s",
+        "dbsExpiryDate": "2020-12-12",
+        "dbsCheckDate": "2020-01-01"
+      },
+      {
+        "employer": "Unknown Company",
+        "position": "Care Assistant",
+        "location": "as asdas dasd",
+        "startDate": "2020-01-01",
+        "endDate": "2020-12-12",
+        "isCurrent": false,
+        "description": "asa sdasd as",
+        "dbsNumber": "123456789",
+        "dbsPosition": "asd asd as",
+        "dbsExpiryDate": "2020-12-12",
+        "dbsCheckDate": "2020-01-01"
+      }
+    ],
+    "skills": [
+      "Healthcare Assistant",
+      "Patient Care",
+      "Dementia Care",
+      "Medication Administration"
+    ],
+    "certifications": [
+      {
+        "name": "Healthcare Assistant License",
+        "issuingBody": "as dasd as",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "certificateNumber": "123456789",
+        "certificateFile": "/uploads/documents/worker_1754598520987/certification_1754598521470.docx"
+      },
+      {
+        "name": "First Aid and CPR",
+        "issuingBody": "f gsf dsfd fs",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "certificateNumber": "123456789",
+        "certificateFile": "/uploads/documents/worker_1754598520987/certification_1754598521542.docx"
+      }
+    ],
+    "licenses": [
+      {
+        "name": "sf sdf sdfs f",
+        "issuingBody": "sdf sdfs dfsd",
+        "issueDate": "2020-01-01",
+        "expiryDate": "2020-12-12",
+        "licenseNumber": "123456789",
+        "licenseFile": "/uploads/documents/worker_1754598520987/certification_1754598521625.docx"
+      }
+    ],
+    "references": [
+      {
+        "name": "dsfs dfsd fs",
+        "relationship": "sdf sdf ",
+        "company": "sdf sf",
+        "position": "sdfsdf ",
+        "email": "sdfsdf@asfdsa.com",
+        "phone": "123456789",
+        "isProfessional": true,
+        "yearsKnown": "4"
+      }
+    ],
+    "emergencyContact": {
+      "name": "dfsdfsdf ",
+      "relationship": "dfsdf",
+      "phone": "123456789",
+      "email": "dsfsdf@safsdf.com"
+    },
+    "bankDetails": {
+      "bankName": "sdfsdfsd",
+      "accountNumber": "123456789",
+      "routingNumber": "123456789",
+      "accountType": "sdfs d"
+    },
+    "documents": {
+      "cv": "/uploads/documents/worker_1754598520987/compliance_1754598521074.docx",
+      "rightToWork": "/uploads/documents/worker_1754598520987/compliance_1754598521248.docx",
+      "certificateOfSponsorship": null,
+      "proofOfAddress": "/uploads/documents/worker_1754598520987/compliance_1754598521328.docx",
+      "qualificationCertificates": null,
+      "dbsCertificate": null,
+      "dbsUpdateService": null,
+      "immunizationRecords": null,
+      "occupationalHealth": null,
+      "photo": "/uploads/documents/worker_1754598520987/compliance_1754598521395.jpeg"
+    },
+    "declarations": {
+      "gdprConsent": true,
+      "workPolicies": true,
+      "dataProcessing": true,
+      "backgroundCheck": true,
+      "healthDeclaration": true,
+      "termsAccepted": true
+    },
+    "preferences": {
+      "preferredShifts": [
+        "Day"
+      ],
+      "preferredLocations": [
+        "South London"
+      ],
+      "hourlyRate": "45",
+      "maxTravelDistance": 50,
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": true
+      }
+    },
+    "status": "pending",
+    "rating": 0,
+    "completedJobs": 0,
+    "createdAt": "2025-08-07T20:28:40.987Z",
+    "updatedAt": "2025-08-07T20:28:40.987Z"
   }
-] 
+]

@@ -101,6 +101,9 @@ export default function UploadDocuments() {
         formData.append('documentId', editMode);
       }
       
+      // Add worker ID
+      formData.append('workerId', user.id);
+      
       const response = await uploadWorkerDocument(formData);
       
       if (response.success) {

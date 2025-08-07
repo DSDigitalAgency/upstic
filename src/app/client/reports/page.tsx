@@ -324,7 +324,7 @@ export default function ReportsPage() {
                             {worker.firstName} {worker.lastName}
                           </p>
                           <p className="text-xs text-gray-500">
-                            {worker.skills.join(', ')} • {worker.experience} years exp
+                            {worker.skills.join(', ')} • Experience details available
                           </p>
                           <p className="text-xs text-gray-500">
                             {worker.completedJobs} completed jobs

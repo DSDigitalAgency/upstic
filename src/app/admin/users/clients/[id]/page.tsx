@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { apiClient, Client } from '@/lib/api';
 import { Input } from '@/components/ui/input';
-import { TextArea } from '@/components/ui/textarea';
+import { Textarea } from '@/components/ui/textarea';
 import { LoadingButton } from '@/components/ui/loading-button';
 
 export default function EditClientPage() {
@@ -312,7 +312,7 @@ export default function EditClientPage() {
             </div>
             
             <div className="mt-6">
-              <TextArea
+              <Textarea
                 label="Description"
                 name="description"
                 value={client.description || ''}

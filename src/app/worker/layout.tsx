@@ -1,10 +1,11 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { WorkerSidebar } from '@/components/ui/sidebar';
 import { useSidebar } from '@/hooks/useSidebar';
+import { apiClient } from '@/demo/func/api';
 
 export default function WorkerLayout({
   children,
@@ -14,6 +15,11 @@ export default function WorkerLayout({
   const { user, isLoading, isAuthenticated } = useAuth();
   const { isCollapsed } = useSidebar();
   const router = useRouter();
+  const pathname = usePathname();
+  const [isCheckingOnboarding, setIsCheckingOnboarding] = useState(true);
+
+  // Check if current route should show the full layout (with sidebar and header)
+  const shouldShowFullLayout = !pathname?.includes('/onboarding') && !pathname?.includes('/pending-approval') && !pathname?.includes('/rejected');
 
   useEffect(() => {
     if (!isLoading) {
@@ -33,9 +39,48 @@ export default function WorkerLayout({
         } else {
           router.push('/');
         }
+      } else {
+        // Check if worker has completed onboarding
+        checkOnboardingStatus();
       }
     }
   }, [isLoading, isAuthenticated, user, router]);
+
+  const checkOnboardingStatus = async () => {
+    if (!user?.id) return;
+    
+    try {
+      const result = await apiClient.getWorkerByUserId(user.id);
+      if (!result.success) {
+        // Worker profile doesn't exist, redirect to onboarding
+        router.push('/worker/onboarding');
+        return;
+      }
+      
+      // Check worker status and redirect accordingly
+      if (result.data?.status === 'pending') {
+        // Worker is waiting for admin approval
+        router.push('/worker/pending-approval');
+        return;
+      }
+      
+      if (result.data?.status === 'rejected') {
+        // Worker is rejected, redirect to rejected page
+        router.push('/worker/rejected');
+        return;
+      }
+      
+      if (result.data?.status === 'approved') {
+        setIsCheckingOnboarding(false);
+      } else {
+        // Worker profile exists but not approved, redirect to onboarding
+        router.push('/worker/onboarding');
+      }
+    } catch (error) {
+      // If there's an error, assume onboarding is needed
+      router.push('/worker/onboarding');
+    }
+  };
 
   if (isLoading) {
     return (
@@ -47,6 +92,11 @@ export default function WorkerLayout({
 
   if (!isAuthenticated || user?.role !== 'worker') {
     return null;
+  }
+
+  // If this is onboarding or pending approval page, just render children without layout
+  if (!shouldShowFullLayout) {
+    return <>{children}</>;
   }
 
   return (

@@ -1,8 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { WorkerDashboardStats } from '@/lib/api';
-import { getWorkerDashboardStats } from '@/lib/worker';
+import { getWorkerDashboardStats, WorkerDashboardStats } from '@/lib/worker';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function WorkerDashboard() {

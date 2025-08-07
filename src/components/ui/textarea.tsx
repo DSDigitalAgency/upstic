@@ -1,46 +1,38 @@
 'use client';
 
-import React, { useId } from 'react';
+import React from 'react';
 
-interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   error?: string;
   helperText?: string;
 }
 
-export function TextArea({ 
+export function Textarea({ 
   label, 
   error, 
   helperText, 
   className = '', 
-  id,
   ...props 
-}: TextAreaProps) {
-  const generatedId = useId();
-  const textAreaId = id || generatedId;
-  
+}: TextareaProps) {
   return (
     <div className="space-y-2">
       {label && (
-        <label 
-          htmlFor={textAreaId}
-          className="block text-sm font-medium text-gray-900"
-        >
+        <label className="block text-sm font-medium text-gray-900">
           {label}
+          {props.required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
       
       <textarea
-        {...props}
-        id={textAreaId}
         className={`
-          w-full px-3 py-2 border rounded-lg shadow-sm 
-          text-gray-900 placeholder-gray-500 bg-white
+          w-full px-3 py-2 border rounded-lg shadow-sm text-gray-900 bg-white 
           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-          disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed
-          ${error ? 'border-red-500' : 'border-gray-300'}
+          disabled:bg-gray-50 disabled:text-gray-500
+          ${error ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'}
           ${className}
         `}
+        {...props}
       />
       
       {error && (

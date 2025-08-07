@@ -88,12 +88,12 @@ export default function EditWorkerPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="experience" className="block text-sm font-medium text-gray-900">Experience (Years)</label>
-              <input type="number" name="experience" id="experience" value={worker.experience || 0} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900 bg-white" />
+              <label htmlFor="address" className="block text-sm font-medium text-gray-900">Address</label>
+              <input type="text" name="address" id="address" value={worker.address || ''} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900 bg-white" />
             </div>
             <div>
-              <label htmlFor="preferredLocation" className="block text-sm font-medium text-gray-900">Preferred Location</label>
-              <input type="text" name="preferredLocation" id="preferredLocation" value={worker.preferredLocation || ''} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900 bg-white" />
+              <label htmlFor="city" className="block text-sm font-medium text-gray-900">City</label>
+              <input type="text" name="city" id="city" value={worker.city || ''} onChange={handleInputChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm text-gray-900 bg-white" />
             </div>
           </div>
 

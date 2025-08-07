@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { apiClient, Job } from '@/lib/api';
 import { Input } from '@/components/ui/input';
-import { TextArea } from '@/components/ui/textarea';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function EditJobPage() {
   const router = useRouter();
@@ -101,7 +101,7 @@ export default function EditJobPage() {
             />
           </div>
 
-          <TextArea
+          <Textarea
             label="Description"
             name="description"
             value={job.description || ''}
@@ -111,21 +111,21 @@ export default function EditJobPage() {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <TextArea
+            <Textarea
               label="Skills (comma-separated)"
               name="skills"
               value={Array.isArray(job.skills) ? job.skills.join(', ') : ''}
               onChange={handleInputChange}
               rows={3}
             />
-            <TextArea
+            <Textarea
               label="Requirements (comma-separated)"
               name="requirements"
               value={Array.isArray(job.requirements) ? job.requirements.join(', ') : ''}
               onChange={handleInputChange}
               rows={3}
             />
-            <TextArea
+            <Textarea
               label="Responsibilities (comma-separated)"
               name="responsibilities"
               value={Array.isArray(job.responsibilities) ? job.responsibilities.join(', ') : ''}

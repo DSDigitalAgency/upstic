@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
 import { LoadingButton } from '@/components/ui/loading-button';
 import { useAuth } from '@/hooks/useAuth';
+import { useResume } from '@/contexts/ResumeContext';
 
 export default function Home() {
   const [isSignup, setIsSignup] = useState(false);
@@ -17,11 +18,13 @@ export default function Home() {
     lastName: '',
     phone: '',
     role: 'worker' as const,
+    resume: null as File | null,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState('');
   
   const { login, register, isLoading, user, isAuthenticated } = useAuth();
+  const { setResumeData } = useResume();
   const router = useRouter();
 
   // Redirect authenticated users to their appropriate portal
@@ -30,7 +33,7 @@ export default function Home() {
       const roleRoutes = {
         admin: '/admin',
         client: '/client',
-        worker: '/worker'
+        worker: '/worker/onboarding' // Redirect workers to onboarding first
       };
       const redirectPath = roleRoutes[user.role as keyof typeof roleRoutes] || '/';
       router.push(redirectPath);
@@ -89,6 +92,31 @@ export default function Home() {
     }
   };
 
+  const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+      if (!allowedTypes.includes(file.type)) {
+        alert('Please upload a PDF, DOC, or DOCX file');
+        return;
+      }
+      
+      // Validate file size (10MB)
+      if (file.size > 10 * 1024 * 1024) {
+        alert('File size must be less than 10MB');
+        return;
+      }
+      
+      setFormData(prev => ({ ...prev, resume: file }));
+      
+      // Clear submit error
+      if (submitError) {
+        setSubmitError('');
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -108,7 +136,13 @@ export default function Home() {
           lastName: formData.lastName,
           phone: formData.phone,
           role: formData.role,
+          resume: formData.resume,
         });
+        
+        // Store parsed resume data if available
+        if (result.success && result.resumeData) {
+          setResumeData(result.resumeData);
+        }
       } else {
         result = await login({
           email: formData.email,
@@ -138,6 +172,7 @@ export default function Home() {
       lastName: '',
       phone: '',
       role: 'worker' as const,
+      resume: null,
     }));
   };
 
@@ -294,6 +329,52 @@ export default function Home() {
                       <option value="client">Healthcare Facility</option>
                     </select>
                   </div>
+
+                  {/* Resume Upload for Workers */}
+                  {formData.role === 'worker' && (
+                    <div>
+                      <label htmlFor="resume" className="block text-sm font-medium text-gray-900 mb-2">
+                        Resume/CV (Optional)
+                      </label>
+                      <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 transition-colors">
+                        <div className="space-y-1 text-center">
+                          <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                          <div className="flex text-sm text-gray-600">
+                            <label htmlFor="resume-upload" className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
+                              <span>Upload a file</span>
+                              <input
+                                id="resume-upload"
+                                name="resume"
+                                type="file"
+                                className="sr-only"
+                                accept=".pdf,.doc,.docx"
+                                onChange={handleResumeUpload}
+                              />
+                            </label>
+                            <p className="pl-1">or drag and drop</p>
+                          </div>
+                          <p className="text-xs text-gray-500">PDF, DOC, DOCX up to 10MB</p>
+                        </div>
+                      </div>
+                      {formData.resume && (
+                        <div className="mt-2 flex items-center space-x-2">
+                          <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span className="text-sm text-gray-600">{formData.resume.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, resume: null }))}
+                            className="text-sm text-red-600 hover:text-red-700"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </>
               )}
 

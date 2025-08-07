@@ -36,7 +36,21 @@ export const getWorkerDocuments = async (_workerId: string) => {
 };
 
 export const uploadWorkerDocument = async (documentData: FormData) => {
-  return await apiClient.post('/api/workers/documents', documentData);
+  try {
+    const response = await fetch('/api/workers/documents', {
+      method: 'POST',
+      body: documentData,
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Upload error:', error);
+    return { success: false, error: 'Failed to upload document' };
+  }
 };
 
 // Worker timesheets

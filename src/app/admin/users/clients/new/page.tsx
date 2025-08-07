@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient, Client } from '@/lib/api';
 import { Input } from '@/components/ui/input';
-import { TextArea } from '@/components/ui/textarea';
+import { Textarea } from '@/components/ui/textarea';
 import { LoadingButton } from '@/components/ui/loading-button';
 import { EmailNotification } from '@/components/ui/email-notification';
 
@@ -243,7 +243,7 @@ export default function NewClientPage() {
             </div>
             
             <div className="mt-6">
-              <TextArea
+              <Textarea
                 label="Description"
                 name="description"
                 value={client.description}

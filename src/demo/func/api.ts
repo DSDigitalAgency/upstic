@@ -15,10 +15,102 @@ export interface Worker {
   firstName: string;
   lastName: string;
   phone?: string;
+  dateOfBirth?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  nationalInsurance?: string;
+  education?: Array<{
+    degree: string;
+    institution: string;
+    graduationYear: string;
+    fieldOfStudy: string;
+  }>;
+  workHistory?: Array<{
+    employer: string;
+    position: string;
+    location: string;
+    startDate: string;
+    endDate: string;
+    isCurrent: boolean;
+    description: string;
+    dbsNumber?: string;
+    dbsPosition?: string;
+    dbsExpiryDate?: string;
+    dbsCheckDate?: string;
+  }>;
   skills: string[];
-  experience: number;
-  preferredLocation: string;
-  status: string;
+  certifications?: Array<{
+    name: string;
+    issuingBody: string;
+    issueDate: string;
+    expiryDate: string;
+    certificateNumber: string;
+    certificateFile?: string | null;
+  }>;
+  licenses?: Array<{
+    name: string;
+    issuingBody: string;
+    issueDate: string;
+    expiryDate: string;
+    licenseNumber: string;
+    licenseFile?: string | null;
+  }>;
+  references?: Array<{
+    name: string;
+    relationship: string;
+    company: string;
+    position: string;
+    email: string;
+    phone: string;
+    isProfessional: boolean;
+    yearsKnown: string;
+  }>;
+  emergencyContact?: {
+    name: string;
+    phone: string;
+    relationship: string;
+    email?: string;
+  };
+  bankDetails?: {
+    bankName: string;
+    accountNumber: string;
+    routingNumber: string;
+    accountType: string;
+  };
+  documents?: {
+    cv: string | null;
+    rightToWork: string | null;
+    certificateOfSponsorship: string | null;
+    proofOfAddress: string | null;
+    qualificationCertificates: string | null;
+    dbsCertificate: string | null;
+    dbsUpdateService: string | null;
+    immunizationRecords: string | null;
+    occupationalHealth: string | null;
+    photo: string | null;
+  };
+  declarations?: {
+    gdprConsent: boolean;
+    workPolicies: boolean;
+    dataProcessing: boolean;
+    backgroundCheck: boolean;
+    healthDeclaration: boolean;
+    termsAccepted: boolean;
+  };
+  preferences?: {
+    preferredShifts: string[];
+    preferredLocations: string[];
+    hourlyRate: string;
+    maxTravelDistance: number;
+    notifications: {
+      email: boolean;
+      sms: boolean;
+      push: boolean;
+    };
+  };
+  status: 'pending' | 'approved' | 'rejected' | 'active' | 'inactive';
   rating: number;
   completedJobs: number;
   createdAt: string;
@@ -369,6 +461,32 @@ export const apiClient = {
     }
   },
 
+  async getWorkerByUserId(userId: string): Promise<{ success: boolean; data?: Worker; error?: string }> {
+    try {
+      const workers = await readJsonFile<Worker>('workers.json');
+      const worker = workers.find(w => w.userId === userId);
+      if (worker) {
+        return { success: true, data: worker };
+      }
+      return { success: false, error: 'Worker not found' };
+    } catch {
+      return { success: false, error: 'Failed to load worker' };
+    }
+  },
+
+  async getWorker(id: string): Promise<{ success: boolean; data?: Worker; error?: string }> {
+    try {
+      const workers = await readJsonFile<Worker>('workers.json');
+      const worker = workers.find(w => w.id === id);
+      if (worker) {
+        return { success: true, data: worker };
+      }
+      return { success: false, error: 'Worker not found' };
+    } catch {
+      return { success: false, error: 'Failed to load worker' };
+    }
+  },
+
   // Clients
   async getClients(): Promise<{ success: boolean; data?: Client[]; error?: string }> {
     try {
@@ -610,59 +728,70 @@ export const apiClient = {
   },
 
   // Worker creation method
-  async createWorker(workerData: {
-    email: string;
-    password: string;
-    username: string;
-    firstName: string;
-    lastName: string;
-    phone: string;
-    role: string;
-    skills?: string[];
-    experience?: number;
-    preferredLocation?: string;
-  }): Promise<{ success: boolean; data?: Worker; error?: string }> {
+  async createWorker(workerData: any): Promise<{ success: boolean; data?: Worker; error?: string }> {
     try {
-      // Create a new worker with mock data
-      const newWorker: Worker = {
-        id: `worker-${Date.now()}`,
-        userId: `user-${Date.now()}`,
-        email: workerData.email,
-        firstName: workerData.firstName,
-        lastName: workerData.lastName,
-        phone: workerData.phone,
-        skills: workerData.skills || [],
-        experience: workerData.experience || 0,
-        preferredLocation: workerData.preferredLocation || '',
-        status: 'ACTIVE',
-        rating: 0,
-        completedJobs: 0,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
-
-      return { success: true, data: newWorker };
-    } catch {
+      const response = await fetch('/api/workers', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(workerData),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        return { success: true, data };
+      }
       return { success: false, error: 'Failed to create worker' };
+    } catch (error) {
+      console.error('Error creating worker:', error);
+      return { success: false, error: 'Failed to create worker' };
+    }
+  },
+
+  // Preferences creation method
+  async createPreferences(preferencesData: any): Promise<{ success: boolean; data?: Preference; error?: string }> {
+    try {
+      const response = await fetch('/api/preferences', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(preferencesData),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        return { success: true, data };
+      }
+      return { success: false, error: 'Failed to create preferences' };
+    } catch {
+      return { success: false, error: 'Failed to create preferences' };
     }
   },
 
   // Additional methods for worker/client management
   async updateWorker(workerId: string, update: Partial<Worker>): Promise<{ success: boolean; data?: Worker; error?: string }> {
     try {
-      // Mock implementation - in a real app, this would update the worker in the database
-      console.log(`Updating worker ${workerId} with`, update);
-      return { success: true, data: { id: workerId, ...update } as Worker };
-    } catch {
+      const response = await fetch(`/api/workers/${workerId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(update),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        return { success: true, data };
+      }
+      return { success: false, error: 'Failed to update worker' };
+    } catch (error) {
+      console.error('Error updating worker:', error);
       return { success: false, error: 'Failed to update worker' };
     }
   },
 
   async deleteWorker(workerId: string): Promise<{ success: boolean; error?: string }> {
     try {
-      // Mock implementation - in a real app, this would delete the worker from the database
-      console.log(`Deleting worker with ID: ${workerId}`);
-      return { success: true };
+      const response = await fetch(`/api/workers/${workerId}`, {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        return { success: true };
+      }
+      return { success: false, error: 'Failed to delete worker' };
     } catch {
       return { success: false, error: 'Failed to delete worker' };
     }

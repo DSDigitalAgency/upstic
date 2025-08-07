@@ -10,6 +10,7 @@ interface User {
   firstName: string;
   lastName: string;
   phone: string;
+  resumeUrl?: string | null;
 }
 
 interface AuthContextType {
@@ -17,7 +18,16 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: { email: string; password: string }) => Promise<{ success: boolean; error?: string }>;
-  register: (userData: unknown) => Promise<{ success: boolean; error?: string }>;
+  register: (userData: {
+    email: string;
+    password: string;
+    username: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    role: 'worker' | 'client' | 'admin';
+    resume?: File | null;
+  }) => Promise<{ success: boolean; error?: string; resumeData?: any }>;
   logout: () => void;
 }
 
@@ -49,15 +59,62 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const data = await res.json();
       setUser(data.user as User);
       localStorage.setItem('user', JSON.stringify(data.user));
-      return { success: true };
+      return { success: true, resumeData: data.resumeData };
     } catch {
       return { success: false, error: 'Login failed' };
     }
   };
 
-  // Registration is not supported in demo mode
-  const register = async () => {
-    return { success: false, error: 'Registration is not supported in demo mode' };
+  const register = async (userData: {
+    email: string;
+    password: string;
+    username: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    role: 'worker' | 'client' | 'admin';
+    resume?: File | null;
+  }) => {
+    try {
+      let res;
+      
+      if (userData.resume) {
+        // If resume is provided, use FormData
+        const formData = new FormData();
+        formData.append('email', userData.email);
+        formData.append('password', userData.password);
+        formData.append('username', userData.username);
+        formData.append('firstName', userData.firstName);
+        formData.append('lastName', userData.lastName);
+        formData.append('phone', userData.phone);
+        formData.append('role', userData.role);
+        formData.append('resume', userData.resume);
+        
+        res = await fetch('/api/demo-register', {
+          method: 'POST',
+          body: formData,
+        });
+      } else {
+        // If no resume, use JSON
+        res = await fetch('/api/demo-register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(userData),
+        });
+      }
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        return { success: false, error: data.error || 'Registration failed' };
+      }
+      
+      setUser(data.user as User);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      return { success: true, resumeData: data.resumeData };
+    } catch {
+      return { success: false, error: 'Registration failed' };
+    }
   };
 
   const logout = () => {

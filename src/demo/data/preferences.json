@@ -12,7 +12,10 @@
       "showContactInfo": true
     },
     "preferences": {
-      "preferredShiftType": ["Day", "Night"],
+      "preferredShiftType": [
+        "Day",
+        "Night"
+      ],
       "maxTravelDistance": 50,
       "minimumHourlyRate": 25
     },
@@ -32,7 +35,10 @@
       "showContactInfo": false
     },
     "preferences": {
-      "preferredShiftType": ["Day", "Evening"],
+      "preferredShiftType": [
+        "Day",
+        "Evening"
+      ],
       "maxTravelDistance": 30,
       "minimumHourlyRate": 30
     },
@@ -52,7 +58,9 @@
       "showContactInfo": false
     },
     "preferences": {
-      "preferredShiftType": ["Day"],
+      "preferredShiftType": [
+        "Day"
+      ],
       "maxTravelDistance": 20,
       "minimumHourlyRate": 20
     },
@@ -72,7 +80,10 @@
       "showContactInfo": true
     },
     "preferences": {
-      "preferredShiftType": ["Night", "Evening"],
+      "preferredShiftType": [
+        "Night",
+        "Evening"
+      ],
       "maxTravelDistance": 40,
       "minimumHourlyRate": 28
     },
@@ -92,11 +103,215 @@
       "showContactInfo": true
     },
     "preferences": {
-      "preferredShiftType": ["Day", "Evening", "Night"],
+      "preferredShiftType": [
+        "Day",
+        "Evening",
+        "Night"
+      ],
       "maxTravelDistance": 60,
       "minimumHourlyRate": 22
     },
     "createdAt": "2025-07-05T08:30:00Z",
     "updatedAt": "2025-07-12T15:45:00Z"
+  },
+  {
+    "id": "pref_1754556891239",
+    "workerId": "user_1754551029890",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "PUBLIC",
+      "showContactInfo": true
+    },
+    "preferences": {
+      "preferredShiftType": [],
+      "maxTravelDistance": 50,
+      "minimumHourlyRate": 0
+    },
+    "createdAt": "2025-08-07T08:54:51.239Z",
+    "updatedAt": "2025-08-07T08:54:51.239Z"
+  },
+  {
+    "id": "pref_1754567373788",
+    "workerId": "user_1754567088992",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "PUBLIC",
+      "showContactInfo": true
+    },
+    "preferences": {
+      "preferredShiftType": [],
+      "maxTravelDistance": 50,
+      "minimumHourlyRate": 0
+    },
+    "createdAt": "2025-08-07T11:49:33.788Z",
+    "updatedAt": "2025-08-07T11:49:33.788Z"
+  },
+  {
+    "id": "pref_1754570117237",
+    "workerId": "user_1754569863835",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "PUBLIC",
+      "showContactInfo": true
+    },
+    "preferences": {
+      "preferredShiftType": [],
+      "maxTravelDistance": 50,
+      "minimumHourlyRate": 0
+    },
+    "createdAt": "2025-08-07T12:35:17.237Z",
+    "updatedAt": "2025-08-07T12:35:17.237Z"
+  },
+  {
+    "id": "pref_1754570681741",
+    "workerId": "user_1754570382615",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "PUBLIC",
+      "showContactInfo": true
+    },
+    "preferences": {
+      "preferredShiftType": [],
+      "maxTravelDistance": 50,
+      "minimumHourlyRate": 0
+    },
+    "createdAt": "2025-08-07T12:44:41.741Z",
+    "updatedAt": "2025-08-07T12:44:41.741Z"
+  },
+  {
+    "id": "pref_1754573265070",
+    "workerId": "user_1754572642257",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "PUBLIC",
+      "showContactInfo": true
+    },
+    "preferences": {
+      "preferredShiftType": [],
+      "maxTravelDistance": 50,
+      "minimumHourlyRate": 0
+    },
+    "createdAt": "2025-08-07T13:27:45.070Z",
+    "updatedAt": "2025-08-07T13:27:45.070Z"
+  },
+  {
+    "id": "pref_1754575163351",
+    "workerId": "user_1754572642257",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "PUBLIC",
+      "showContactInfo": true
+    },
+    "preferences": {
+      "preferredShiftType": [],
+      "maxTravelDistance": 50,
+      "minimumHourlyRate": 0
+    },
+    "createdAt": "2025-08-07T13:59:23.351Z",
+    "updatedAt": "2025-08-07T13:59:23.351Z"
+  },
+  {
+    "id": "pref_1754577586771",
+    "workerId": "user_1754577355609",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "PUBLIC",
+      "showContactInfo": true
+    },
+    "preferences": {
+      "preferredShiftType": [],
+      "maxTravelDistance": 50,
+      "minimumHourlyRate": 0
+    },
+    "createdAt": "2025-08-07T14:39:46.771Z",
+    "updatedAt": "2025-08-07T14:39:46.771Z"
+  },
+  {
+    "id": "pref_1754583826281",
+    "workerId": "user_1754583560363",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "PUBLIC",
+      "showContactInfo": true
+    },
+    "preferences": {
+      "preferredShiftType": [],
+      "maxTravelDistance": 50,
+      "minimumHourlyRate": 0
+    },
+    "createdAt": "2025-08-07T16:23:46.281Z",
+    "updatedAt": "2025-08-07T16:23:46.281Z"
+  },
+  {
+    "id": "pref_1754596290956",
+    "workerId": "user_1754596040209",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "PUBLIC",
+      "showContactInfo": true
+    },
+    "preferences": {
+      "preferredShiftType": [],
+      "maxTravelDistance": 50,
+      "minimumHourlyRate": 0
+    },
+    "createdAt": "2025-08-07T19:51:30.956Z",
+    "updatedAt": "2025-08-07T19:51:30.957Z"
+  },
+  {
+    "id": "pref_1754598521628",
+    "workerId": "user_1754598299931",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "PUBLIC",
+      "showContactInfo": true
+    },
+    "preferences": {
+      "preferredShiftType": [],
+      "maxTravelDistance": 50,
+      "minimumHourlyRate": 0
+    },
+    "createdAt": "2025-08-07T20:28:41.628Z",
+    "updatedAt": "2025-08-07T20:28:41.628Z"
   }
-] 
+]
