@@ -71,6 +71,11 @@ export default function Home() {
       if (!formData.phone) {
         newErrors.phone = 'Phone number is required';
       }
+      
+      // Resume validation for workers
+      if (formData.role === 'worker' && !formData.resume) {
+        newErrors.resume = 'Resume/CV is required for healthcare professionals';
+      }
     }
 
     setErrors(newErrors);
@@ -98,17 +103,20 @@ export default function Home() {
       // Validate file type
       const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
       if (!allowedTypes.includes(file.type)) {
-        alert('Please upload a PDF, DOC, or DOCX file');
+        setErrors(prev => ({ ...prev, resume: 'Please upload a PDF, DOC, or DOCX file' }));
         return;
       }
       
       // Validate file size (10MB)
       if (file.size > 10 * 1024 * 1024) {
-        alert('File size must be less than 10MB');
+        setErrors(prev => ({ ...prev, resume: 'File size must be less than 10MB' }));
         return;
       }
       
       setFormData(prev => ({ ...prev, resume: file }));
+      
+      // Clear errors
+      setErrors(prev => ({ ...prev, resume: '' }));
       
       // Clear submit error
       if (submitError) {
@@ -334,11 +342,17 @@ export default function Home() {
                   {formData.role === 'worker' && (
                     <div>
                       <label htmlFor="resume" className="block text-sm font-medium text-gray-900 mb-2">
-                        Resume/CV (Optional)
+                        Resume/CV <span className="text-red-600">*</span>
                       </label>
-                      <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 transition-colors">
+                      <div className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 rounded-lg transition-colors ${
+                        errors.resume 
+                          ? 'border-red-300 bg-red-50' 
+                          : formData.resume 
+                          ? 'border-green-300 bg-green-50' 
+                          : 'border-gray-300 border-dashed hover:border-gray-400'
+                      }`}>
                         <div className="space-y-1 text-center">
-                          <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                          <svg className={`mx-auto h-12 w-12 ${errors.resume ? 'text-red-400' : formData.resume ? 'text-green-400' : 'text-gray-400'}`} stroke="currentColor" fill="none" viewBox="0 0 48 48">
                             <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
                           </svg>
                           <div className="flex text-sm text-gray-600">
@@ -351,6 +365,7 @@ export default function Home() {
                                 className="sr-only"
                                 accept=".pdf,.doc,.docx"
                                 onChange={handleResumeUpload}
+                                required
                               />
                             </label>
                             <p className="pl-1">or drag and drop</p>
@@ -358,6 +373,9 @@ export default function Home() {
                           <p className="text-xs text-gray-500">PDF, DOC, DOCX up to 10MB</p>
                         </div>
                       </div>
+                      {errors.resume && (
+                        <p className="mt-1 text-sm text-red-600">{errors.resume}</p>
+                      )}
                       {formData.resume && (
                         <div className="mt-2 flex items-center space-x-2">
                           <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">

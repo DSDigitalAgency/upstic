@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiClient } from '@/demo/func/api';
 import { Assignment, Worker, Job } from '@/demo/func/api';
+import DBSStatusBadge from '@/components/DBSStatusBadge';
 
 interface AssignmentWithDetails extends Assignment {
   worker?: Worker;
@@ -244,6 +245,14 @@ export function AssignmentDetailsClient({ assignmentId }: { assignmentId: string
                   <p className="text-sm text-gray-500">{assignment.worker.skills?.join(', ')}</p>
                 </div>
               </div>
+              
+              {/* DBS Verification Status */}
+              {assignment.worker.dbsVerification && (
+                <div className="mt-4">
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">DBS Verification Status</h4>
+                  <DBSStatusBadge verification={assignment.worker.dbsVerification} showDetails={true} />
+                </div>
+              )}
             </div>
           )}
         </div>

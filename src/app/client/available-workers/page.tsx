@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { apiClient } from '@/demo/func/api';
 import type { Worker, Availability } from '@/demo/func/api';
 import WorkerAvailabilityView from '@/components/WorkerAvailabilityView';
+import DBSStatusBadge from '@/components/DBSStatusBadge';
 
 export default function AvailableWorkersPage() {
   const [workers, setWorkers] = useState<Worker[]>([]);
@@ -174,7 +175,7 @@ export default function AvailableWorkersPage() {
               <div key={worker.id} className="bg-white rounded-lg shadow-sm border">
                 <div className="p-4 border-b">
                   <div className="flex items-center justify-between">
-                    <div>
+                    <div className="flex-1">
                       <h3 className="text-lg font-medium text-gray-900">
                         {worker.firstName} {worker.lastName}
                       </h3>
@@ -185,6 +186,9 @@ export default function AvailableWorkersPage() {
                       <p className="text-sm text-gray-600">
                         Skills: {worker.skills.join(', ')}
                       </p>
+                      <div className="mt-2">
+                        <DBSStatusBadge verification={worker.dbsVerification} showDetails={false} />
+                      </div>
                     </div>
                     <div className="text-right">
                       <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
@@ -194,7 +198,7 @@ export default function AvailableWorkersPage() {
                   </div>
                 </div>
                 
-                <div className="p-4">
+                <div className="p-4 space-y-4">
                   {workerAvailability ? (
                     <WorkerAvailabilityView 
                       workerId={worker.id} 
@@ -204,6 +208,14 @@ export default function AvailableWorkersPage() {
                   ) : (
                     <div className="text-center py-4">
                       <p className="text-gray-500">No availability data available</p>
+                    </div>
+                  )}
+                  
+                  {/* DBS Verification Status */}
+                  {worker.dbsVerification && (
+                    <div className="mt-4">
+                      <h4 className="text-sm font-medium text-gray-900 mb-2">DBS Verification Status</h4>
+                      <DBSStatusBadge verification={worker.dbsVerification} showDetails={true} />
                     </div>
                   )}
                 </div>

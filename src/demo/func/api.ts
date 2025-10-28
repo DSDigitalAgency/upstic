@@ -8,6 +8,19 @@ export interface User {
   phone?: string;
 }
 
+export interface DBSVerificationResult {
+  ok: boolean;
+  structured: {
+    personName: string;
+    dateOfBirth: string;
+    certificateNumber: string;
+    certificatePrintDate: string;
+    outcomeText: string;
+    outcome: 'clear_and_current' | 'current' | 'not_current';
+  };
+  verificationDate: string;
+}
+
 export interface Worker {
   id: string;
   userId?: string;
@@ -21,6 +34,7 @@ export interface Worker {
   state?: string;
   zipCode?: string;
   nationalInsurance?: string;
+  dbsVerification?: DBSVerificationResult;
   education?: Array<{
     degree: string;
     institution: string;
@@ -39,6 +53,7 @@ export interface Worker {
     dbsPosition?: string;
     dbsExpiryDate?: string;
     dbsCheckDate?: string;
+    dbsVerificationResult?: DBSVerificationResult;
   }>;
   skills: string[];
   certifications?: Array<{

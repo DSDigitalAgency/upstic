@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { apiClient } from '@/lib/api';
-import type { Worker } from '@/lib/api';
+import { apiClient } from '@/demo/func/api';
+import type { Worker } from '@/demo/func/api';
+import DBSStatusBadge from '@/components/DBSStatusBadge';
 
 interface WorkerWithStats extends Omit<Worker, 'completedJobs'> {
   activeAssignments?: number;
@@ -362,7 +363,7 @@ export default function WorkersPage() {
                     </span>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
                     <div>
                       <p className="text-sm font-medium text-gray-500">Email</p>
                       <p className="text-sm text-gray-900">{worker.email}</p>
@@ -381,6 +382,11 @@ export default function WorkersPage() {
                     <div>
                       <p className="text-sm font-medium text-gray-500">Location</p>
                       <p className="text-sm text-gray-900">{worker.city || 'Not specified'}</p>
+                    </div>
+                    
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">DBS Status</p>
+                      <DBSStatusBadge verification={worker.dbsVerification} showDetails={false} />
                     </div>
                   </div>
                   

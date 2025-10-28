@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { apiClient } from '@/lib/api';
-import { Assignment, Worker } from '@/lib/api';
-import { saveJob } from '@/lib/api';
+import { apiClient } from '@/demo/func/api';
+import { Assignment, Worker } from '@/demo/func/api';
 import { useAuth } from '@/hooks/useAuth';
+import DBSStatusBadge from '@/components/DBSStatusBadge';
 
 interface StaffingStats {
   totalRequests: number;
@@ -349,18 +349,21 @@ export default function StaffingPage() {
                   <h3 className="text-lg font-medium text-gray-900 mb-4">Top Workers</h3>
                   <div className="space-y-3">
                     {workers.slice(0, 5).map((worker) => (
-                      <div key={worker.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                        <div>
+                      <div key={worker.id} className="p-4 border border-gray-200 rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
                           <p className="text-sm font-medium text-gray-900">
                             {worker.firstName} {worker.lastName}
                           </p>
+                          <DBSStatusBadge verification={worker.dbsVerification} showDetails={false} />
+                        </div>
+                        <div className="flex items-center justify-between">
                           <p className="text-xs text-gray-500">
                             {worker.skills.join(', ')} • Experience details available
                           </p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <span className="text-sm font-medium text-gray-900">{worker.rating}/5</span>
-                          <span className="text-xs text-gray-500">({worker.completedJobs} jobs)</span>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-sm font-medium text-gray-900">{worker.rating}/5</span>
+                            <span className="text-xs text-gray-500">({worker.completedJobs} jobs)</span>
+                          </div>
                         </div>
                       </div>
                     ))}

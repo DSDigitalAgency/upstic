@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { apiClient } from '@/demo/func/api';
 import type { Worker } from '@/demo/func/api';
 import DocumentViewer from '@/components/DocumentViewer';
+import DBSStatusBadge from '@/components/DBSStatusBadge';
 
 interface WorkerApplication extends Worker {
   applicationStatus: 'pending' | 'approved' | 'rejected';
@@ -415,6 +416,13 @@ export default function WorkerApplicationDetailsPage() {
               <p className="text-sm font-medium text-gray-500">Submitted</p>
               <p className="text-sm text-gray-900">{formatDate(application.submittedAt)}</p>
             </div>
+            
+            <div className="md:col-span-2">
+              <p className="text-sm font-medium text-gray-500">DBS Verification Status</p>
+              <div className="mt-2">
+                <DBSStatusBadge verification={application.dbsVerification} showDetails={false} />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -477,6 +485,14 @@ export default function WorkerApplicationDetailsPage() {
                       <p className="text-sm font-medium text-gray-500">Description</p>
                       <p className="text-sm text-gray-900">{work.description}</p>
                     </div>
+                    
+                    {/* DBS Verification for this work entry */}
+                    {work.dbsVerificationResult && (
+                      <div className="md:col-span-2 mt-2">
+                        <p className="text-sm font-medium text-gray-500 mb-2">DBS Check Status</p>
+                        <DBSStatusBadge verification={work.dbsVerificationResult} showDetails={true} />
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

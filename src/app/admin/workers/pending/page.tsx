@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { apiClient } from '@/demo/func/api';
 import type { Worker } from '@/demo/func/api';
 import { LoadingButton } from '@/components/ui/loading-button';
+import DBSStatusBadge from '@/components/DBSStatusBadge';
 
 export default function PendingWorkers() {
   const [pendingWorkers, setPendingWorkers] = useState<Worker[]>([]);
@@ -167,6 +168,14 @@ export default function PendingWorkers() {
                   </div>
                 </div>
               </div>
+
+              {/* DBS Verification Status */}
+              {worker.dbsVerification && (
+                <div className="mb-4">
+                  <h4 className="font-medium text-gray-900 mb-2">DBS Verification Status</h4>
+                  <DBSStatusBadge verification={worker.dbsVerification} showDetails={true} />
+                </div>
+              )}
 
               {worker.emergencyContact && (
                 <div className="mb-4">

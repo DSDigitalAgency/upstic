@@ -42,6 +42,7 @@ interface OnboardingData {
     dbsPosition?: string;
     dbsExpiryDate?: string;
     dbsCheckDate?: string;
+    dbsVerificationResult?: any;
   }>;
   
   // Skills & Certifications
@@ -136,6 +137,10 @@ export default function WorkerOnboarding() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showAdditionalDocuments, setShowAdditionalDocuments] = useState(false);
+  
+  // DBS verification state
+  const [dbsVerificationResults, setDbsVerificationResults] = useState<Record<number, any>>({});
+  const [verifyingDBS, setVerifyingDBS] = useState<Record<number, boolean>>({});
   
   // Auto-fill form with resume data when available
   useEffect(() => {
@@ -534,6 +539,71 @@ export default function WorkerOnboarding() {
     }));
   };
 
+  // DBS verification handler
+  const handleDBSVerification = async (index: number) => {
+    const work = formData.workHistory[index];
+    
+    if (!work.dbsNumber) {
+      alert('Please enter a DBS certificate number first');
+      return;
+    }
+
+    if (!formData.dateOfBirth) {
+      alert('Please enter your date of birth in Step 1 first');
+      return;
+    }
+
+    setVerifyingDBS(prev => ({ ...prev, [index]: true }));
+
+    try {
+      // Parse date of birth
+      const dob = formData.dateOfBirth;
+      const [year, month, day] = dob.split('-');
+
+      const response = await fetch('/api/dbs-verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          certificateNumber: work.dbsNumber,
+          applicantSurname: formData.lastName.toUpperCase(),
+          dob: {
+            day: day || '',
+            month: month || '',
+            year: year || ''
+          }
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        setDbsVerificationResults(prev => ({ 
+          ...prev, 
+          [index]: result.data 
+        }));
+        
+        // Auto-fill DBS information from verification result
+        if (result.data.structured) {
+          const verificationData = result.data.structured;
+          updateWorkHistory(index, 'dbsPosition', verificationData.personName || work.dbsPosition);
+          
+          // Update expiry date if available from certificate print date
+          if (verificationData.certificatePrintDate) {
+            const printDate = verificationData.certificatePrintDate.split('/').reverse().join('-');
+            updateWorkHistory(index, 'dbsCheckDate', printDate);
+          }
+        }
+      } else {
+        alert(result.error || 'Failed to verify DBS certificate');
+      }
+    } catch (error) {
+      console.error('DBS verification error:', error);
+      alert('Failed to verify DBS certificate. Please try again.');
+    } finally {
+      setVerifyingDBS(prev => ({ ...prev, [index]: false }));
+    }
+  };
+
   const handleNext = () => {
     if (currentStep < 9) {
       setCurrentStep(currentStep + 1);
@@ -552,6 +622,15 @@ export default function WorkerOnboarding() {
     setIsSubmitting(true);
     try {
       // Create worker profile with all the new data
+      // Include DBS verification results in work history
+      const workHistoryWithVerification = formData.workHistory.map((work, index) => ({
+        ...work,
+        dbsVerificationResult: dbsVerificationResults[index] || null
+      }));
+
+      // Get the most recent DBS verification from work history (if any)
+      const latestDBSVerification = Object.values(dbsVerificationResults).find(result => result);
+
       const workerData = {
         id: `worker_${Date.now()}`,
         userId: user.id,
@@ -566,7 +645,8 @@ export default function WorkerOnboarding() {
         zipCode: formData.zipCode,
         nationalInsurance: formData.nationalInsurance,
         education: formData.education,
-        workHistory: formData.workHistory,
+        workHistory: workHistoryWithVerification,
+        dbsVerification: latestDBSVerification || null,
         skills: formData.skills.split(',').map(skill => skill.trim()),
         certifications: formData.certifications,
         licenses: formData.licenses,
@@ -1048,12 +1128,31 @@ export default function WorkerOnboarding() {
                   onChange={(e) => updateWorkHistory(index, 'description', e.target.value)}
                   placeholder="e.g., Responsibilities, achievements"
                 />
-                <Input
-                  label="DBS Number (if applicable)"
-                  value={work.dbsNumber}
-                  onChange={(e) => updateWorkHistory(index, 'dbsNumber', e.target.value)}
-                  placeholder="e.g., 123456789"
-                />
+                <div className="space-y-2">
+                  <Input
+                    label="DBS Number (if applicable)"
+                    value={work.dbsNumber}
+                    onChange={(e) => updateWorkHistory(index, 'dbsNumber', e.target.value)}
+                    placeholder="e.g., 123456789"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleDBSVerification(index)}
+                    disabled={verifyingDBS[index] || !work.dbsNumber}
+                    className="w-full px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {verifyingDBS[index] ? (
+                      <span className="flex items-center justify-center">
+                        <svg className="animate-spin h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Verifying...
+                      </span>
+                    ) : (
+                      'Verify DBS Certificate'
+                    )}
+                  </button>
+                </div>
                 <Input
                   label="DBS Position"
                   value={work.dbsPosition}
@@ -1072,6 +1171,61 @@ export default function WorkerOnboarding() {
                   value={work.dbsCheckDate}
                   onChange={(e) => updateWorkHistory(index, 'dbsCheckDate', e.target.value)}
                 />
+                
+                {/* DBS Verification Results */}
+                {dbsVerificationResults[index] && (
+                  <div className="col-span-full">
+                    <div className={`mt-4 p-4 rounded-lg border ${
+                      dbsVerificationResults[index].structured?.outcome === 'clear_and_current' 
+                        ? 'bg-green-50 border-green-200' 
+                        : dbsVerificationResults[index].structured?.outcome === 'current'
+                        ? 'bg-blue-50 border-blue-200'
+                        : 'bg-yellow-50 border-yellow-200'
+                    }`}>
+                      <div className="flex items-start">
+                        {dbsVerificationResults[index].structured?.outcome === 'clear_and_current' ? (
+                          <svg className="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                        ) : (
+                          <svg className="w-5 h-5 text-blue-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                        <div className="flex-1">
+                          <h4 className={`font-medium ${
+                            dbsVerificationResults[index].structured?.outcome === 'clear_and_current' 
+                              ? 'text-green-800' 
+                              : 'text-blue-800'
+                          }`}>
+                            DBS Certificate Verified
+                          </h4>
+                          <p className="text-sm text-gray-700 mt-1">
+                            {dbsVerificationResults[index].structured?.outcomeText || 'Verification completed'}
+                          </p>
+                          <div className="mt-2 text-xs text-gray-600 space-y-1">
+                            {dbsVerificationResults[index].structured?.personName && (
+                              <p><strong>Person:</strong> {dbsVerificationResults[index].structured.personName}</p>
+                            )}
+                            {dbsVerificationResults[index].structured?.certificateNumber && (
+                              <p><strong>Certificate Number:</strong> {dbsVerificationResults[index].structured.certificateNumber}</p>
+                            )}
+                            {dbsVerificationResults[index].structured?.certificatePrintDate && (
+                              <p><strong>Print Date:</strong> {dbsVerificationResults[index].structured.certificatePrintDate}</p>
+                            )}
+                            <p className={`font-medium ${
+                              dbsVerificationResults[index].structured?.outcome === 'clear_and_current' 
+                                ? 'text-green-600' 
+                                : 'text-blue-600'
+                            }`}>
+                              Status: {dbsVerificationResults[index].structured?.outcome === 'clear_and_current' ? 'Clear and Current' : 'Current'}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           ))}
