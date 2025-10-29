@@ -28,6 +28,7 @@ export async function POST(request: NextRequest) {
       references: workerData.references || [],
       emergencyContact: workerData.emergencyContact,
       bankDetails: workerData.bankDetails,
+      dbsVerification: workerData.dbsVerification || null,
       documents: workerData.documents || { cv: null, rightToWork: null, certificateOfSponsorship: null, proofOfAddress: null, qualificationCertificates: null, dbsCertificate: null, dbsUpdateService: null, immunizationRecords: null, occupationalHealth: null, photo: null },
       declarations: workerData.declarations || { gdprConsent: false, workPolicies: false, dataProcessing: false, backgroundCheck: false, healthDeclaration: false, termsAccepted: false },
       preferences: workerData.preferences || { preferredShifts: [], preferredLocations: [], hourlyRate: '0', maxTravelDistance: 50, notifications: { email: true, sms: false, push: true } },
