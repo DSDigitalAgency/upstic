@@ -814,7 +814,7 @@
     "rating": 0,
     "completedJobs": 0,
     "createdAt": "2025-08-07T12:44:41.741Z",
-    "updatedAt": "2025-08-07T12:44:41.741Z"
+    "updatedAt": "2025-10-31T15:27:48.967Z"
   },
   {
     "id": "worker_1754573265070",
@@ -1719,5 +1719,153 @@
     "completedJobs": 0,
     "createdAt": "2025-08-07T20:28:40.987Z",
     "updatedAt": "2025-08-07T20:28:40.987Z"
+  },
+  {
+    "id": "worker_1761923962547",
+    "userId": "user_1761920766841",
+    "email": "test@worker22.com",
+    "firstName": "ADEROJU",
+    "lastName": "KUJU",
+    "phone": "1234567890",
+    "dateOfBirth": "1994-05-27",
+    "address": "sadfsdf sdf ",
+    "city": "sdfsdf d",
+    "state": "sdf sdf ",
+    "zipCode": "505050",
+    "nationalInsurance": "ab12346c",
+    "education": [
+      {
+        "degree": "sdf sdfsd",
+        "institution": "sdfsdsd",
+        "graduationYear": "2020",
+        "fieldOfStudy": "dsfsdf"
+      }
+    ],
+    "workHistory": [
+      {
+        "employer": "sdfsdf ",
+        "position": "dfsdf",
+        "location": "1sdf",
+        "startDate": "2025-09-29",
+        "endDate": "",
+        "isCurrent": true,
+        "description": "sdfsdf s",
+        "dbsNumber": "001913551408",
+        "dbsPosition": "ADEROJU KUJU",
+        "dbsExpiryDate": "",
+        "dbsCheckDate": "2025-02-13",
+        "dbsVerificationResult": {
+          "ok": true,
+          "structured": {
+            "personName": "ADEROJU KUJU",
+            "dateOfBirth": "27/05/1994",
+            "certificateNumber": "001913551408",
+            "certificatePrintDate": "13/02/2025",
+            "outcomeText": "This Certificate did not reveal any information and remains current as no further information has been identified since its issue.",
+            "outcome": "clear_and_current"
+          },
+          "verificationDate": "2025-10-31T15:17:55.551Z"
+        }
+      }
+    ],
+    "skills": [
+      "sdfsdfs"
+    ],
+    "certifications": [
+      {
+        "name": "sdfsdf",
+        "issuingBody": "sdfsdf",
+        "issueDate": "2025-10-09",
+        "expiryDate": "2025-10-28",
+        "certificateNumber": "sdfsdf",
+        "certificateFile": "/uploads/documents/worker_1761923962547/certification_1761923963458.docx"
+      }
+    ],
+    "licenses": [
+      {
+        "name": "sdfsd f",
+        "issuingBody": "sdfsd f",
+        "issueDate": "2025-10-08",
+        "expiryDate": "2025-11-04",
+        "licenseNumber": "sdfsdf",
+        "licenseFile": "/uploads/documents/worker_1761923962547/certification_1761923963535.docx"
+      }
+    ],
+    "references": [
+      {
+        "name": "sdfsdf",
+        "relationship": "sdfsdf",
+        "company": "sdfsdf",
+        "position": "sdfsdf",
+        "email": "sdfsdf@gmail.com",
+        "phone": "dfsdfsd",
+        "isProfessional": true,
+        "yearsKnown": "s"
+      }
+    ],
+    "emergencyContact": {
+      "name": "sdfsdf",
+      "relationship": "sdfsf",
+      "phone": "sdfsdf",
+      "email": "sdfsdf@gmail.com"
+    },
+    "bankDetails": {
+      "bankName": "sdfsdf",
+      "accountNumber": "sdfsdf",
+      "routingNumber": "sdfsdf",
+      "accountType": "sdfsdf"
+    },
+    "dbsVerification": {
+      "ok": true,
+      "structured": {
+        "personName": "ADEROJU KUJU",
+        "dateOfBirth": "27/05/1994",
+        "certificateNumber": "001913551408",
+        "certificatePrintDate": "13/02/2025",
+        "outcomeText": "This Certificate did not reveal any information and remains current as no further information has been identified since its issue.",
+        "outcome": "clear_and_current"
+      },
+      "verificationDate": "2025-10-31T15:17:55.551Z"
+    },
+    "documents": {
+      "cv": "/uploads/documents/worker_1761923962547/compliance_1761923963064.docx",
+      "rightToWork": "/uploads/documents/worker_1761923962547/compliance_1761923963218.docx",
+      "certificateOfSponsorship": null,
+      "proofOfAddress": "/uploads/documents/worker_1761923962547/compliance_1761923963297.docx",
+      "qualificationCertificates": null,
+      "dbsCertificate": null,
+      "dbsUpdateService": null,
+      "immunizationRecords": null,
+      "occupationalHealth": null,
+      "photo": "/uploads/documents/worker_1761923962547/compliance_1761923963370.jpeg"
+    },
+    "declarations": {
+      "gdprConsent": true,
+      "workPolicies": true,
+      "dataProcessing": true,
+      "backgroundCheck": true,
+      "healthDeclaration": true,
+      "termsAccepted": true
+    },
+    "preferences": {
+      "preferredShifts": [
+        "Weekend"
+      ],
+      "preferredLocations": [
+        "South London"
+      ],
+      "hourlyRate": "376",
+      "maxTravelDistance": 50,
+      "notifications": {
+        "email": true,
+        "sms": false,
+        "push": true
+      }
+    },
+    "status": "pending",
+    "rating": 0,
+    "completedJobs": 0,
+    "createdAt": "2025-10-31T15:19:22.547Z",
+    "updatedAt": "2025-10-31T15:19:22.547Z"
   }
 ]

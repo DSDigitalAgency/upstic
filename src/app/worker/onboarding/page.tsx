@@ -558,7 +558,19 @@ export default function WorkerOnboarding() {
     try {
       // Parse date of birth
       const dob = formData.dateOfBirth;
+      if (!dob || typeof dob !== 'string') {
+        alert('Please enter a valid date of birth in Step 1 first');
+        setVerifyingDBS(prev => ({ ...prev, [index]: false }));
+        return;
+      }
+
       const [year, month, day] = dob.split('-');
+      
+      if (!year || !month || !day) {
+        alert('Date of birth format is invalid. Please use YYYY-MM-DD format.');
+        setVerifyingDBS(prev => ({ ...prev, [index]: false }));
+        return;
+      }
 
       const response = await fetch('/api/dbs-verify', {
         method: 'POST',
@@ -574,27 +586,59 @@ export default function WorkerOnboarding() {
         })
       });
 
-      const result = await response.json();
+      let result;
+      try {
+        result = await response.json();
+      } catch (jsonError) {
+        console.error('Failed to parse DBS verification response:', jsonError);
+        alert('Failed to verify DBS certificate. Please try again.');
+        return;
+      }
+
+      if (!response.ok) {
+        let errorMessage = result.error || `Server error: ${response.status}`;
+        let details = result.details ? `\n\nDetails: ${result.details}` : '';
+        
+        // Provide helpful message for service unavailable (503)
+        if (response.status === 503) {
+          errorMessage = 'DBS Verification Service Unavailable';
+          details = '\n\nThe DBS verification service is currently not available. Please:\n' +
+                   '1. Ensure the DBS service is running, or\n' +
+                   '2. Contact support if this issue persists.';
+        }
+        
+        alert(`${errorMessage}${details}`);
+        return;
+      }
 
       if (result.success && result.data) {
+        // Store the verification result (even if verification failed)
         setDbsVerificationResults(prev => ({ 
           ...prev, 
           [index]: result.data 
         }));
         
-        // Auto-fill DBS information from verification result
-        if (result.data.structured) {
-          const verificationData = result.data.structured;
-          updateWorkHistory(index, 'dbsPosition', verificationData.personName || work.dbsPosition);
-          
-          // Update expiry date if available from certificate print date
-          if (verificationData.certificatePrintDate) {
-            const printDate = verificationData.certificatePrintDate.split('/').reverse().join('-');
-            updateWorkHistory(index, 'dbsCheckDate', printDate);
+        // If verification failed, show the error message
+        if (result.data.ok === false) {
+          const errorMsg = result.data.error || 'DBS verification failed';
+          alert(`DBS Verification Failed\n\n${errorMsg}\n\nPlease check the certificate number, surname, and date of birth.`);
+        } else {
+          // Verification succeeded - auto-fill DBS information
+          if (result.data.structured) {
+            const verificationData = result.data.structured;
+            updateWorkHistory(index, 'dbsPosition', verificationData.personName || work.dbsPosition);
+            
+            // Update expiry date if available from certificate print date
+            if (verificationData.certificatePrintDate) {
+              const printDate = verificationData.certificatePrintDate.split('/').reverse().join('-');
+              updateWorkHistory(index, 'dbsCheckDate', printDate);
+            }
           }
         }
       } else {
-        alert(result.error || 'Failed to verify DBS certificate');
+        const errorMessage = result.error || 'Failed to verify DBS certificate';
+        const details = result.details ? `\n\nDetails: ${result.details}` : '';
+        alert(`${errorMessage}${details}`);
       }
     } catch (error) {
       console.error('DBS verification error:', error);
@@ -1175,55 +1219,80 @@ export default function WorkerOnboarding() {
                 {/* DBS Verification Results */}
                 {dbsVerificationResults[index] && (
                   <div className="col-span-full">
-                    <div className={`mt-4 p-4 rounded-lg border ${
-                      dbsVerificationResults[index].structured?.outcome === 'clear_and_current' 
-                        ? 'bg-green-50 border-green-200' 
-                        : dbsVerificationResults[index].structured?.outcome === 'current'
-                        ? 'bg-blue-50 border-blue-200'
-                        : 'bg-yellow-50 border-yellow-200'
-                    }`}>
-                      <div className="flex items-start">
-                        {dbsVerificationResults[index].structured?.outcome === 'clear_and_current' ? (
-                          <svg className="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                        ) : (
-                          <svg className="w-5 h-5 text-blue-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                          </svg>
-                        )}
-                        <div className="flex-1">
-                          <h4 className={`font-medium ${
-                            dbsVerificationResults[index].structured?.outcome === 'clear_and_current' 
-                              ? 'text-green-800' 
-                              : 'text-blue-800'
-                          }`}>
-                            DBS Certificate Verified
-                          </h4>
-                          <p className="text-sm text-gray-700 mt-1">
-                            {dbsVerificationResults[index].structured?.outcomeText || 'Verification completed'}
-                          </p>
-                          <div className="mt-2 text-xs text-gray-600 space-y-1">
-                            {dbsVerificationResults[index].structured?.personName && (
-                              <p><strong>Person:</strong> {dbsVerificationResults[index].structured.personName}</p>
-                            )}
-                            {dbsVerificationResults[index].structured?.certificateNumber && (
-                              <p><strong>Certificate Number:</strong> {dbsVerificationResults[index].structured.certificateNumber}</p>
-                            )}
-                            {dbsVerificationResults[index].structured?.certificatePrintDate && (
-                              <p><strong>Print Date:</strong> {dbsVerificationResults[index].structured.certificatePrintDate}</p>
-                            )}
-                            <p className={`font-medium ${
+                    {/* Show success message only if verification passed (ok: true) */}
+                    {dbsVerificationResults[index].ok !== false && dbsVerificationResults[index].structured?.outcome ? (
+                      <div className={`mt-4 p-4 rounded-lg border ${
+                        dbsVerificationResults[index].structured?.outcome === 'clear_and_current' 
+                          ? 'bg-green-50 border-green-200' 
+                          : dbsVerificationResults[index].structured?.outcome === 'current'
+                          ? 'bg-blue-50 border-blue-200'
+                          : 'bg-yellow-50 border-yellow-200'
+                      }`}>
+                        <div className="flex items-start">
+                          {dbsVerificationResults[index].structured?.outcome === 'clear_and_current' ? (
+                            <svg className="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                          ) : (
+                            <svg className="w-5 h-5 text-blue-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                            </svg>
+                          )}
+                          <div className="flex-1">
+                            <h4 className={`font-medium ${
                               dbsVerificationResults[index].structured?.outcome === 'clear_and_current' 
-                                ? 'text-green-600' 
-                                : 'text-blue-600'
+                                ? 'text-green-800' 
+                                : 'text-blue-800'
                             }`}>
-                              Status: {dbsVerificationResults[index].structured?.outcome === 'clear_and_current' ? 'Clear and Current' : 'Current'}
+                              DBS Certificate Verified
+                            </h4>
+                            <p className="text-sm text-gray-700 mt-1">
+                              {dbsVerificationResults[index].structured?.outcomeText || 'Verification completed'}
                             </p>
+                            <div className="mt-2 text-xs text-gray-600 space-y-1">
+                              {dbsVerificationResults[index].structured?.personName && (
+                                <p><strong>Person:</strong> {dbsVerificationResults[index].structured.personName}</p>
+                              )}
+                              {dbsVerificationResults[index].structured?.certificateNumber && (
+                                <p><strong>Certificate Number:</strong> {dbsVerificationResults[index].structured.certificateNumber}</p>
+                              )}
+                              {dbsVerificationResults[index].structured?.certificatePrintDate && (
+                                <p><strong>Print Date:</strong> {dbsVerificationResults[index].structured.certificatePrintDate}</p>
+                              )}
+                              <p className={`font-medium ${
+                                dbsVerificationResults[index].structured?.outcome === 'clear_and_current' 
+                                  ? 'text-green-600' 
+                                  : 'text-blue-600'
+                              }`}>
+                                Status: {dbsVerificationResults[index].structured?.outcome === 'clear_and_current' ? 'Clear and Current' : 'Current'}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    ) : (
+                      /* Show error message if verification failed */
+                      <div className="mt-4 p-4 rounded-lg border bg-red-50 border-red-200">
+                        <div className="flex items-start">
+                          <svg className="w-5 h-5 text-red-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                          </svg>
+                          <div className="flex-1">
+                            <h4 className="font-medium text-red-800">
+                              DBS Verification Failed
+                            </h4>
+                            <p className="text-sm text-gray-700 mt-1">
+                              {dbsVerificationResults[index].error || 'The certificate details do not match our records. Please verify the certificate number, surname, and date of birth.'}
+                            </p>
+                            {work.dbsNumber && (
+                              <p className="text-xs text-gray-600 mt-2">
+                                <strong>Submitted Certificate Number:</strong> {work.dbsNumber}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

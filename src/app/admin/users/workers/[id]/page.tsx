@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { apiClient, Worker } from '@/lib/api';
+import { apiClient, Worker } from '@/demo/func/api';
 
 export default function EditWorkerPage() {
   const router = useRouter();
@@ -17,18 +17,21 @@ export default function EditWorkerPage() {
     if (id) {
       const fetchWorker = async () => {
         setIsLoading(true);
-        const response = await apiClient.getWorkers();
-        if (response.success && response.data) {
-          const worker = response.data.items.find(w => w.id === id);
-          if (worker) {
-            setWorker(worker);
+        setError(null);
+        try {
+          // Fetch worker by ID
+          const response = await apiClient.getWorker(id);
+          if (response.success && response.data) {
+            setWorker(response.data);
           } else {
-            setError('Worker not found');
+            setError(response.error || 'Worker not found');
           }
-        } else {
+        } catch (err) {
+          console.error('Error fetching worker:', err);
           setError('Failed to fetch worker data.');
+        } finally {
+          setIsLoading(false);
         }
-        setIsLoading(false);
       };
       fetchWorker();
     }
