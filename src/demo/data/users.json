@@ -48,5 +48,18 @@
     "password": "$2b$12$qQTRgGJrm7HnlN/gCTZkBOfyPYg2hH2GBOfVZTX.INkRcxwS0gWna",
     "createdAt": "2025-01-27T00:00:00.000Z",
     "updatedAt": "2025-01-27T00:00:00.000Z"
+  },
+  {
+    "id": "user_1761990236735",
+    "email": "test@worker1.com",
+    "username": "testworker1",
+    "firstName": "test",
+    "lastName": "worker",
+    "phone": "1234567890",
+    "role": "worker",
+    "password": "$2b$12$aQY6.a6S2hALDrubCZrUN.GsGPnCNJFNqpSVchfsdXIg8rCtNOs.u",
+    "resumeUrl": "/uploads/resumes/resume_1761990236734_Sarah Thompson.docx",
+    "createdAt": "2025-11-01T09:43:56.735Z",
+    "updatedAt": "2025-11-01T09:43:56.735Z"
   }
 ]

@@ -159,11 +159,12 @@ export async function POST(request: NextRequest) {
     });
 
     // Call the DBS verification API
-    // Check if raw format is requested (for simpler response)
-    const useRawFormat = request.nextUrl.searchParams.get('raw') === '1' || 
-                         body.raw === true;
+    // Default to raw format for simpler response (can be overridden with ?raw=0 or body.raw=false)
+    const forceFullFormat = request.nextUrl.searchParams.get('raw') === '0' || body.raw === false;
+    const useRawFormat = !forceFullFormat; // Default to true (raw format)
     
     // Always use production API
+    // Use raw format by default as that's what the API returns
     const apiUrl = useRawFormat ? `${PRODUCTION_DBS_API_URL}?raw=1` : PRODUCTION_DBS_API_URL;
     
     console.log('Calling DBS API:', apiUrl, useRawFormat ? '(raw format)' : '(full format)');
@@ -237,16 +238,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // If DBS API returned ok: false, this is a verification failure, not an HTTP error
-    // Return it as a successful API call with verification failure
-    if (data.ok === false || !data.ok) {
-      console.log('DBS Verification failed:', data.error || 'Verification failed');
+    // Check if the external API explicitly returned ok: false or if ok is missing/undefined
+    // This is a verification failure, not an HTTP error - return it as a successful API call with verification failure
+    if (data.ok === false || data.ok === undefined || data.ok === null) {
+      console.log('DBS Verification failed - ok field is false, undefined, or null:', {
+        ok: data.ok,
+        error: data.error,
+        hasStructured: !!data.structured
+      });
       return NextResponse.json({
         success: true,
         data: {
           ok: false,
           structured: data.structured || null,
-          error: data.error || 'Verification failed',
+          error: data.error || 'Verification failed - certificate details could not be verified',
           verificationDate: new Date().toISOString(),
         }
       });
@@ -264,54 +269,89 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Log the raw response for debugging
+    console.log('Raw API Response:', JSON.stringify(data, null, 2));
+    
+    // At this point, we know data.ok === true (we would have returned early otherwise)
     // Normalize the response - handle both full format and raw format
     let normalizedData: any;
     
-    if (useRawFormat || !data.structured) {
-      // Raw format or fields at top level
+    // Check if response has structured object (full format) or fields at top level (raw format)
+    // Prioritize structured object if it exists, regardless of useRawFormat flag
+    const hasStructuredObject = data.structured && typeof data.structured === 'object' && !Array.isArray(data.structured) && Object.keys(data.structured).length > 0;
+    const hasTopLevelFields = (data.personName !== undefined && data.personName !== '') || 
+                              (data.dateOfBirth !== undefined && data.dateOfBirth !== '') || 
+                              (data.certificateNumber !== undefined && data.certificateNumber !== '');
+    
+    if (hasStructuredObject) {
+      // Full format with nested structured object (even if raw=1 was requested, API might return structured)
+      console.log('Using structured object from response');
       normalizedData = {
-        ok: data.ok !== false,
+        ok: false, // Will be set to true only after all validations pass
+        structured: data.structured,
+        verificationDate: new Date().toISOString(),
+      };
+    } else if (hasTopLevelFields) {
+      // Raw format with fields at top level
+      console.log('Using top-level fields from response (raw format)');
+      // DO NOT use fallback values - if the API didn't return them, it means verification failed
+      normalizedData = {
+        ok: false, // Will be set to true only after all validations pass
         structured: {
-          personName: data.personName || '',
-          dateOfBirth: data.dateOfBirth || '',
-          certificateNumber: data.certificateNumber || verifyPayload.certificateNumber,
-          certificatePrintDate: data.certificatePrintDate || '',
+          personName: data.personName || '', // Empty string if not present
+          dateOfBirth: data.dateOfBirth || '', // Empty string if not present
+          certificateNumber: data.certificateNumber || '', // Empty string if not present - DO NOT use fallback
+          certificatePrintDate: data.certificatePrintDate || '', // Empty string if not present
           outcomeText: data.outcomeText || '',
           outcome: data.outcome || 'error'
         },
         verificationDate: new Date().toISOString(),
       };
     } else {
-      // Full format with nested structured object
+      // No structured data found - verification failed
+      console.log('No structured data found in response - verification failed');
       normalizedData = {
-        ok: data.ok !== false,
-        structured: data.structured || {},
+        ok: false,
+        structured: null,
         verificationDate: new Date().toISOString(),
       };
     }
+    
+    console.log('Normalized data:', JSON.stringify(normalizedData, null, 2));
 
     // Validate that we got proper verification details
-    // If verification fails, we typically don't get structured details with outcome
+    // Even if external API returned ok: true, we need to verify the data is actually valid
     const hasStructuredData = normalizedData.structured && Object.keys(normalizedData.structured).length > 0;
     const hasOutcome = normalizedData.structured?.outcome && 
                        ['clear_and_current', 'current', 'not_current'].includes(normalizedData.structured.outcome);
     const hasCertificateNumber = normalizedData.structured?.certificateNumber && 
                                  normalizedData.structured.certificateNumber.trim() !== '';
+    
+    // Critical: personName and dateOfBirth must be non-empty for a valid verification
+    // If these are empty, it means the verification didn't find a match for the submitted details
+    const hasPersonName = normalizedData.structured?.personName && 
+                          normalizedData.structured.personName.trim() !== '';
+    const hasDateOfBirth = normalizedData.structured?.dateOfBirth && 
+                           normalizedData.structured.dateOfBirth.trim() !== '';
 
-    // If we don't have proper details (outcome, certificate number), verification failed
-    if (!hasStructuredData || !hasOutcome || !hasCertificateNumber) {
-      console.log('DBS Verification failed - missing verification details:', {
+    // If we don't have proper details (outcome, certificate number, personName, dateOfBirth), verification failed
+    // This can happen even if external API returned ok: true but with incomplete data
+    if (!hasStructuredData || !hasOutcome || !hasCertificateNumber || !hasPersonName || !hasDateOfBirth) {
+      console.log('DBS Verification failed - missing verification details even though ok was true:', {
         hasStructuredData,
         hasOutcome,
         hasCertificateNumber,
-        structured: normalizedData.structured
+        hasPersonName,
+        hasDateOfBirth,
+        structured: normalizedData.structured,
+        externalOk: data.ok
       });
       return NextResponse.json({
         success: true,
         data: {
           ok: false,
           structured: null,
-          error: data.error || 'Verification failed - certificate details could not be verified',
+          error: data.error || 'Verification failed - certificate details do not match. Please verify the certificate number, surname, and date of birth.',
           verificationDate: new Date().toISOString(),
         }
       });
@@ -342,7 +382,32 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // Validate that the returned personName contains the submitted surname
+    // This ensures the verification actually matched the person we're checking
+    const returnedPersonName = normalizedData.structured?.personName || '';
+    const submittedSurname = verifyPayload.applicantSurname.trim().toUpperCase();
+    const normalizedPersonName = returnedPersonName.trim().toUpperCase();
+    
+    // Check if the person name contains the surname (case-insensitive)
+    // This handles cases like "ADEROJU KUJU" matching "KUJU"
+    if (!normalizedPersonName.includes(submittedSurname)) {
+      console.log('Surname mismatch in person name:', {
+        submittedSurname,
+        returnedPersonName: normalizedPersonName
+      });
+      return NextResponse.json({
+        success: true,
+        data: {
+          ok: false,
+          structured: normalizedData.structured,
+          error: `Verification failed - the returned person name does not match the submitted surname. Please verify the certificate number, surname, and date of birth.`,
+          verificationDate: new Date().toISOString(),
+        }
+      });
+    }
+
     // All validations passed - verification is successful
+    // Only set to true if we explicitly have valid verification data
     normalizedData.ok = true;
 
     // Return the verification result

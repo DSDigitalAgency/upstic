@@ -1220,7 +1220,7 @@ export default function WorkerOnboarding() {
                 {dbsVerificationResults[index] && (
                   <div className="col-span-full">
                     {/* Show success message only if verification passed (ok: true) */}
-                    {dbsVerificationResults[index].ok !== false && dbsVerificationResults[index].structured?.outcome ? (
+                    {dbsVerificationResults[index].ok === true && dbsVerificationResults[index].structured?.outcome ? (
                       <div className={`mt-4 p-4 rounded-lg border ${
                         dbsVerificationResults[index].structured?.outcome === 'clear_and_current' 
                           ? 'bg-green-50 border-green-200' 
