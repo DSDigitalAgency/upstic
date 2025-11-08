@@ -19,6 +19,65 @@ export interface DBSVerificationResult {
     outcome: 'clear_and_current' | 'current' | 'not_current';
   };
   verificationDate: string;
+  error?: string;
+}
+
+export interface OfqualVerificationResult {
+  ok: boolean;
+  qualification?: any;
+  verificationDate: string;
+  error?: string;
+}
+
+export interface DBSUpdateServiceResult {
+  ok: boolean;
+  format: 'html' | 'pdf';
+  certificateNumber: string;
+  status: string;
+  verificationDate: string;
+  message?: string;
+  error?: string;
+}
+
+export interface ProfessionalRegisterResult {
+  ok: boolean;
+  source: string;
+  registrationNumber: string;
+  status: string;
+  verificationDate: string;
+  registerUrl?: string;
+  details?: {
+    name?: string;
+    registrationStatus: string;
+    expiryDate?: string | null;
+  };
+  error?: string;
+}
+
+export interface RTWVerificationResult {
+  ok: boolean;
+  shareCode: string;
+  dateOfBirth: string;
+  status: string;
+  verificationDate: string;
+  details?: {
+    workStatus: string;
+    expiryDate?: string | null;
+  };
+  error?: string;
+}
+
+export interface ECSVerificationResult {
+  ok: boolean;
+  shareCode: string;
+  dateOfBirth: string;
+  status: string;
+  verificationDate: string;
+  details?: {
+    workStatus: string;
+    expiryDate?: string | null;
+  };
+  error?: string;
 }
 
 export interface Worker {
@@ -35,6 +94,13 @@ export interface Worker {
   zipCode?: string;
   nationalInsurance?: string;
   dbsVerification?: DBSVerificationResult;
+  verifications?: {
+    ofqual?: OfqualVerificationResult[];
+    dbsUpdateService?: DBSUpdateServiceResult;
+    professionalRegisters?: ProfessionalRegisterResult[];
+    rightToWork?: RTWVerificationResult;
+    ecs?: ECSVerificationResult;
+  };
   education?: Array<{
     degree: string;
     institution: string;
@@ -63,6 +129,8 @@ export interface Worker {
     expiryDate: string;
     certificateNumber: string;
     certificateFile?: string | null;
+    ofqualVerification?: OfqualVerificationResult;
+    professionalRegisterVerification?: ProfessionalRegisterResult;
   }>;
   licenses?: Array<{
     name: string;
@@ -71,6 +139,7 @@ export interface Worker {
     expiryDate: string;
     licenseNumber: string;
     licenseFile?: string | null;
+    professionalRegisterVerification?: ProfessionalRegisterResult;
   }>;
   references?: Array<{
     name: string;

@@ -61,5 +61,31 @@
     "resumeUrl": "/uploads/resumes/resume_1761990236734_Sarah Thompson.docx",
     "createdAt": "2025-11-01T09:43:56.735Z",
     "updatedAt": "2025-11-01T09:43:56.735Z"
+  },
+  {
+    "id": "user_1762584353086",
+    "email": "test@worker2.com",
+    "username": "test1worker",
+    "firstName": "test1",
+    "lastName": "Worker11",
+    "phone": "1234567890",
+    "role": "worker",
+    "password": "$2b$12$K45h4pCYOA9661za4QaoUOFlNz6OD81cy1dE97Ezyyuf.5pXrUMl.",
+    "resumeUrl": "/uploads/resumes/resume_1762584353084_Sarah Thompson.docx",
+    "createdAt": "2025-11-08T06:45:53.086Z",
+    "updatedAt": "2025-11-08T06:45:53.086Z"
+  },
+  {
+    "id": "user_1762586126442",
+    "email": "test@worker3.com",
+    "username": "test3worker",
+    "firstName": "Test",
+    "lastName": "worker",
+    "phone": "+44 7123 456789",
+    "role": "worker",
+    "password": "$2b$12$xG2/pBz09wHyRjlIz9OzIez.ykjPVnSrgA85aotwDoe3X/faA0GQS",
+    "resumeUrl": "/uploads/resumes/resume_1762586126441_CV.docx",
+    "createdAt": "2025-11-08T07:15:26.442Z",
+    "updatedAt": "2025-11-08T07:15:26.442Z"
   }
 ]

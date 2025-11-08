@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:verifications": "node test-verifications.js"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",

@@ -333,5 +333,65 @@
     },
     "createdAt": "2025-10-31T15:19:23.541Z",
     "updatedAt": "2025-10-31T15:19:23.541Z"
+  },
+  {
+    "id": "pref_1762581846060",
+    "workerId": "user_1761990236735",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "PUBLIC",
+      "showContactInfo": true
+    },
+    "preferences": {
+      "preferredShiftType": [],
+      "maxTravelDistance": 50,
+      "minimumHourlyRate": 0
+    },
+    "createdAt": "2025-11-08T06:04:06.060Z",
+    "updatedAt": "2025-11-08T06:04:06.060Z"
+  },
+  {
+    "id": "pref_1762585611443",
+    "workerId": "user_1762584353086",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "PUBLIC",
+      "showContactInfo": true
+    },
+    "preferences": {
+      "preferredShiftType": [],
+      "maxTravelDistance": 50,
+      "minimumHourlyRate": 0
+    },
+    "createdAt": "2025-11-08T07:06:51.443Z",
+    "updatedAt": "2025-11-08T07:06:51.443Z"
+  },
+  {
+    "id": "pref_1762586391910",
+    "workerId": "user_1762586126442",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "PUBLIC",
+      "showContactInfo": true
+    },
+    "preferences": {
+      "preferredShiftType": [],
+      "maxTravelDistance": 50,
+      "minimumHourlyRate": 0
+    },
+    "createdAt": "2025-11-08T07:19:51.910Z",
+    "updatedAt": "2025-11-08T07:19:51.910Z"
   }
 ]

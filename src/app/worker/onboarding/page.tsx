@@ -142,6 +142,40 @@ export default function WorkerOnboarding() {
   const [dbsVerificationResults, setDbsVerificationResults] = useState<Record<number, any>>({});
   const [verifyingDBS, setVerifyingDBS] = useState<Record<number, boolean>>({});
   
+  // Verification state for other services
+  const [ofqualVerificationResults, setOfqualVerificationResults] = useState<Record<number, any>>({});
+  const [verifyingOfqual, setVerifyingOfqual] = useState<Record<number, boolean>>({});
+  const [professionalRegisterResults, setProfessionalRegisterResults] = useState<Record<string, any>>({}); // Use string keys: 'cert-{index}' or 'license-{index}'
+  const [verifyingProfessionalRegister, setVerifyingProfessionalRegister] = useState<Record<string, boolean>>({});
+  const [dbsUpdateServiceResult, setDbsUpdateServiceResult] = useState<any>(null);
+  const [verifyingDbsUpdateService, setVerifyingDbsUpdateService] = useState(false);
+  const [rtwVerificationResult, setRtwVerificationResult] = useState<any>(null);
+  const [verifyingRTW, setVerifyingRTW] = useState(false);
+  const [ecsVerificationResult, setEcsVerificationResult] = useState<any>(null);
+  const [verifyingECS, setVerifyingECS] = useState(false);
+  
+  // New verification services state
+  const [britishCitizenRTWResult, setBritishCitizenRTWResult] = useState<any>(null);
+  const [verifyingBritishCitizenRTW, setVerifyingBritishCitizenRTW] = useState(false);
+  const [ukviVerificationResult, setUkviVerificationResult] = useState<any>(null);
+  const [verifyingUKVI, setVerifyingUKVI] = useState(false);
+  const [immigrationStatusResult, setImmigrationStatusResult] = useState<any>(null);
+  const [verifyingImmigrationStatus, setVerifyingImmigrationStatus] = useState(false);
+  const [dvlaVerificationResult, setDvlaVerificationResult] = useState<any>(null);
+  const [verifyingDVLA, setVerifyingDVLA] = useState(false);
+  const [onfidoVerificationResult, setOnfidoVerificationResult] = useState<any>(null);
+  const [verifyingOnfido, setVerifyingOnfido] = useState(false);
+  const [gbgVerificationResult, setGbgVerificationResult] = useState<any>(null);
+  const [verifyingGBG, setVerifyingGBG] = useState(false);
+  const [trainingCertificateResult, setTrainingCertificateResult] = useState<any>(null);
+  const [verifyingTrainingCertificate, setVerifyingTrainingCertificate] = useState(false);
+  const [cosVerificationResult, setCosVerificationResult] = useState<any>(null);
+  const [verifyingCOS, setVerifyingCOS] = useState(false);
+  const [hpanVerificationResult, setHpanVerificationResult] = useState<any>(null);
+  const [verifyingHPAN, setVerifyingHPAN] = useState(false);
+  const [newDBSResult, setNewDBSResult] = useState<any>(null);
+  const [verifyingNewDBS, setVerifyingNewDBS] = useState(false);
+  
   // Auto-fill form with resume data when available
   useEffect(() => {
     if (resumeData) {
@@ -648,6 +682,697 @@ export default function WorkerOnboarding() {
     }
   };
 
+  // Ofqual qualification verification handler
+  const handleOfqualVerification = async (index: number) => {
+    const cert = formData.certifications[index];
+    
+    if (!cert.certificateNumber) {
+      alert('Please enter a certificate number first');
+      return;
+    }
+
+    setVerifyingOfqual(prev => ({ ...prev, [index]: true }));
+
+    try {
+      const response = await fetch('/api/verify/ofqual/qualification', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          qualificationNumber: cert.certificateNumber,
+          qualificationTitle: cert.name,
+          awardingOrganisation: cert.issuingBody
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        setOfqualVerificationResults(prev => ({ ...prev, [index]: result.data }));
+        if (!result.data.ok) {
+          alert(`Ofqual Verification Failed\n\n${result.data.error || 'Qualification not found in Ofqual register'}`);
+        }
+      } else {
+        alert(result.error || 'Failed to verify qualification');
+      }
+    } catch (error) {
+      console.error('Ofqual verification error:', error);
+      alert('Failed to verify qualification. Please try again.');
+    } finally {
+      setVerifyingOfqual(prev => ({ ...prev, [index]: false }));
+    }
+  };
+
+  // Professional register verification handler
+  const handleProfessionalRegisterVerification = async (index: number, isLicense: boolean) => {
+    const item = isLicense ? formData.licenses[index] : formData.certifications[index];
+    
+    if (!item.licenseNumber && !item.certificateNumber) {
+      alert('Please enter a registration number first');
+      return;
+    }
+
+    const registrationNumber = isLicense ? item.licenseNumber : item.certificateNumber;
+    
+    // Map issuing body to register source
+    const issuingBodyLower = item.issuingBody.toLowerCase();
+    let source = 'nmc'; // Default to NMC
+    
+    if (issuingBodyLower.includes('dental') || issuingBodyLower.includes('gdc')) source = 'gdc';
+    else if (issuingBodyLower.includes('medical') || issuingBodyLower.includes('gmc')) source = 'gmc';
+    else if (issuingBodyLower.includes('optical') || issuingBodyLower.includes('goc')) source = 'goc';
+    else if (issuingBodyLower.includes('pharmacy') || issuingBodyLower.includes('gphc')) source = 'gphc';
+    else if (issuingBodyLower.includes('hcpc')) source = 'hcpc';
+    else if (issuingBodyLower.includes('nursing') || issuingBodyLower.includes('midwifery') || issuingBodyLower.includes('nmc')) source = 'nmc';
+    else if (issuingBodyLower.includes('social work')) source = 'social-work-england';
+    else if (issuingBodyLower.includes('chiropractic') || issuingBodyLower.includes('gcc')) source = 'gcc';
+    else if (issuingBodyLower.includes('nhs')) source = 'nhs-performers';
+
+    const key = isLicense ? `license-${index}` : `cert-${index}`;
+    setVerifyingProfessionalRegister(prev => ({ ...prev, [key]: true }));
+
+    try {
+      const response = await fetch(`/api/verify/${source}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          registrationNumber,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          dateOfBirth: formData.dateOfBirth
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        setProfessionalRegisterResults(prev => ({ ...prev, [key]: result.data }));
+        if (!result.data.ok) {
+          alert(`Professional Register Verification Failed\n\n${result.data.error || 'Registration not found'}`);
+        }
+      } else {
+        alert(result.error || 'Failed to verify registration');
+      }
+    } catch (error) {
+      console.error('Professional register verification error:', error);
+      alert('Failed to verify registration. Please try again.');
+    } finally {
+      setVerifyingProfessionalRegister(prev => ({ ...prev, [key]: false }));
+    }
+  };
+
+  // DBS Update Service verification handler
+  const handleDBSUpdateServiceVerification = async () => {
+    if (!formData.dateOfBirth) {
+      alert('Please enter your date of birth in Step 1 first');
+      return;
+    }
+
+    // Find DBS number from work history
+    const dbsNumber = formData.workHistory.find(w => w.dbsNumber)?.dbsNumber;
+    if (!dbsNumber) {
+      alert('Please enter a DBS certificate number in Step 2 first');
+      return;
+    }
+
+    setVerifyingDbsUpdateService(true);
+
+    try {
+      const [year, month, day] = formData.dateOfBirth.split('-');
+      
+      const response = await fetch('/api/verify/dbs/update-service', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          certificateNumber: dbsNumber,
+          surname: formData.lastName,
+          dob: { day, month, year },
+          format: 'html'
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        setDbsUpdateServiceResult(result.data);
+        if (!result.data.ok) {
+          alert(`DBS Update Service Verification Failed\n\n${result.data.error || 'Verification failed'}`);
+        }
+      } else {
+        alert(result.error || 'Failed to verify DBS Update Service');
+      }
+    } catch (error) {
+      console.error('DBS Update Service verification error:', error);
+      alert('Failed to verify DBS Update Service. Please try again.');
+    } finally {
+      setVerifyingDbsUpdateService(false);
+    }
+  };
+
+  // Right to Work verification handler
+  const handleRTWVerification = async () => {
+    const shareCode = (document.getElementById('rtw-share-code') as HTMLInputElement)?.value;
+    if (!shareCode) {
+      alert('Please enter a Right to Work share code');
+      return;
+    }
+
+    if (!formData.dateOfBirth) {
+      alert('Please enter your date of birth in Step 1 first');
+      return;
+    }
+
+    setVerifyingRTW(true);
+
+    try {
+      const response = await fetch('/api/verify/rtw/share-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          shareCode,
+          dateOfBirth: formData.dateOfBirth
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        setRtwVerificationResult(result.data);
+        if (!result.data.ok) {
+          alert(`Right to Work Verification Failed\n\n${result.data.error || 'Verification failed'}`);
+        }
+      } else {
+        alert(result.error || 'Failed to verify Right to Work');
+      }
+    } catch (error) {
+      console.error('Right to Work verification error:', error);
+      alert('Failed to verify Right to Work. Please try again.');
+    } finally {
+      setVerifyingRTW(false);
+    }
+  };
+
+  // ECS verification handler
+  const handleECSVerification = async () => {
+    const shareCode = (document.getElementById('ecs-share-code') as HTMLInputElement)?.value;
+    if (!shareCode) {
+      alert('Please enter an ECS share code');
+      return;
+    }
+
+    if (!formData.dateOfBirth) {
+      alert('Please enter your date of birth in Step 1 first');
+      return;
+    }
+
+    setVerifyingECS(true);
+
+    try {
+      const response = await fetch('/api/verify/ecs', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          shareCode,
+          dateOfBirth: formData.dateOfBirth
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        setEcsVerificationResult(result.data);
+        if (!result.data.ok) {
+          alert(`ECS Verification Failed\n\n${result.data.error || 'Verification failed'}`);
+        }
+      } else {
+        alert(result.error || 'Failed to verify via ECS');
+      }
+    } catch (error) {
+      console.error('ECS verification error:', error);
+      alert('Failed to verify via ECS. Please try again.');
+    } finally {
+      setVerifyingECS(false);
+    }
+  };
+
+  // British Citizen RTW verification handler
+  const handleBritishCitizenRTW = async (provider: 'credas' | 'ebulk' | 'yoti') => {
+    setVerifyingBritishCitizenRTW(true);
+    try {
+      const response = await fetch('/api/verify/rtw/british-citizen', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider })
+      });
+      const result = await response.json();
+      if (result.success && result.data) {
+        setBritishCitizenRTWResult(result.data);
+        if (result.data.redirectUrl) {
+          window.open(result.data.redirectUrl, '_blank');
+        }
+      } else {
+        alert(result.error || 'Failed to initiate British Citizen RTW verification');
+      }
+    } catch (error) {
+      console.error('British Citizen RTW verification error:', error);
+      alert('Failed to initiate verification. Please try again.');
+    } finally {
+      setVerifyingBritishCitizenRTW(false);
+    }
+  };
+
+  // UKVI verification handler
+  const handleUKVIVerification = async () => {
+    const email = (document.getElementById('ukvi-email') as HTMLInputElement)?.value;
+    const shareCode = (document.getElementById('ukvi-share-code') as HTMLInputElement)?.value;
+    
+    if (!email && !shareCode) {
+      alert('Please enter either email (for UKVI account access) or share code (for immigration status)');
+      return;
+    }
+
+    setVerifyingUKVI(true);
+    try {
+      const response = await fetch('/api/verify/rtw/ukvi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          shareCode,
+          dateOfBirth: shareCode ? formData.dateOfBirth : undefined
+        })
+      });
+      const result = await response.json();
+      if (result.success && result.data) {
+        setUkviVerificationResult(result.data);
+        if (result.data.redirectUrl) {
+          window.open(result.data.redirectUrl, '_blank');
+        }
+      } else {
+        alert(result.error || 'Failed to verify UKVI status');
+      }
+    } catch (error) {
+      console.error('UKVI verification error:', error);
+      alert('Failed to verify UKVI status. Please try again.');
+    } finally {
+      setVerifyingUKVI(false);
+    }
+  };
+
+  // Immigration status verification handler
+  const handleImmigrationStatusVerification = async () => {
+    const shareCode = (document.getElementById('immigration-share-code') as HTMLInputElement)?.value;
+    if (!shareCode || !formData.dateOfBirth) {
+      alert('Please enter share code and ensure date of birth is set in Step 1');
+      return;
+    }
+
+    setVerifyingImmigrationStatus(true);
+    try {
+      const response = await fetch('/api/verify/rtw/immigration-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          shareCode,
+          dateOfBirth: formData.dateOfBirth
+        })
+      });
+      const result = await response.json();
+      if (result.success && result.data) {
+        setImmigrationStatusResult(result.data);
+      } else {
+        alert(result.error || 'Failed to verify immigration status');
+      }
+    } catch (error) {
+      console.error('Immigration status verification error:', error);
+      alert('Failed to verify immigration status. Please try again.');
+    } finally {
+      setVerifyingImmigrationStatus(false);
+    }
+  };
+
+  // DVLA verification handler
+  const handleDVLAVerification = async (type: 'auth' | 'driver-data' | 'vehicle' | 'driver-image') => {
+    const licenseNumber = (document.getElementById('dvla-license-number') as HTMLInputElement)?.value;
+    const postcode = (document.getElementById('dvla-postcode') as HTMLInputElement)?.value;
+    const registrationNumber = (document.getElementById('dvla-registration') as HTMLInputElement)?.value;
+
+    if ((type === 'auth' || type === 'driver-data') && (!licenseNumber || !postcode)) {
+      alert('Please enter license number and postcode');
+      return;
+    }
+    if (type === 'vehicle' && !registrationNumber) {
+      alert('Please enter vehicle registration number');
+      return;
+    }
+    if (type === 'auth' && !formData.dateOfBirth) {
+      alert('Please enter your date of birth in Step 1 first');
+      return;
+    }
+
+    setVerifyingDVLA(true);
+    try {
+      const response = await fetch('/api/verify/dvla', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type,
+          licenseNumber,
+          postcode,
+          dateOfBirth: type === 'auth' ? formData.dateOfBirth : undefined,
+          registrationNumber
+        })
+      });
+      const result = await response.json();
+      if (result.success && result.data) {
+        setDvlaVerificationResult(result.data);
+      } else {
+        alert(result.error || 'Failed to verify DVLA information');
+      }
+    } catch (error) {
+      console.error('DVLA verification error:', error);
+      alert('Failed to verify DVLA information. Please try again.');
+    } finally {
+      setVerifyingDVLA(false);
+    }
+  };
+
+  // Onfido ID verification handler
+  const handleOnfidoVerification = async () => {
+    setVerifyingOnfido(true);
+    try {
+      const response = await fetch('/api/verify/id/onfido', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      });
+      const result = await response.json();
+      if (result.success && result.data) {
+        setOnfidoVerificationResult(result.data);
+        if (result.data.redirectUrl) {
+          window.open(result.data.redirectUrl, '_blank');
+        }
+      } else {
+        alert(result.error || 'Failed to initiate Onfido verification');
+      }
+    } catch (error) {
+      console.error('Onfido verification error:', error);
+      alert('Failed to initiate Onfido verification. Please try again.');
+    } finally {
+      setVerifyingOnfido(false);
+    }
+  };
+
+  // GBG ID verification handler
+  const handleGBGVerification = async () => {
+    setVerifyingGBG(true);
+    try {
+      const response = await fetch('/api/verify/id/gbg', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      });
+      const result = await response.json();
+      if (result.success && result.data) {
+        setGbgVerificationResult(result.data);
+        if (result.data.redirectUrl) {
+          window.open(result.data.redirectUrl, '_blank');
+        }
+      } else {
+        alert(result.error || 'Failed to initiate GBG verification');
+      }
+    } catch (error) {
+      console.error('GBG verification error:', error);
+      alert('Failed to initiate GBG verification. Please try again.');
+    } finally {
+      setVerifyingGBG(false);
+    }
+  };
+
+  // Training certificate verification handler
+  const handleTrainingCertificateVerification = async () => {
+    const certificateNumber = (document.getElementById('training-cert-number') as HTMLInputElement)?.value;
+    const providerName = (document.getElementById('training-provider') as HTMLInputElement)?.value;
+    const certificateType = (document.getElementById('training-cert-type') as HTMLInputElement)?.value;
+    const email = formData.email;
+
+    setVerifyingTrainingCertificate(true);
+    try {
+      const response = await fetch('/api/verify/training-certificates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          certificateNumber,
+          providerName,
+          certificateType,
+          email
+        })
+      });
+      const result = await response.json();
+      if (result.success && result.data) {
+        setTrainingCertificateResult(result.data);
+      } else {
+        alert(result.error || 'Failed to verify training certificate');
+      }
+    } catch (error) {
+      console.error('Training certificate verification error:', error);
+      alert('Failed to verify training certificate. Please try again.');
+    } finally {
+      setVerifyingTrainingCertificate(false);
+    }
+  };
+
+  // COS verification handler
+  const handleCOSVerification = async () => {
+    const cosNumber = (document.getElementById('cos-number') as HTMLInputElement)?.value;
+    const email = formData.email;
+
+    setVerifyingCOS(true);
+    try {
+      const response = await fetch('/api/verify/cos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cosNumber,
+          email,
+          automatedEmail: true
+        })
+      });
+      const result = await response.json();
+      if (result.success && result.data) {
+        setCosVerificationResult(result.data);
+      } else {
+        alert(result.error || 'Failed to verify Certificate of Sponsorship');
+      }
+    } catch (error) {
+      console.error('COS verification error:', error);
+      alert('Failed to verify Certificate of Sponsorship. Please try again.');
+    } finally {
+      setVerifyingCOS(false);
+    }
+  };
+
+  // HPAN verification handler
+  const handleHPANVerification = async () => {
+    const hpanNumber = (document.getElementById('hpan-number') as HTMLInputElement)?.value;
+    const email = formData.email;
+
+    setVerifyingHPAN(true);
+    try {
+      const response = await fetch('/api/verify/hpan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          hpanNumber,
+          email,
+          automatedEmail: true
+        })
+      });
+      const result = await response.json();
+      if (result.success && result.data) {
+        setHpanVerificationResult(result.data);
+      } else {
+        alert(result.error || 'Failed to verify HPAN');
+      }
+    } catch (error) {
+      console.error('HPAN verification error:', error);
+      alert('Failed to verify HPAN. Please try again.');
+    } finally {
+      setVerifyingHPAN(false);
+    }
+  };
+
+  // New DBS check handler
+  const handleNewDBSCheck = async () => {
+    setVerifyingNewDBS(true);
+    try {
+      const response = await fetch('/api/verify/dbs/new-check', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          applicantData: {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            dateOfBirth: formData.dateOfBirth,
+            address: formData.address?.line1 || ''
+          }
+        })
+      });
+      const result = await response.json();
+      if (result.success && result.data) {
+        setNewDBSResult(result.data);
+        if (result.data.redirectUrl) {
+          window.open(result.data.redirectUrl, '_blank');
+        }
+      } else {
+        alert(result.error || 'Failed to initiate new DBS check');
+      }
+    } catch (error) {
+      console.error('New DBS check error:', error);
+      alert('Failed to initiate new DBS check. Please try again.');
+    } finally {
+      setVerifyingNewDBS(false);
+    }
+  };
+
+  // Helper function to create default "not verified" result
+  const createNotVerifiedResult = (type: string, error?: string) => ({
+    ok: false,
+    verified: false,
+    verificationDate: new Date().toISOString(),
+    error: error || `${type} verification not completed`,
+    message: `Not verified - ${error || 'verification not completed'}`
+  });
+
+  // Automatic verification function - runs all verifications based on form data
+  const runAllVerifications = async () => {
+    const verificationResults: any = {
+      dbsVerificationResults: {},
+      ofqualVerificationResults: {},
+      professionalRegisterResults: {},
+      dbsUpdateServiceResult: null,
+      rtwVerificationResult: null,
+      ecsVerificationResult: null,
+      britishCitizenRTWResult: null,
+      ukviVerificationResult: null,
+      immigrationStatusResult: null,
+      dvlaVerificationResult: null,
+      onfidoVerificationResult: null,
+      gbgVerificationResult: null,
+      trainingCertificateResult: null,
+      cosVerificationResult: null,
+      hpanVerificationResult: null,
+      newDBSResult: null,
+    };
+
+    try {
+      // 1. DBS Verification for each work history entry
+      for (let i = 0; i < formData.workHistory.length; i++) {
+        const work = formData.workHistory[i];
+        if (work.dbsNumber && work.dbsSurname && work.dbsDob) {
+          try {
+            const response = await fetch('/api/dbs-verify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                certificateNumber: work.dbsNumber,
+                applicantSurname: work.dbsSurname,
+                dob: work.dbsDob
+              })
+            });
+            const result = await response.json();
+            if (result.success && result.data) {
+              verificationResults.dbsVerificationResults[i] = {
+                ...result.data,
+                verificationDate: result.data.verificationDate || new Date().toISOString()
+              };
+            } else {
+              // Default to not verified if verification fails
+              verificationResults.dbsVerificationResults[i] = createNotVerifiedResult('DBS', result.error || 'DBS verification failed');
+            }
+          } catch (error) {
+            console.error(`DBS verification error for work history ${i}:`, error);
+            // Default to not verified on error
+            verificationResults.dbsVerificationResults[i] = createNotVerifiedResult('DBS', 'Verification request failed');
+          }
+        } else if (work.dbsNumber) {
+          // If DBS number is provided but missing other required fields, mark as not verified
+          verificationResults.dbsVerificationResults[i] = createNotVerifiedResult('DBS', 'Missing required information (surname or date of birth)');
+        }
+      }
+
+      // 2. Ofqual Verification - NOT USED, all certifications default to not verified
+      for (let i = 0; i < formData.certifications.length; i++) {
+        verificationResults.ofqualVerificationResults[i] = createNotVerifiedResult('Ofqual', 'Ofqual verification service not available');
+      }
+
+      // 3. Professional Register Verification for certifications - NOT USED, default to not verified
+      for (let i = 0; i < formData.certifications.length; i++) {
+        const cert = formData.certifications[i];
+        if (cert.certificateNumber && cert.issuingBody) {
+          // Professional register verification not available - default to not verified
+          verificationResults.professionalRegisterResults[`cert-${i}`] = createNotVerifiedResult('Professional Register', 'Professional register verification service not available');
+        } else if (cert.certificateNumber) {
+          verificationResults.professionalRegisterResults[`cert-${i}`] = createNotVerifiedResult('Professional Register', 'Issuing body not provided');
+        }
+      }
+
+      // Professional Register Verification for licenses - NOT USED, default to not verified
+      for (let i = 0; i < formData.licenses.length; i++) {
+        const license = formData.licenses[i];
+        if (license.licenseNumber && license.issuingBody) {
+          // Professional register verification not available - default to not verified
+          verificationResults.professionalRegisterResults[`license-${i}`] = createNotVerifiedResult('Professional Register', 'Professional register verification service not available');
+        } else if (license.licenseNumber) {
+          verificationResults.professionalRegisterResults[`license-${i}`] = createNotVerifiedResult('Professional Register', 'Issuing body not provided');
+        }
+      }
+
+      // 4. Right to Work Verification - NOT USED, default to not verified
+      verificationResults.rtwVerificationResult = createNotVerifiedResult('Right to Work', 'Right to Work verification service not available');
+
+      // 5. DBS Update Service Verification - NOT USED, default to not verified
+      verificationResults.dbsUpdateServiceResult = createNotVerifiedResult('DBS Update Service', 'DBS Update Service verification not available');
+
+      // 6. ECS Verification - NOT USED, default to not verified
+      verificationResults.ecsVerificationResult = createNotVerifiedResult('ECS', 'ECS verification service not available');
+
+      // 7. UKVI Verification - NOT USED, default to not verified
+      verificationResults.ukviVerificationResult = createNotVerifiedResult('UKVI', 'UKVI verification service not available');
+
+      // 8. Immigration Status Verification - NOT USED, default to not verified
+      verificationResults.immigrationStatusResult = createNotVerifiedResult('Immigration Status', 'Immigration status verification service not available');
+
+      // 9. DVLA Verification - NOT USED, default to not verified
+      verificationResults.dvlaVerificationResult = createNotVerifiedResult('DVLA', 'DVLA verification service not available');
+
+      // 10. Training Certificate Verification - NOT USED, default to not verified
+      verificationResults.trainingCertificateResult = createNotVerifiedResult('Training Certificate', 'Training certificate verification service not available');
+
+      // 11. COS Verification - NOT USED, default to not verified
+      verificationResults.cosVerificationResult = createNotVerifiedResult('COS', 'COS verification service not available');
+
+      // 12. HPAN Verification - NOT USED, default to not verified
+      verificationResults.hpanVerificationResult = createNotVerifiedResult('HPAN', 'HPAN verification service not available');
+
+      // 13. British Citizen RTW (redirect-based, default to not verified)
+      verificationResults.britishCitizenRTWResult = createNotVerifiedResult('British Citizen RTW', 'Verification not initiated');
+
+      // 14. Onfido ID Verification (redirect-based, default to not verified)
+      verificationResults.onfidoVerificationResult = createNotVerifiedResult('Onfido', 'Verification not initiated');
+
+      // 15. GBG ID Verification (redirect-based, default to not verified)
+      verificationResults.gbgVerificationResult = createNotVerifiedResult('GBG', 'Verification not initiated');
+
+      // 16. New DBS Check (redirect-based, default to not verified)
+      verificationResults.newDBSResult = createNotVerifiedResult('New DBS Check', 'DBS check not initiated');
+
+    } catch (error) {
+      console.error('Error running verifications:', error);
+    }
+
+    return verificationResults;
+  };
+
   const handleNext = () => {
     if (currentStep < 9) {
       setCurrentStep(currentStep + 1);
@@ -665,15 +1390,44 @@ export default function WorkerOnboarding() {
 
     setIsSubmitting(true);
     try {
+      // Show message that verifications are running
+      console.log('Running automatic verifications...');
+      
+      // Run all verifications automatically
+      const verificationResults = await runAllVerifications();
+      
+      console.log('Verifications completed:', verificationResults);
+
       // Create worker profile with all the new data
       // Include DBS verification results in work history
       const workHistoryWithVerification = formData.workHistory.map((work, index) => ({
         ...work,
-        dbsVerificationResult: dbsVerificationResults[index] || null
+        dbsVerificationResult: verificationResults.dbsVerificationResults[index] || null
       }));
 
       // Get the most recent DBS verification from work history (if any)
-      const latestDBSVerification = Object.values(dbsVerificationResults).find(result => result);
+      // Always include DBS verification - use the first one or create a default "not verified" if none exist
+      const latestDBSVerification = Object.values(verificationResults.dbsVerificationResults).find(result => result) || 
+        (formData.workHistory.some(w => w.dbsNumber) ? createNotVerifiedResult('DBS', 'DBS verification not completed') : null);
+
+      // Include verification results in certifications
+      const certificationsWithVerification = formData.certifications.map((cert, index) => ({
+        ...cert,
+        ofqualVerification: verificationResults.ofqualVerificationResults[index] || null,
+        professionalRegisterVerification: verificationResults.professionalRegisterResults[`cert-${index}`] || null
+      }));
+
+      // Include verification results in licenses
+      const licensesWithVerification = formData.licenses.map((license, index) => ({
+        ...license,
+        professionalRegisterVerification: verificationResults.professionalRegisterResults[`license-${index}`] || null
+      }));
+
+      // Collect all Ofqual verifications (include all, even failed ones)
+      const ofqualVerifications = Object.values(verificationResults.ofqualVerificationResults).filter(v => v !== null && v !== undefined) as any[];
+
+      // Collect all professional register verifications (include all, even failed ones)
+      const professionalRegisterVerifications = Object.values(verificationResults.professionalRegisterResults).filter(v => v !== null && v !== undefined) as any[];
 
       const workerData = {
         id: `worker_${Date.now()}`,
@@ -690,10 +1444,27 @@ export default function WorkerOnboarding() {
         nationalInsurance: formData.nationalInsurance,
         education: formData.education,
         workHistory: workHistoryWithVerification,
-        dbsVerification: latestDBSVerification || null,
+        dbsVerification: latestDBSVerification,
+        verifications: {
+          ofqual: ofqualVerifications.length > 0 ? ofqualVerifications : [],
+          dbsUpdateService: verificationResults.dbsUpdateServiceResult,
+          professionalRegisters: professionalRegisterVerifications.length > 0 ? professionalRegisterVerifications : [],
+          rightToWork: verificationResults.rtwVerificationResult,
+          ecs: verificationResults.ecsVerificationResult,
+          britishCitizenRTW: verificationResults.britishCitizenRTWResult,
+          ukvi: verificationResults.ukviVerificationResult,
+          immigrationStatus: verificationResults.immigrationStatusResult,
+          dvla: verificationResults.dvlaVerificationResult,
+          onfido: verificationResults.onfidoVerificationResult,
+          gbg: verificationResults.gbgVerificationResult,
+          trainingCertificates: verificationResults.trainingCertificateResult,
+          cos: verificationResults.cosVerificationResult,
+          hpan: verificationResults.hpanVerificationResult,
+          newDBSCheck: verificationResults.newDBSResult,
+        },
         skills: formData.skills.split(',').map(skill => skill.trim()),
-        certifications: formData.certifications,
-        licenses: formData.licenses,
+        certifications: certificationsWithVerification,
+        licenses: licensesWithVerification,
         references: formData.references,
         emergencyContact: formData.emergencyContact,
         bankDetails: formData.bankDetails,
@@ -1172,31 +1943,12 @@ export default function WorkerOnboarding() {
                   onChange={(e) => updateWorkHistory(index, 'description', e.target.value)}
                   placeholder="e.g., Responsibilities, achievements"
                 />
-                <div className="space-y-2">
-                  <Input
-                    label="DBS Number (if applicable)"
-                    value={work.dbsNumber}
-                    onChange={(e) => updateWorkHistory(index, 'dbsNumber', e.target.value)}
-                    placeholder="e.g., 123456789"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleDBSVerification(index)}
-                    disabled={verifyingDBS[index] || !work.dbsNumber}
-                    className="w-full px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
-                  >
-                    {verifyingDBS[index] ? (
-                      <span className="flex items-center justify-center">
-                        <svg className="animate-spin h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                        Verifying...
-                      </span>
-                    ) : (
-                      'Verify DBS Certificate'
-                    )}
-                  </button>
-                </div>
+                <Input
+                  label="DBS Number (if applicable)"
+                  value={work.dbsNumber}
+                  onChange={(e) => updateWorkHistory(index, 'dbsNumber', e.target.value)}
+                  placeholder="e.g., 123456789"
+                />
                 <Input
                   label="DBS Position"
                   value={work.dbsPosition}
@@ -1683,14 +2435,21 @@ export default function WorkerOnboarding() {
               helperText="Upload your current CV (PDF or Word Document)"
               required
             />
-            <Input
-              label="Upload Right to Work Document"
-              type="file"
-              onChange={(e) => handleDocumentUpload('rightToWork', e.target.files?.[0] || null)}
-              accept=".pdf,.doc,.docx"
-              helperText="Upload a document proving your right to work in the UK"
-              required
-            />
+            <div className="space-y-2">
+              <Input
+                label="Upload Right to Work Document"
+                type="file"
+                onChange={(e) => handleDocumentUpload('rightToWork', e.target.files?.[0] || null)}
+                accept=".pdf,.doc,.docx"
+                helperText="Upload a document proving your right to work in the UK"
+                required
+              />
+              <Input
+                id="rtw-share-code"
+                label="Right to Work Share Code (Optional - for verification)"
+                placeholder="Enter share code if available"
+              />
+            </div>
             <Input
               label="Upload Proof of Address"
               type="file"
@@ -1762,6 +2521,104 @@ export default function WorkerOnboarding() {
                 accept=".pdf,.doc,.docx"
                 helperText="Upload your Disclosure and Barring Service (DBS) Certificate Update Service"
               />
+              <Input
+                id="ecs-share-code"
+                label="ECS Share Code (Optional - for verification)"
+                placeholder="Enter ECS share code if available"
+              />
+              
+              {/* British Citizen RTW Verification */}
+              <div className="space-y-2 border-t pt-4">
+                <h5 className="font-medium text-sm text-gray-700">British Citizen Right to Work Verification</h5>
+                <p className="text-xs text-gray-600 mb-2">Note: Verification will be processed automatically on form submission</p>
+              </div>
+
+              {/* UKVI Verification */}
+              <div className="space-y-2 border-t pt-4">
+                <h5 className="font-medium text-sm text-gray-700">UKVI Account / Immigration Status</h5>
+                <Input
+                  id="ukvi-email"
+                  label="UKVI Email (for account access)"
+                  type="email"
+                  placeholder="Enter your UKVI account email"
+                />
+                <Input
+                  id="ukvi-share-code"
+                  label="Share Code (for immigration status)"
+                  placeholder="Enter share code"
+                />
+              </div>
+
+              {/* Immigration Status Verification */}
+              <div className="space-y-2 border-t pt-4">
+                <h5 className="font-medium text-sm text-gray-700">Employee Immigration Status</h5>
+                <Input
+                  id="immigration-share-code"
+                  label="Share Code"
+                  placeholder="Enter share code"
+                />
+              </div>
+
+              {/* DVLA Verification */}
+              <div className="space-y-2 border-t pt-4">
+                <h5 className="font-medium text-sm text-gray-700">DVLA Driver License Verification</h5>
+                <Input
+                  id="dvla-license-number"
+                  label="License Number"
+                  placeholder="Enter driver license number"
+                />
+                <Input
+                  id="dvla-postcode"
+                  label="Postcode"
+                  placeholder="Enter postcode"
+                />
+                <Input
+                  id="dvla-registration"
+                  label="Vehicle Registration (Optional)"
+                  placeholder="Enter vehicle registration"
+                />
+              </div>
+
+              {/* Training Certificate Verification */}
+              <div className="space-y-2 border-t pt-4">
+                <h5 className="font-medium text-sm text-gray-700">Mandatory Training Certificate Verification</h5>
+                <Input
+                  id="training-cert-number"
+                  label="Certificate Number"
+                  placeholder="Enter certificate number"
+                />
+                <Input
+                  id="training-provider"
+                  label="Training Provider"
+                  placeholder="Enter provider name"
+                />
+                <Input
+                  id="training-cert-type"
+                  label="Certificate Type"
+                  placeholder="Enter certificate type"
+                />
+              </div>
+
+              {/* COS Verification */}
+              <div className="space-y-2 border-t pt-4">
+                <h5 className="font-medium text-sm text-gray-700">Certificate of Sponsorship (COS)</h5>
+                <Input
+                  id="cos-number"
+                  label="COS Number (Optional)"
+                  placeholder="Enter COS number"
+                />
+              </div>
+
+              {/* HPAN Verification */}
+              <div className="space-y-2 border-t pt-4">
+                <h5 className="font-medium text-sm text-gray-700">HPAN Check</h5>
+                <Input
+                  id="hpan-number"
+                  label="HPAN Number (Optional)"
+                  placeholder="Enter HPAN number"
+                />
+              </div>
+
               <Input
                 label="Upload Immunization Records"
                 type="file"

@@ -202,6 +202,65 @@ export default function WorkerApplicationDetailsPage() {
     });
   };
 
+  // Helper function to render verification details inline
+  const renderVerificationDetails = (verification: any, type: string) => {
+    if (!verification) return null;
+
+    // Use strict check - only true means verified, everything else is failed
+    const isVerified = verification.ok === true;
+    const verificationDate = verification.verificationDate 
+      ? formatDate(verification.verificationDate) 
+      : 'N/A';
+
+    return (
+      <div className={`mt-3 p-3 rounded-lg border ${
+        isVerified ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+      }`}>
+        <div className="flex items-start">
+          {isVerified ? (
+            <svg className="w-5 h-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+          ) : (
+            <svg className="w-5 h-5 text-red-600 mr-2 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
+          )}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center justify-between mb-1">
+              <p className={`text-sm font-medium ${isVerified ? 'text-green-800' : 'text-red-800'}`}>
+                {type} Verification: {isVerified ? 'Verified' : 'Failed'}
+              </p>
+              <p className="text-xs text-gray-500">{verificationDate}</p>
+            </div>
+            {verification.error && (
+              <p className="text-xs text-gray-600 mt-1">{verification.error}</p>
+            )}
+            {verification.message && (
+              <p className="text-xs text-gray-600 mt-1">{verification.message}</p>
+            )}
+            {verification.structured && (
+              <div className="mt-2 text-xs text-gray-600 space-y-1">
+                {verification.structured.personName && (
+                  <p><span className="font-medium">Name:</span> {verification.structured.personName}</p>
+                )}
+                {verification.structured.dateOfBirth && (
+                  <p><span className="font-medium">DOB:</span> {verification.structured.dateOfBirth}</p>
+                )}
+                {verification.structured.certificateNumber && (
+                  <p><span className="font-medium">Certificate #:</span> {verification.structured.certificateNumber}</p>
+                )}
+                {verification.structured.outcomeText && (
+                  <p><span className="font-medium">Status:</span> {verification.structured.outcomeText}</p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const handleViewDocument = (fileUrl: string, fileName: string, fileType: string = 'application/pdf') => {
     console.log('handleViewDocument called with:', fileUrl, fileName, fileType);
     setSelectedDocument({
@@ -417,12 +476,13 @@ export default function WorkerApplicationDetailsPage() {
               <p className="text-sm text-gray-900">{formatDate(application.submittedAt)}</p>
             </div>
             
-            <div className="md:col-span-2">
-              <p className="text-sm font-medium text-gray-500">DBS Verification Status</p>
-              <div className="mt-2">
-                <DBSStatusBadge verification={application.dbsVerification} showDetails={false} />
+            {/* DBS Verification - Inline */}
+            {application.dbsVerification && (
+              <div className="md:col-span-2">
+                <p className="text-sm font-medium text-gray-500 mb-2">DBS Verification</p>
+                {renderVerificationDetails(application.dbsVerification, 'DBS')}
               </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -486,11 +546,10 @@ export default function WorkerApplicationDetailsPage() {
                       <p className="text-sm text-gray-900">{work.description}</p>
                     </div>
                     
-                    {/* DBS Verification for this work entry */}
+                    {/* DBS Verification for this work entry - Inline */}
                     {work.dbsVerificationResult && (
-                      <div className="md:col-span-2 mt-2">
-                        <p className="text-sm font-medium text-gray-500 mb-2">DBS Check Status</p>
-                        <DBSStatusBadge verification={work.dbsVerificationResult} showDetails={true} />
+                      <div className="md:col-span-2">
+                        {renderVerificationDetails(work.dbsVerificationResult, 'DBS')}
                       </div>
                     )}
                   </div>
@@ -522,32 +581,101 @@ export default function WorkerApplicationDetailsPage() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Certifications</h3>
             <div className="space-y-4">
-              {application.certifications.map((cert, index) => (
-                <div key={index} className="border border-gray-200 rounded-lg p-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Name</p>
-                      <p className="text-sm text-gray-900">{cert.name}</p>
+              {application.certifications.map((cert, index) => {
+                // Get verification results for this certification
+                const ofqualVerification = application.verifications?.ofqual?.[index];
+                const professionalRegisterVerification = cert.professionalRegisterVerification || 
+                  application.verifications?.professionalRegisters?.find((r: any) => r.index === index || r.certIndex === index);
+                
+                return (
+                  <div key={index} className="border border-gray-200 rounded-lg p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Name</p>
+                        <p className="text-sm text-gray-900">{cert.name}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Issuing Body</p>
+                        <p className="text-sm text-gray-900">{cert.issuingBody}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Issue Date</p>
+                        <p className="text-sm text-gray-900">{cert.issueDate}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Expiry Date</p>
+                        <p className="text-sm text-gray-900">{cert.expiryDate}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Certificate Number</p>
+                        <p className="text-sm text-gray-900">{cert.certificateNumber}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Issuing Body</p>
-                      <p className="text-sm text-gray-900">{cert.issuingBody}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Issue Date</p>
-                      <p className="text-sm text-gray-900">{cert.issueDate}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Expiry Date</p>
-                      <p className="text-sm text-gray-900">{cert.expiryDate}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Certificate Number</p>
-                      <p className="text-sm text-gray-900">{cert.certificateNumber}</p>
-                    </div>
+                    
+                    {/* Ofqual Verification - Inline (Service Not Available) */}
+                    {ofqualVerification && (
+                      <div className="mt-3">
+                        {renderVerificationDetails(ofqualVerification, 'Ofqual (Service Not Available)')}
+                      </div>
+                    )}
+                    
+                    {/* Professional Register Verification - Inline */}
+                    {professionalRegisterVerification && (
+                      <div className="mt-3">
+                        {renderVerificationDetails(professionalRegisterVerification, 'Professional Register')}
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Licenses */}
+        {application.licenses && application.licenses.length > 0 && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Licenses</h3>
+            <div className="space-y-4">
+              {application.licenses.map((license, index) => {
+                // Get verification results for this license
+                const professionalRegisterVerification = license.professionalRegisterVerification || 
+                  application.verifications?.professionalRegisters?.find((r: any) => r.index === index || r.licenseIndex === index);
+                
+                return (
+                  <div key={index} className="border border-gray-200 rounded-lg p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Name</p>
+                        <p className="text-sm text-gray-900">{license.name}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Issuing Body</p>
+                        <p className="text-sm text-gray-900">{license.issuingBody}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Issue Date</p>
+                        <p className="text-sm text-gray-900">{license.issueDate}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Expiry Date</p>
+                        <p className="text-sm text-gray-900">{license.expiryDate}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">License Number</p>
+                        <p className="text-sm text-gray-900">{license.licenseNumber}</p>
+                      </div>
+                    </div>
+                    
+                    {/* Professional Register Verification - Inline */}
+                    {professionalRegisterVerification && (
+                      <div className="mt-3">
+                        {renderVerificationDetails(professionalRegisterVerification, 'Professional Register')}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
@@ -1024,6 +1152,338 @@ export default function WorkerApplicationDetailsPage() {
                 <div className={`w-4 h-4 rounded-full ${application.declarations.termsAccepted ? 'bg-green-500' : 'bg-red-500'}`}></div>
                 <span className="text-sm text-gray-900">Terms Accepted</span>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Verifications Section */}
+        {application.verifications && (
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Verification Results</h3>
+            <div className="space-y-4">
+              {/* DBS Update Service */}
+              {application.verifications.dbsUpdateService && (
+                <div className={`p-4 rounded-lg border ${
+                  application.verifications.dbsUpdateService.ok === true ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                }`}>
+                  <div className="flex items-start">
+                    {application.verifications.dbsUpdateService.ok === true ? (
+                      <svg className="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5 text-red-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                    <div className="flex-1">
+                      <p className={`text-sm font-medium ${application.verifications.dbsUpdateService.ok === true ? 'text-green-800' : 'text-red-800'}`}>
+                        DBS Update Service: {application.verifications.dbsUpdateService.ok === true ? 'Verified' : 'Failed'}
+                      </p>
+                      {application.verifications.dbsUpdateService.error && (
+                        <p className="text-xs text-gray-600 mt-1">{application.verifications.dbsUpdateService.error}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Right to Work */}
+              {application.verifications.rightToWork && (
+                <div className={`p-4 rounded-lg border ${
+                  application.verifications.rightToWork.ok === true ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                }`}>
+                  <div className="flex items-start">
+                    {application.verifications.rightToWork.ok === true ? (
+                      <svg className="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5 text-red-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                    <div className="flex-1">
+                      <p className={`text-sm font-medium ${application.verifications.rightToWork.ok === true ? 'text-green-800' : 'text-red-800'}`}>
+                        Right to Work: {application.verifications.rightToWork.ok === true ? 'Verified' : 'Failed'}
+                      </p>
+                      {application.verifications.rightToWork.error && (
+                        <p className="text-xs text-gray-600 mt-1">{application.verifications.rightToWork.error}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ECS */}
+              {application.verifications.ecs && (
+                <div className={`p-4 rounded-lg border ${
+                  application.verifications.ecs.ok === true ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                }`}>
+                  <div className="flex items-start">
+                    {application.verifications.ecs.ok === true ? (
+                      <svg className="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5 text-red-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                    <div className="flex-1">
+                      <p className={`text-sm font-medium ${application.verifications.ecs.ok === true ? 'text-green-800' : 'text-red-800'}`}>
+                        ECS: {application.verifications.ecs.ok === true ? 'Verified' : 'Failed'}
+                      </p>
+                      {application.verifications.ecs.error && (
+                        <p className="text-xs text-gray-600 mt-1">{application.verifications.ecs.error}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* UKVI */}
+              {application.verifications.ukvi && (
+                <div className={`p-4 rounded-lg border ${
+                  application.verifications.ukvi.ok === true ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                }`}>
+                  <div className="flex items-start">
+                    {application.verifications.ukvi.ok === true ? (
+                      <svg className="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5 text-red-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                    <div className="flex-1">
+                      <p className={`text-sm font-medium ${application.verifications.ukvi.ok === true ? 'text-green-800' : 'text-red-800'}`}>
+                        UKVI: {application.verifications.ukvi.ok === true ? 'Verified' : 'Failed'}
+                      </p>
+                      {application.verifications.ukvi.error && (
+                        <p className="text-xs text-gray-600 mt-1">{application.verifications.ukvi.error}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Immigration Status */}
+              {application.verifications.immigrationStatus && (
+                <div className={`p-4 rounded-lg border ${
+                  application.verifications.immigrationStatus.ok === true ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                }`}>
+                  <div className="flex items-start">
+                    {application.verifications.immigrationStatus.ok === true ? (
+                      <svg className="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5 text-red-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                    <div className="flex-1">
+                      <p className={`text-sm font-medium ${application.verifications.immigrationStatus.ok === true ? 'text-green-800' : 'text-red-800'}`}>
+                        Immigration Status: {application.verifications.immigrationStatus.ok === true ? 'Verified' : 'Failed'}
+                      </p>
+                      {application.verifications.immigrationStatus.error && (
+                        <p className="text-xs text-gray-600 mt-1">{application.verifications.immigrationStatus.error}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* DVLA */}
+              {application.verifications.dvla && (
+                <div className={`p-4 rounded-lg border ${
+                  application.verifications.dvla.ok === true ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                }`}>
+                  <div className="flex items-start">
+                    {application.verifications.dvla.ok === true ? (
+                      <svg className="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5 text-red-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                    <div className="flex-1">
+                      <p className={`text-sm font-medium ${application.verifications.dvla.ok === true ? 'text-green-800' : 'text-red-800'}`}>
+                        DVLA: {application.verifications.dvla.ok === true ? 'Verified' : 'Failed'}
+                      </p>
+                      {(application.verifications.dvla.message || application.verifications.dvla.error) && (
+                        <p className="text-xs text-gray-600 mt-1">{application.verifications.dvla.message || application.verifications.dvla.error}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Training Certificates */}
+              {application.verifications.trainingCertificates && (
+                <div className={`p-4 rounded-lg border ${
+                  application.verifications.trainingCertificates.ok === true ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                }`}>
+                  <div className="flex items-start">
+                    {application.verifications.trainingCertificates.ok === true ? (
+                      <svg className="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5 text-red-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                    <div className="flex-1">
+                      <p className={`text-sm font-medium ${application.verifications.trainingCertificates.ok === true ? 'text-green-800' : 'text-red-800'}`}>
+                        Training Certificates: {application.verifications.trainingCertificates.ok === true ? 'Verified' : 'Failed'}
+                      </p>
+                      {(application.verifications.trainingCertificates.message || application.verifications.trainingCertificates.error) && (
+                        <p className="text-xs text-gray-600 mt-1">{application.verifications.trainingCertificates.message || application.verifications.trainingCertificates.error}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* COS */}
+              {application.verifications.cos && (
+                <div className={`p-4 rounded-lg border ${
+                  application.verifications.cos.ok === true ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                }`}>
+                  <div className="flex items-start">
+                    {application.verifications.cos.ok === true ? (
+                      <svg className="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5 text-red-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                    <div className="flex-1">
+                      <p className={`text-sm font-medium ${application.verifications.cos.ok === true ? 'text-green-800' : 'text-red-800'}`}>
+                        COS: {application.verifications.cos.ok === true ? 'Verified' : 'Failed'}
+                      </p>
+                      {(application.verifications.cos.message || application.verifications.cos.error) && (
+                        <p className="text-xs text-gray-600 mt-1">{application.verifications.cos.message || application.verifications.cos.error}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* HPAN */}
+              {application.verifications.hpan && (
+                <div className={`p-4 rounded-lg border ${
+                  application.verifications.hpan.ok === true ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                }`}>
+                  <div className="flex items-start">
+                    {application.verifications.hpan.ok === true ? (
+                      <svg className="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5 text-red-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                    <div className="flex-1">
+                      <p className={`text-sm font-medium ${application.verifications.hpan.ok === true ? 'text-green-800' : 'text-red-800'}`}>
+                        HPAN: {application.verifications.hpan.ok === true ? 'Verified' : 'Failed'}
+                      </p>
+                      {(application.verifications.hpan.message || application.verifications.hpan.error) && (
+                        <p className="text-xs text-gray-600 mt-1">{application.verifications.hpan.message || application.verifications.hpan.error}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Ofqual Verifications - NOT USED, but show if present */}
+              {application.verifications.ofqual && Array.isArray(application.verifications.ofqual) && application.verifications.ofqual.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-gray-700">Ofqual Qualifications (Service Not Available):</p>
+                  {application.verifications.ofqual.map((ofqual: any, index: number) => (
+                    <div key={index} className={`p-3 rounded-lg border ${
+                      ofqual.ok === true ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                    }`}>
+                      <div className="flex items-start">
+                        {ofqual.ok === true ? (
+                          <svg className="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                        ) : (
+                          <svg className="w-5 h-5 text-red-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                        <div className="flex-1">
+                          <p className={`text-sm font-medium ${ofqual.ok === true ? 'text-green-800' : 'text-red-800'}`}>
+                            Qualification {index + 1}: {ofqual.ok === true ? 'Verified' : 'Failed'}
+                          </p>
+                          {ofqual.error && (
+                            <p className="text-xs text-gray-600 mt-1">{ofqual.error}</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Professional Registers */}
+              {application.verifications.professionalRegisters && Array.isArray(application.verifications.professionalRegisters) && application.verifications.professionalRegisters.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-gray-700">Professional Register Verifications:</p>
+                  {application.verifications.professionalRegisters.map((register: any, index: number) => (
+                    <div key={index} className={`p-3 rounded-lg border ${
+                      register.ok === true ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                    }`}>
+                      <div className="flex items-start">
+                        {register.ok === true ? (
+                          <svg className="w-5 h-5 text-green-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          </svg>
+                        ) : (
+                          <svg className="w-5 h-5 text-red-600 mr-2 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                          </svg>
+                        )}
+                        <div className="flex-1">
+                          <p className={`text-sm font-medium ${register.ok === true ? 'text-green-800' : 'text-red-800'}`}>
+                            {register.registerName || `Register ${index + 1}`}: {register.ok === true ? 'Verified' : 'Failed'}
+                          </p>
+                          {register.error && (
+                            <p className="text-xs text-gray-600 mt-1">{register.error}</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Show message if no verifications */}
+              {!application.verifications.dbsUpdateService && 
+               !application.verifications.rightToWork && 
+               !application.verifications.ecs && 
+               !application.verifications.ukvi && 
+               !application.verifications.immigrationStatus && 
+               !application.verifications.dvla && 
+               !application.verifications.trainingCertificates && 
+               !application.verifications.cos && 
+               !application.verifications.hpan && 
+               (!application.verifications.ofqual || application.verifications.ofqual.length === 0) && 
+               (!application.verifications.professionalRegisters || application.verifications.professionalRegisters.length === 0) && (
+                <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                  <p className="text-sm text-gray-600">No verification results available yet.</p>
+                </div>
+              )}
             </div>
           </div>
         )}

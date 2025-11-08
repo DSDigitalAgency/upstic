@@ -43,7 +43,9 @@ export default function WorkerApplicationsPage() {
             reviewedAt: worker.updatedAt !== worker.createdAt ? worker.updatedAt : undefined,
             reviewedBy: worker.status !== 'pending' ? 'admin' : undefined,
             rejectionReason: worker.status === 'rejected' ? 'Application did not meet requirements' : undefined
-          }));
+          }))
+          // Sort by latest first (most recent createdAt first)
+          .sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
         
         setApplications(applicationsData);
       } else {
