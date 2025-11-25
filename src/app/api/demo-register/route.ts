@@ -44,11 +44,11 @@ export async function POST(request: NextRequest) {
         try {
           parsedResume = await parseResume(resumeFile);
           
-          // Override form data with resume data if available
-          if (parsedResume.firstName && !firstName) firstName = parsedResume.firstName;
-          if (parsedResume.lastName && !lastName) lastName = parsedResume.lastName;
-          if (parsedResume.email && !email) email = parsedResume.email;
-          if (parsedResume.phone && !phone) phone = parsedResume.phone;
+          // Override form data with resume data - prioritize resume data
+          if (parsedResume.firstName) firstName = parsedResume.firstName;
+          if (parsedResume.lastName) lastName = parsedResume.lastName;
+          if (parsedResume.email) email = parsedResume.email;
+          if (parsedResume.phone) phone = parsedResume.phone;
         } catch (error) {
           console.error('Resume parsing error:', error);
           // Continue with registration even if resume parsing fails

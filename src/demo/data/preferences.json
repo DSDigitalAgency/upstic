@@ -393,5 +393,25 @@
     },
     "createdAt": "2025-11-08T07:19:51.910Z",
     "updatedAt": "2025-11-08T07:19:51.910Z"
+  },
+  {
+    "id": "pref_1764074078346",
+    "workerId": "user_1764073819063",
+    "notifications": {
+      "email": true,
+      "sms": false,
+      "push": true
+    },
+    "privacy": {
+      "profileVisibility": "PUBLIC",
+      "showContactInfo": true
+    },
+    "preferences": {
+      "preferredShiftType": [],
+      "maxTravelDistance": 50,
+      "minimumHourlyRate": 0
+    },
+    "createdAt": "2025-11-25T12:34:38.346Z",
+    "updatedAt": "2025-11-25T12:34:38.346Z"
   }
 ]

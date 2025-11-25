@@ -8,6 +8,7 @@ export interface ParsedResumeData {
   email?: string;
   phone?: string;
   address?: string;
+  dateOfBirth?: string;
   skills: string[];
   experience: Array<{
     title: string;
@@ -19,6 +20,7 @@ export interface ParsedResumeData {
     degree: string;
     institution: string;
     year: string;
+    fieldOfStudy?: string;
   }>;
   certifications: string[];
 }

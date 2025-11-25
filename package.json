@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:verifications": "node test-verifications.js"
+    "test:verifications": "node test-verifications.js",
+    "test:resume": "tsx scripts/testResumeParser.ts",
+    "test:dbs": "tsx scripts/testDBS.ts",
+    "test:dbs:external": "cross-env TEST_EXTERNAL=true tsx scripts/testDBS.ts"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -18,6 +21,7 @@
     "lodash": "^4.17.21",
     "mammoth": "^1.10.0",
     "next": "15.3.4",
+    "pdf-parse": "^1.1.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.3.1",
@@ -29,11 +33,15 @@
     "@tailwindcss/postcss": "^4",
     "@types/lodash": "^4.17.20",
     "@types/node": "^20",
+    "@types/node-fetch": "^2.6.13",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.4",
+    "node-fetch": "^3.3.2",
     "tailwindcss": "^4",
+    "tsx": "^4.20.6",
     "typescript": "^5"
   }
 }

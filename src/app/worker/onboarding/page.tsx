@@ -131,7 +131,7 @@ interface OnboardingData {
 }
 
 export default function WorkerOnboarding() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { resumeData, clearResumeData } = useResume();
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
@@ -177,52 +177,109 @@ export default function WorkerOnboarding() {
   const [verifyingNewDBS, setVerifyingNewDBS] = useState(false);
   
   // Auto-fill form with resume data when available
+  // Prioritize resume data - only use existing values if resume data is not available
   useEffect(() => {
     if (resumeData) {
+      console.log('Applying resume data to form:', {
+        firstName: resumeData.firstName,
+        lastName: resumeData.lastName,
+        phone: resumeData.phone,
+        email: resumeData.email,
+        address: resumeData.address,
+        skillsCount: resumeData.skills?.length,
+        experienceCount: resumeData.experience?.length
+      });
+      
       setFormData(prev => ({
         ...prev,
-        // Personal Information
-        firstName: resumeData.firstName || prev.firstName,
-        lastName: resumeData.lastName || prev.lastName,
-        phone: resumeData.phone || prev.phone,
-        email: resumeData.email || prev.email,
-        address: resumeData.address || prev.address,
+        // Personal Information - prioritize resume data, use empty string if not available
+        firstName: resumeData.firstName || '',
+        lastName: resumeData.lastName || '',
+        phone: resumeData.phone || '',
+        email: resumeData.email || '',
+        address: resumeData.address || '',
+        dateOfBirth: resumeData.dateOfBirth || '',
         
-        // Skills
-        skills: resumeData.skills.join(', ') || prev.skills,
+        // Skills - prioritize resume data
+        skills: resumeData.skills && resumeData.skills.length > 0 
+          ? resumeData.skills.join(', ') 
+          : '',
         
-        // Work History
-        workHistory: resumeData.experience.length > 0 ? resumeData.experience.map(exp => ({
-          employer: exp.company,
-          position: exp.title,
-          location: '',
-          startDate: '',
-          endDate: '',
-          isCurrent: false,
-          description: exp.description,
-          dbsNumber: '',
-          dbsPosition: '',
-          dbsExpiryDate: '',
-          dbsCheckDate: ''
-        })) : prev.workHistory,
+        // Work History - replace with resume data if available
+        workHistory: resumeData.experience && resumeData.experience.length > 0 
+          ? resumeData.experience.map(exp => {
+              const companyStr = exp.company || '';
+              const companyParts = companyStr.split(/\s+-\s+/);
+              const employer = companyParts[0]?.trim() || '';
+              const location = companyParts.slice(1).join(' - ').trim();
+              
+              const duration = exp.duration || '';
+              let startDate = '';
+              let endDate = '';
+              let isCurrent = false;
+              if (duration) {
+                const durationParts = duration.split(/[-–—]/).map(part => part.trim()).filter(Boolean);
+                if (durationParts.length > 0) {
+                  startDate = durationParts[0];
+                }
+                if (durationParts.length > 1) {
+                  const endPart = durationParts[1];
+                  if (/current|present/i.test(endPart)) {
+                    endDate = '';
+                    isCurrent = true;
+                  } else {
+                    endDate = endPart;
+                  }
+                }
+              }
+              
+              return {
+                employer,
+                position: exp.title || '',
+                location,
+                startDate,
+                endDate,
+                isCurrent,
+                description: exp.description || '',
+                dbsNumber: '',
+                dbsPosition: '',
+                dbsExpiryDate: '',
+                dbsCheckDate: ''
+              };
+            }) 
+          : prev.workHistory,
         
-        // Education
-        education: resumeData.education.length > 0 ? resumeData.education.map(edu => ({
-          degree: edu.degree,
-          institution: edu.institution,
-          graduationYear: edu.year,
-          fieldOfStudy: ''
-        })) : prev.education,
+        // Education - replace with resume data if available
+        education: resumeData.education && resumeData.education.length > 0 
+          ? resumeData.education.map(edu => {
+              let degree = edu.degree || '';
+              let fieldOfStudy = edu.fieldOfStudy || '';
+              if (!fieldOfStudy && degree.includes(':')) {
+                const [deg, ...rest] = degree.split(':');
+                degree = deg.trim();
+                fieldOfStudy = rest.join(':').trim();
+              }
+              
+              return {
+                degree,
+                institution: edu.institution || '',
+                graduationYear: edu.year || '',
+                fieldOfStudy: fieldOfStudy || ''
+              };
+            }) 
+          : prev.education,
         
-        // Certifications
-        certifications: resumeData.certifications.length > 0 ? resumeData.certifications.map(cert => ({
-          name: cert,
-          issuingBody: '',
-          issueDate: '',
-          expiryDate: '',
-          certificateNumber: '',
-          certificateFile: null
-        })) : prev.certifications,
+        // Certifications - replace with resume data if available
+        certifications: resumeData.certifications && resumeData.certifications.length > 0 
+          ? resumeData.certifications.map(cert => ({
+              name: cert || '',
+              issuingBody: '',
+              issueDate: '',
+              expiryDate: '',
+              certificateNumber: '',
+              certificateFile: null
+            })) 
+          : prev.certifications,
       }));
       
       // Clear resume data after auto-filling
@@ -232,10 +289,11 @@ export default function WorkerOnboarding() {
   
   const [formData, setFormData] = useState<OnboardingData>({
     // Personal Information
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
-    phone: user?.phone || '',
-    email: user?.email || '',
+    // Don't pre-fill from user data - let resume data populate it
+    firstName: '',
+    lastName: '',
+    phone: '',
+    email: '',
     dateOfBirth: '',
     address: '',
     city: '',
@@ -2921,14 +2979,29 @@ export default function WorkerOnboarding() {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    router.push('/');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-sm border">
           {/* Header */}
           <div className="px-6 py-4 border-b border-gray-200">
-            <h1 className="text-2xl font-bold text-black">Complete Your Profile</h1>
-            <p className="text-gray-800 mt-1">Step {currentStep} of 9</p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h1 className="text-2xl font-bold text-black">Complete Your Profile</h1>
+                <p className="text-gray-800 mt-1">Step {currentStep} of 9</p>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="inline-flex items-center justify-center rounded-md border border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-100"
+              >
+                Sign Out
+              </button>
+            </div>
           </div>
 
           {/* Progress Bar */}
