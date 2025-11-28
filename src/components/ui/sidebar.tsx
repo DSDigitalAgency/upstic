@@ -91,6 +91,7 @@ const sidebarItems: SidebarItem[] = [
       { id: 'documents', label: 'Worker Documents', href: '/admin/documents', icon: null },
       { id: 'compliance-expiry', label: 'Expiry Tracking', href: '/admin/compliance/expiry', icon: null },
       { id: 'compliance-audits', label: 'Audit Logs', href: '/admin/compliance/audits', icon: null },
+      { id: 'verifications', label: 'Verification Services', href: '/admin/verifications', icon: null },
     ],
   },
   {

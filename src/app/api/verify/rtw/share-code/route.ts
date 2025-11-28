@@ -1,25 +1,44 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { rtwScraper } from '@/lib/rtwScraper';
 
 interface RTWVerifyRequest {
   shareCode: string;
   dateOfBirth: string; // Format: YYYY-MM-DD
 }
 
-const RTW_CHECK_URL = process.env.RTW_CHECK_URL || 'https://www.gov.uk/prove-right-to-work';
-
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { shareCode, dateOfBirth } = body;
+    const { shareCode, dateOfBirth } = body as RTWVerifyRequest;
 
-    if (!shareCode || !dateOfBirth) {
+    // Validate required fields
+    if (!shareCode) {
       return NextResponse.json(
-        { error: 'Missing required fields: shareCode and dateOfBirth are required' },
+        { error: 'Missing required field: shareCode' },
         { status: 400 }
       );
     }
 
-    // Validate date format
+    if (!dateOfBirth) {
+      return NextResponse.json(
+        { error: 'Missing required field: dateOfBirth' },
+        { status: 400 }
+      );
+    }
+
+    // Validate share code format (typically 9 alphanumeric characters)
+    const cleanShareCode = shareCode.replace(/\s+/g, '').toUpperCase();
+    if (!/^[A-Z0-9]{9}$/.test(cleanShareCode)) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid share code format',
+          details: 'Share code must be 9 alphanumeric characters (e.g., ABC123XYZ)'
+        },
+        { status: 400 }
+      );
+    }
+
+    // Validate date format (YYYY-MM-DD)
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!dateRegex.test(dateOfBirth)) {
       return NextResponse.json(
@@ -28,40 +47,61 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Right to Work verification requires browser automation with consent
-    // This is a placeholder - actual implementation would use Playwright to check the government service
-    // Note: This requires user consent and must comply with site ToS
-    
-    // For now, we'll return a mock response structure
-    // In production, this would:
-    // 1. Use Playwright to navigate to the RTW check page
-    // 2. Enter the share code and date of birth
-    // 3. Extract the verification result
-    // 4. Return structured data
+    // Validate date is a real date
+    const [year, month, day] = dateOfBirth.split('-').map(Number);
+    const dateObj = new Date(year, month - 1, day);
+    if (
+      dateObj.getFullYear() !== year ||
+      dateObj.getMonth() !== month - 1 ||
+      dateObj.getDate() !== day
+    ) {
+      return NextResponse.json(
+        { error: 'Invalid date. Please enter a valid date.' },
+        { status: 400 }
+      );
+    }
 
+    console.log('[RTW API] Starting verification for share code:', cleanShareCode);
+
+    // Perform the verification using web scraping
+    const result = await rtwScraper({
+      shareCode: cleanShareCode,
+      dateOfBirth,
+    });
+
+    console.log('[RTW API] Verification result:', {
+      success: result.success,
+      verified: result.verified,
+      status: result.status,
+      result: result.result,
+    });
+
+    // Return the result
     return NextResponse.json({
-      success: true,
+      success: result.success,
+      verified: result.verified,
       data: {
-        ok: true,
-        shareCode,
-        dateOfBirth,
-        status: 'verified',
-        verificationDate: new Date().toISOString(),
-        message: 'Right to Work check completed via share code',
-        // In production, this would include actual verification details
-        details: {
-          workStatus: 'allowed',
-          expiryDate: null, // Would be populated from actual check
-        }
+        shareCode: result.shareCode,
+        dateOfBirth: result.dateOfBirth,
+        status: result.status,
+        result: result.result,
+        message: result.message,
+        details: result.details,
+        verificationDate: result.verificationDate,
+        screenshot: result.screenshot,
+        serviceUrl: 'https://www.gov.uk/view-right-to-work',
       }
     });
 
   } catch (error) {
-    console.error('Right to Work verification error:', error);
+    console.error('[RTW API] Verification error:', error);
     return NextResponse.json(
-      { error: 'Failed to verify Right to Work', details: error instanceof Error ? error.message : 'Unknown error' },
+      { 
+        success: false,
+        error: 'Failed to verify Right to Work', 
+        details: error instanceof Error ? error.message : 'Unknown error' 
+      },
       { status: 500 }
     );
   }
 }
-
