@@ -210,10 +210,11 @@ function parseDBSResult(
   const dateOfBirth = `${dob.day.padStart(2, '0')}/${dob.month.padStart(2, '0')}/${dob.year}`;
   const contentLower = content.toLowerCase();
 
-  // If we're still on the form page, the form didn't submit
+  // If we're still on the form page, the form didn't submit - this is a failure
   if (!isResultPage) {
     // Check for validation errors on the form
-    if (contentLower.includes('error') || contentLower.includes('invalid') || contentLower.includes('please enter')) {
+    if (contentLower.includes('error') || contentLower.includes('invalid') || contentLower.includes('please enter') ||
+        contentLower.includes('does not match') || contentLower.includes('check your details')) {
       return {
         success: false,
         verified: false,
@@ -225,7 +226,7 @@ function parseDBSResult(
           dateOfBirth,
           status: 'error',
           result: 'validation_error',
-          message: 'The form contained validation errors. Please check the details are correct.',
+          message: 'The details entered are invalid or do not match any certificate. Please check the certificate number, name, and date of birth are correct.',
           verificationDate: new Date().toISOString(),
         }
       };
@@ -319,7 +320,7 @@ function parseDBSResult(
       contentLower.includes('not a member') || contentLower.includes('not signed up') ||
       contentLower.includes('certificate holder has not')) {
     return {
-      success: true,
+      success: false,
       verified: false,
       data: {
         certificateNumber,
@@ -341,7 +342,7 @@ function parseDBSResult(
       contentLower.includes('cannot find') || contentLower.includes('details do not match') ||
       contentLower.includes('check your details') || contentLower.includes('try again')) {
     return {
-      success: true,
+      success: false,
       verified: false,
       data: {
         certificateNumber,
@@ -357,9 +358,9 @@ function parseDBSResult(
     };
   }
 
-  // Default: couldn't determine result - show screenshot
+  // Default: couldn't determine result - this is a failure
   return {
-    success: true,
+    success: false,
     verified: false,
     data: {
       certificateNumber,
@@ -369,7 +370,7 @@ function parseDBSResult(
       dateOfBirth,
       status: 'error',
       result: 'unknown',
-      message: 'Verification completed but the result could not be automatically determined. Please review the screenshot for the actual result.',
+      message: 'Verification failed. The result could not be automatically determined. Please check the details and try again.',
       verificationDate: new Date().toISOString(),
     }
   };

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { apiClient } from '@/demo/func/api';
-import { Assignment, Worker } from '@/demo/func/api';
+import { apiClient, saveJob } from '@/lib/api';
+import { Assignment, Worker, Job } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 import DBSStatusBadge from '@/components/DBSStatusBadge';
 
@@ -24,6 +24,7 @@ export default function StaffingPage() {
   });
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [workers, setWorkers] = useState<Worker[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'requests' | 'schedule'>('overview');
@@ -59,9 +60,27 @@ export default function StaffingPage() {
         const workersResponse = await apiClient.getWorkers();
         const workersData = workersResponse.data?.items || [];
 
-        // Calculate stats
-        const activeAssignments = assignmentsData.filter(a => a.status === 'active');
-        const pendingAssignments = assignmentsData.filter(a => a.status === 'pending');
+        // Fetch jobs to enrich assignments
+        const jobsResponse = await apiClient.getJobs({ page: 1, limit: 100 });
+        const jobsData = jobsResponse.data?.items || [];
+        setJobs(jobsData);
+
+        // Enrich assignments with job data
+        const enrichedAssignments = assignmentsData.map((assignment: Assignment) => {
+          const job = jobsData.find((j: Job) => j.id === assignment.jobId);
+          return {
+            ...assignment,
+            title: job?.title || assignment.title || 'Untitled Assignment',
+            location: job?.location || assignment.location || 'Location not specified',
+            shiftType: job?.shift || assignment.shiftType || 'Not specified',
+            hourlyRate: assignment.rate,
+            totalHours: assignment.hoursPerWeek,
+          };
+        });
+
+        // Calculate stats using enriched assignments
+        const activeAssignments = enrichedAssignments.filter(a => a.status === 'active');
+        const pendingAssignments = enrichedAssignments.filter(a => a.status === 'pending');
         const totalCost = activeAssignments.reduce((sum, assignment) => {
           return sum + (assignment.rate * assignment.hoursPerWeek);
         }, 0);
@@ -71,14 +90,14 @@ export default function StaffingPage() {
           : 0;
 
         setStats({
-          totalRequests: assignmentsData.length,
+          totalRequests: enrichedAssignments.length,
           activeStaff: activeAssignments.length,
           pendingApprovals: pendingAssignments.length,
           totalCost,
           averageRating: Math.round(averageRating * 10) / 10,
         });
 
-        setAssignments(assignmentsData);
+        setAssignments(enrichedAssignments);
         setWorkers(workersData);
 
       } catch (err) {

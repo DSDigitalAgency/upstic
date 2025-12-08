@@ -2,9 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { apiClient } from '@/demo/func/api';
-
-import { Assignment, Job, Worker, Client } from '@/demo/func/api';
+import { apiClient } from '@/lib/api';
+import { Assignment, Job, Worker, Client } from '@/lib/api';
 
 export default function ClientAssignmentsPage() {
   const { user } = useAuth();

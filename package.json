@@ -10,7 +10,8 @@
     "test:verifications": "node test-verifications.js",
     "test:resume": "tsx scripts/testResumeParser.ts",
     "test:dbs": "tsx scripts/testDBS.ts",
-    "test:dbs:external": "cross-env TEST_EXTERNAL=true tsx scripts/testDBS.ts"
+    "test:dbs:external": "cross-env TEST_EXTERNAL=true tsx scripts/testDBS.ts",
+    "test:auto": "tsx scripts/testVerifications.ts"
   },
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",

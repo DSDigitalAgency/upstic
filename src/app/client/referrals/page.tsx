@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { apiClient, Referral } from '@/demo/func/api';
+import { apiClient, Referral } from '@/lib/api';
 
 interface ReferralFormData {
   referredEmail: string;

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { apiClient } from '@/demo/func/api';
-import type { Worker, Availability } from '@/demo/func/api';
+import { apiClient } from '@/lib/api';
+import type { Worker, Availability } from '@/lib/api';
 import WorkerAvailabilityView from '@/components/WorkerAvailabilityView';
 import DBSStatusBadge from '@/components/DBSStatusBadge';
 

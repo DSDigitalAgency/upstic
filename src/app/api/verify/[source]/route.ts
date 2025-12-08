@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { nmcScraper } from '@/lib/nmcScraper';
+import { hcpcScraper } from '@/lib/hcpcScraper';
+import { gmcScraper } from '@/lib/gmcScraper';
+import { gdcScraper } from '@/lib/gdcScraper';
 
 interface ProfessionalRegisterVerifyRequest {
   registrationNumber: string;
@@ -67,33 +71,135 @@ export async function POST(
       );
     }
 
-    // Professional register verification requires browser automation (Playwright)
-    // No public APIs available; must comply with site ToS
-    // This is a placeholder - actual implementation would use Playwright to check the register
-    
-    // In production, this would:
-    // 1. Use Playwright to navigate to the appropriate register check page
-    // 2. Enter the registration number and other details
-    // 3. Extract the verification result
-    // 4. Return structured data
-
     const registerUrl = REGISTER_URLS[normalizedSource] || '';
 
+    // Use web scraping for professional registers
+    if (normalizedSource === 'nmc') {
+      console.log('[NMC API] Starting NMC verification for registration:', registrationNumber);
+      
+      const result = await nmcScraper({
+        registrationNumber,
+        firstName,
+        lastName,
+        dateOfBirth,
+      });
+
+      return NextResponse.json({
+        success: result.success,
+        verified: result.verified,
+        data: {
+          source: normalizedSource,
+          registrationNumber: result.registrationNumber,
+          status: result.status,
+          result: result.result,
+          message: result.message,
+          details: result.details,
+          verificationDate: result.verificationDate,
+          registerUrl,
+        },
+        error: result.status === 'error' ? result.message : undefined,
+      });
+    }
+
+    if (normalizedSource === 'hcpc') {
+      console.log('[HCPC API] Starting HCPC verification for registration:', registrationNumber);
+      
+      const result = await hcpcScraper({
+        registrationNumber,
+        firstName,
+        lastName,
+        dateOfBirth,
+      });
+
+      return NextResponse.json({
+        success: result.success,
+        verified: result.verified,
+        data: {
+          source: normalizedSource,
+          registrationNumber: result.registrationNumber,
+          status: result.status,
+          result: result.result,
+          message: result.message,
+          details: result.details,
+          verificationDate: result.verificationDate,
+          registerUrl,
+        },
+        error: result.status === 'error' ? result.message : undefined,
+      });
+    }
+
+    if (normalizedSource === 'gmc') {
+      console.log('[GMC API] Starting GMC verification for registration:', registrationNumber);
+      
+      const result = await gmcScraper({
+        registrationNumber,
+        firstName,
+        lastName,
+        dateOfBirth,
+      });
+
+      return NextResponse.json({
+        success: result.success,
+        verified: result.verified,
+        data: {
+          source: normalizedSource,
+          registrationNumber: result.registrationNumber,
+          status: result.status,
+          result: result.result,
+          message: result.message,
+          details: result.details,
+          verificationDate: result.verificationDate,
+          registerUrl,
+        },
+        error: result.status === 'error' ? result.message : undefined,
+      });
+    }
+
+    if (normalizedSource === 'gdc') {
+      console.log('[GDC API] Starting GDC verification for registration:', registrationNumber);
+      
+      const result = await gdcScraper({
+        registrationNumber,
+        firstName,
+        lastName,
+        dateOfBirth,
+      });
+
+      return NextResponse.json({
+        success: result.success,
+        verified: result.verified,
+        data: {
+          source: normalizedSource,
+          registrationNumber: result.registrationNumber,
+          status: result.status,
+          result: result.result,
+          message: result.message,
+          details: result.details,
+          verificationDate: result.verificationDate,
+          registerUrl,
+        },
+        error: result.status === 'error' ? result.message : undefined,
+      });
+    }
+
+    // For other registers, return mock response (to be implemented)
+    // Professional register verification requires browser automation (Playwright)
+    // No public APIs available; must comply with site ToS
+    
     return NextResponse.json({
       success: true,
+      verified: true,
       data: {
-        ok: true,
         source: normalizedSource,
         registrationNumber,
         status: 'verified',
         verificationDate: new Date().toISOString(),
-        message: `Professional register check completed for ${normalizedSource.toUpperCase()}`,
+        message: `Professional register check completed for ${normalizedSource.toUpperCase()} (mock response - implementation pending)`,
         registerUrl,
-        // In production, this would include actual verification details
         details: {
           name: firstName && lastName ? `${firstName} ${lastName}` : undefined,
           registrationStatus: 'active',
-          expiryDate: null, // Would be populated from actual check
+          expiryDate: null,
         }
       }
     });
