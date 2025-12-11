@@ -179,6 +179,20 @@ export async function checkDBSCertificate(request: DBSCheckRequest): Promise<DBS
       }
     }
 
+    // Check for missing system dependencies error
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const errorString = error instanceof Error ? error.toString() : String(error);
+    
+    let userMessage = `Failed to check DBS certificate: ${errorMessage}`;
+    
+    if (errorString.includes('libatk') || 
+        errorString.includes('cannot open shared object file') ||
+        errorString.includes('shared libraries') ||
+        errorMessage.includes('Target page, context or browser has been closed') ||
+        errorString.includes('error while loading shared libraries')) {
+      userMessage = 'Browser failed to start due to missing system dependencies. Please install Playwright system dependencies by running: npx playwright install-deps chromium';
+    }
+
     return {
       success: false,
       verified: false,
@@ -190,10 +204,10 @@ export async function checkDBSCertificate(request: DBSCheckRequest): Promise<DBS
         dateOfBirth,
         status: 'error',
         result: 'scraping_failed',
-        message: `Failed to check DBS certificate: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        message: userMessage,
         verificationDate: new Date().toISOString(),
       },
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: errorMessage
     };
   }
 }
