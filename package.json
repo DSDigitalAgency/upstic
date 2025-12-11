@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "npx playwright install chromium && next build",
     "start": "next start",
     "lint": "next lint",
+    "postinstall": "npx playwright install chromium --with-deps || npx playwright install chromium",
     "test:verifications": "node test-verifications.js",
     "test:resume": "tsx scripts/testResumeParser.ts",
     "test:dbs": "tsx scripts/testDBS.ts",
