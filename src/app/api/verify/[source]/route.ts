@@ -44,10 +44,10 @@ const REGISTER_URLS: Record<string, string> = {
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { source: string } }
+  { params }: { params: Promise<{ source: string }> }
 ) {
   try {
-    const { source } = params;
+    const { source } = await params;
     const normalizedSource = source.toLowerCase().replace(/_/g, '-');
 
     if (!SUPPORTED_REGISTERS.includes(normalizedSource)) {
@@ -62,7 +62,7 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { registrationNumber, firstName, lastName, dateOfBirth } = body;
+    const { registrationNumber, profession } = body;
 
     if (!registrationNumber) {
       return NextResponse.json(
@@ -79,9 +79,6 @@ export async function POST(
       
       const result = await nmcScraper({
         registrationNumber,
-        firstName,
-        lastName,
-        dateOfBirth,
       });
 
       return NextResponse.json({
@@ -102,13 +99,19 @@ export async function POST(
     }
 
     if (normalizedSource === 'hcpc') {
-      console.log('[HCPC API] Starting HCPC verification for registration:', registrationNumber);
+      // Profession is required for HCPC
+      if (!profession) {
+        return NextResponse.json(
+          { error: 'Profession is required for HCPC verification' },
+          { status: 400 }
+        );
+      }
+      
+      console.log('[HCPC API] Starting HCPC verification for registration:', registrationNumber, `with profession: ${profession}`);
       
       const result = await hcpcScraper({
         registrationNumber,
-        firstName,
-        lastName,
-        dateOfBirth,
+        profession,
       });
 
       return NextResponse.json({
@@ -123,6 +126,8 @@ export async function POST(
           details: result.details,
           verificationDate: result.verificationDate,
           registerUrl,
+          screenshot: result.screenshot,
+          pdf: result.pdf,
         },
         error: result.status === 'error' ? result.message : undefined,
       });
@@ -133,9 +138,6 @@ export async function POST(
       
       const result = await gmcScraper({
         registrationNumber,
-        firstName,
-        lastName,
-        dateOfBirth,
       });
 
       return NextResponse.json({
@@ -150,6 +152,8 @@ export async function POST(
           details: result.details,
           verificationDate: result.verificationDate,
           registerUrl,
+          screenshot: result.screenshot,
+          pdf: result.pdf,
         },
         error: result.status === 'error' ? result.message : undefined,
       });
@@ -160,9 +164,6 @@ export async function POST(
       
       const result = await gdcScraper({
         registrationNumber,
-        firstName,
-        lastName,
-        dateOfBirth,
       });
 
       return NextResponse.json({

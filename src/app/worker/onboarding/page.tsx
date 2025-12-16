@@ -793,14 +793,49 @@ export default function WorkerOnboarding() {
     
     // Map issuing body to register source
     const issuingBodyLower = item.issuingBody.toLowerCase();
+    const itemNameLower = item.name.toLowerCase();
     let source = 'nmc'; // Default to NMC
+    let profession: string | undefined = undefined;
     
     if (issuingBodyLower.includes('dental') || issuingBodyLower.includes('gdc')) source = 'gdc';
     else if (issuingBodyLower.includes('medical') || issuingBodyLower.includes('gmc')) source = 'gmc';
     else if (issuingBodyLower.includes('optical') || issuingBodyLower.includes('goc')) source = 'goc';
     else if (issuingBodyLower.includes('pharmacy') || issuingBodyLower.includes('gphc')) source = 'gphc';
-    else if (issuingBodyLower.includes('hcpc')) source = 'hcpc';
-    else if (issuingBodyLower.includes('nursing') || issuingBodyLower.includes('midwifery') || issuingBodyLower.includes('nmc')) source = 'nmc';
+    else if (issuingBodyLower.includes('hcpc')) {
+      source = 'hcpc';
+      // Auto-detect profession from certification/license name or issuing body
+      if (itemNameLower.includes('occupational') || itemNameLower.includes('ot')) {
+        profession = 'Occupational therapist';
+      } else if (itemNameLower.includes('dietitian') || itemNameLower.includes('dietician') || itemNameLower.includes('dt')) {
+        profession = 'Dietitian';
+      } else if (itemNameLower.includes('physiotherapist') || itemNameLower.includes('physio')) {
+        profession = 'Physiotherapist';
+      } else if (itemNameLower.includes('paramedic')) {
+        profession = 'Paramedic';
+      } else if (itemNameLower.includes('radiographer')) {
+        profession = 'Radiographer';
+      } else if (itemNameLower.includes('speech') || itemNameLower.includes('language therapist')) {
+        profession = 'Speech and language therapist';
+      } else if (itemNameLower.includes('biomedical')) {
+        profession = 'Biomedical scientist';
+      } else if (itemNameLower.includes('clinical scientist')) {
+        profession = 'Clinical scientist';
+      } else if (itemNameLower.includes('chiropodist') || itemNameLower.includes('podiatrist')) {
+        profession = 'Chiropodist / podiatrist';
+      } else if (itemNameLower.includes('hearing aid')) {
+        profession = 'Hearing aid dispenser';
+      } else if (itemNameLower.includes('operating department')) {
+        profession = 'Operating department practitioner';
+      } else if (itemNameLower.includes('orthoptist')) {
+        profession = 'Orthoptist';
+      } else if (itemNameLower.includes('psychologist')) {
+        profession = 'Practitioner psychologist';
+      } else if (itemNameLower.includes('prosthetist') || itemNameLower.includes('orthotist')) {
+        profession = 'Prosthetist / orthotist';
+      } else if (itemNameLower.includes('arts therapist')) {
+        profession = 'Arts Therapist';
+      }
+    } else if (issuingBodyLower.includes('nursing') || issuingBodyLower.includes('midwifery') || issuingBodyLower.includes('nmc')) source = 'nmc';
     else if (issuingBodyLower.includes('social work')) source = 'social-work-england';
     else if (issuingBodyLower.includes('chiropractic') || issuingBodyLower.includes('gcc')) source = 'gcc';
     else if (issuingBodyLower.includes('nhs')) source = 'nhs-performers';
@@ -809,23 +844,40 @@ export default function WorkerOnboarding() {
     setVerifyingProfessionalRegister(prev => ({ ...prev, [key]: true }));
 
     try {
+      const requestBody: any = {
+        registrationNumber,
+      };
+      
+      // Profession is required for HCPC
+      if (source === 'hcpc') {
+        if (!profession) {
+          alert('Profession is required for HCPC verification. Please ensure the certification/license name or issuing body contains profession information (e.g., "Occupational Therapist", "Dietitian").');
+          setVerifyingProfessionalRegister(prev => ({ ...prev, [key]: false }));
+          return;
+        }
+        requestBody.profession = profession;
+      }
+
       const response = await fetch(`/api/verify/${source}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          registrationNumber,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
-          dateOfBirth: formData.dateOfBirth
-        })
+        body: JSON.stringify(requestBody)
       });
 
       const result = await response.json();
 
       if (result.success && result.data) {
-        setProfessionalRegisterResults(prev => ({ ...prev, [key]: result.data }));
-        if (!result.data.ok) {
-          alert(`Professional Register Verification Failed\n\n${result.data.error || 'Registration not found'}`);
+        // Store the full result including verified status and details
+        setProfessionalRegisterResults(prev => ({ ...prev, [key]: {
+          ...result.data,
+          verified: result.verified,
+          success: result.success,
+        }}));
+        if (!result.verified) {
+          // Only show alert if verification failed (not just if not found)
+          if (result.data.status === 'error' || result.data.status === 'not_found') {
+            alert(`Professional Register Verification Failed\n\n${result.data.message || result.error || 'Registration not found'}`);
+          }
         }
       } else {
         alert(result.error || 'Failed to verify registration');
@@ -2189,7 +2241,7 @@ export default function WorkerOnboarding() {
                   label="Certificate Number"
                   value={cert.certificateNumber}
                   onChange={(e) => updateCertification(index, 'certificateNumber', e.target.value)}
-                  placeholder="e.g., 123456789"
+                  placeholder="e.g., OT61642, DT035366"
                 />
                 <Input
                   label="Upload Certificate File"
@@ -2199,6 +2251,103 @@ export default function WorkerOnboarding() {
                   helperText="Upload the certificate document (PDF, Word, or Image)"
                   required
                 />
+              </div>
+              
+              {/* Verification Buttons */}
+              <div className="col-span-full mt-4 space-y-3">
+                {/* Ofqual Verification */}
+                {cert.certificateNumber && (
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => handleOfqualVerification(index)}
+                      disabled={verifyingOfqual[index]}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                    >
+                      {verifyingOfqual[index] ? 'Verifying...' : 'Verify with Ofqual'}
+                    </button>
+                    {ofqualVerificationResults[index] && (
+                      <span className={`text-sm font-medium ${
+                        ofqualVerificationResults[index].ok ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                        {ofqualVerificationResults[index].ok ? '✓ Verified' : '✗ Not Verified'}
+                      </span>
+                    )}
+                  </div>
+                )}
+                
+                {/* Professional Register Verification */}
+                {cert.certificateNumber && cert.issuingBody && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => handleProfessionalRegisterVerification(index, false)}
+                        disabled={verifyingProfessionalRegister[`cert-${index}`]}
+                        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                      >
+                        {verifyingProfessionalRegister[`cert-${index}`] ? 'Verifying...' : 'Verify Professional Register'}
+                      </button>
+                      {professionalRegisterResults[`cert-${index}`] && (
+                        <span className={`text-sm font-medium ${
+                          professionalRegisterResults[`cert-${index}`].verified ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                          {professionalRegisterResults[`cert-${index}`].verified ? '✓ Verified' : '✗ Not Verified'}
+                        </span>
+                      )}
+                    </div>
+                    {/* Display detailed results */}
+                    {professionalRegisterResults[`cert-${index}`] && professionalRegisterResults[`cert-${index}`].details && (
+                      <div className="mt-3 p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
+                        <p className="text-xs font-semibold text-indigo-900 mb-2 uppercase tracking-wide">Registration Details</p>
+                        <dl className="space-y-2 text-xs">
+                          {professionalRegisterResults[`cert-${index}`].details.fullName && (
+                            <div className="flex items-start border-b border-indigo-200 pb-2">
+                              <dt className="text-indigo-700 font-medium w-32 flex-shrink-0">Name:</dt>
+                              <dd className="text-indigo-900 font-semibold flex-1">{professionalRegisterResults[`cert-${index}`].details.fullName}</dd>
+                            </div>
+                          )}
+                          {professionalRegisterResults[`cert-${index}`].registrationNumber && (
+                            <div className="flex items-start border-b border-indigo-200 pb-2">
+                              <dt className="text-indigo-700 font-medium w-32 flex-shrink-0">Registration number:</dt>
+                              <dd className="text-indigo-900 font-semibold flex-1">{professionalRegisterResults[`cert-${index}`].registrationNumber}</dd>
+                            </div>
+                          )}
+                          {professionalRegisterResults[`cert-${index}`].details.location && (
+                            <div className="flex items-start border-b border-indigo-200 pb-2">
+                              <dt className="text-indigo-700 font-medium w-32 flex-shrink-0">Location:</dt>
+                              <dd className="text-indigo-900 font-semibold flex-1">{professionalRegisterResults[`cert-${index}`].details.location}</dd>
+                            </div>
+                          )}
+                          {professionalRegisterResults[`cert-${index}`].details.registrationStatus && (
+                            <div className="flex items-start border-b border-indigo-200 pb-2">
+                              <dt className="text-indigo-700 font-medium w-32 flex-shrink-0">Status:</dt>
+                              <dd className={`font-semibold flex-1 ${
+                                String(professionalRegisterResults[`cert-${index}`].details.registrationStatus).toLowerCase().includes('registered') 
+                                  ? 'text-green-600' 
+                                  : 'text-indigo-900'
+                              }`}>
+                                {professionalRegisterResults[`cert-${index}`].details.registrationStatus}
+                              </dd>
+                            </div>
+                          )}
+                          {professionalRegisterResults[`cert-${index}`].details.period && (
+                            <div className="flex items-start border-b border-indigo-200 pb-2">
+                              <dt className="text-indigo-700 font-medium w-32 flex-shrink-0">Period:</dt>
+                              <dd className="text-indigo-900 font-semibold flex-1">{professionalRegisterResults[`cert-${index}`].details.period}</dd>
+                            </div>
+                          )}
+                          {professionalRegisterResults[`cert-${index}`].details.profession && (
+                            <div className="flex items-start border-b border-indigo-200 pb-2">
+                              <dt className="text-indigo-700 font-medium w-32 flex-shrink-0">Profession:</dt>
+                              <dd className="text-indigo-900 font-semibold flex-1">{professionalRegisterResults[`cert-${index}`].details.profession}</dd>
+                            </div>
+                          )}
+                        </dl>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -2265,7 +2414,7 @@ export default function WorkerOnboarding() {
                   label="License Number"
                   value={license.licenseNumber}
                   onChange={(e) => updateLicense(index, 'licenseNumber', e.target.value)}
-                  placeholder="e.g., 123456789"
+                  placeholder="e.g., OT61642, DT035366"
                 />
                 <Input
                   label="Upload License File"
@@ -2275,6 +2424,130 @@ export default function WorkerOnboarding() {
                   helperText="Upload the license document (PDF, Word, or Image)"
                   required
                 />
+              </div>
+              
+              {/* Verification Buttons */}
+              <div className="col-span-full mt-4 space-y-3">
+                {/* Professional Register Verification */}
+                {license.licenseNumber && license.issuingBody && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => handleProfessionalRegisterVerification(index, true)}
+                        disabled={verifyingProfessionalRegister[`license-${index}`]}
+                        className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                      >
+                        {verifyingProfessionalRegister[`license-${index}`] ? 'Verifying...' : 'Verify Professional Register'}
+                      </button>
+                      {professionalRegisterResults[`license-${index}`] && (
+                        <span className={`text-sm font-medium ${
+                          professionalRegisterResults[`license-${index}`].verified ? 'text-green-600' : 'text-red-600'
+                        }`}>
+                          {professionalRegisterResults[`license-${index}`].verified ? '✓ Verified' : '✗ Not Verified'}
+                        </span>
+                      )}
+                    </div>
+                    {/* Display detailed results */}
+                    {professionalRegisterResults[`license-${index}`] && professionalRegisterResults[`license-${index}`].details && (
+                      <div className="mt-3 p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
+                        <p className="text-xs font-semibold text-indigo-900 mb-2 uppercase tracking-wide">Registration Details</p>
+                        <dl className="space-y-2 text-xs">
+                          {professionalRegisterResults[`license-${index}`].details.fullName && (
+                            <div className="flex items-start border-b border-indigo-200 pb-2">
+                              <dt className="text-indigo-700 font-medium w-32 flex-shrink-0">Name:</dt>
+                              <dd className="text-indigo-900 font-semibold flex-1">{professionalRegisterResults[`license-${index}`].details.fullName}</dd>
+                            </div>
+                          )}
+                          {professionalRegisterResults[`license-${index}`].registrationNumber && (
+                            <div className="flex items-start border-b border-indigo-200 pb-2">
+                              <dt className="text-indigo-700 font-medium w-32 flex-shrink-0">Registration number:</dt>
+                              <dd className="text-indigo-900 font-semibold flex-1">{professionalRegisterResults[`license-${index}`].registrationNumber}</dd>
+                            </div>
+                          )}
+                          {professionalRegisterResults[`license-${index}`].details.location && (
+                            <div className="flex items-start border-b border-indigo-200 pb-2">
+                              <dt className="text-indigo-700 font-medium w-32 flex-shrink-0">Location:</dt>
+                              <dd className="text-indigo-900 font-semibold flex-1">{professionalRegisterResults[`license-${index}`].details.location}</dd>
+                            </div>
+                          )}
+                          {professionalRegisterResults[`license-${index}`].details.registrationStatus && (
+                            <div className="flex items-start border-b border-indigo-200 pb-2">
+                              <dt className="text-indigo-700 font-medium w-32 flex-shrink-0">Status:</dt>
+                              <dd className={`font-semibold flex-1 ${
+                                String(professionalRegisterResults[`license-${index}`].details.registrationStatus).toLowerCase().includes('registered') 
+                                  ? 'text-green-600' 
+                                  : 'text-indigo-900'
+                              }`}>
+                                {professionalRegisterResults[`license-${index}`].details.registrationStatus}
+                              </dd>
+                            </div>
+                          )}
+                          {professionalRegisterResults[`license-${index}`].details.period && (
+                            <div className="flex items-start border-b border-indigo-200 pb-2">
+                              <dt className="text-indigo-700 font-medium w-32 flex-shrink-0">Period:</dt>
+                              <dd className="text-indigo-900 font-semibold flex-1">{professionalRegisterResults[`license-${index}`].details.period}</dd>
+                            </div>
+                          )}
+                          {professionalRegisterResults[`license-${index}`].details.profession && (
+                            <div className="flex items-start border-b border-indigo-200 pb-2">
+                              <dt className="text-indigo-700 font-medium w-32 flex-shrink-0">Profession:</dt>
+                              <dd className="text-indigo-900 font-semibold flex-1">{professionalRegisterResults[`license-${index}`].details.profession}</dd>
+                            </div>
+                          )}
+                        </dl>
+                        {/* Screenshot and PDF download buttons */}
+                        {(professionalRegisterResults[`license-${index}`].screenshot || professionalRegisterResults[`license-${index}`].pdf) && (
+                          <div className="mt-3 flex gap-2 flex-wrap">
+                            {professionalRegisterResults[`license-${index}`].screenshot && (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    const link = document.createElement('a');
+                                    link.href = `data:image/png;base64,${professionalRegisterResults[`license-${index}`].screenshot}`;
+                                    link.download = `hcpc-verification-${professionalRegisterResults[`license-${index}`].registrationNumber || 'result'}-${new Date().toISOString().split('T')[0]}.png`;
+                                    link.click();
+                                  }}
+                                  className="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors flex items-center gap-1.5"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                  </svg>
+                                  Download Screenshot
+                                </button>
+                                <div className="mt-2 w-full">
+                                  <img 
+                                    src={`data:image/png;base64,${professionalRegisterResults[`license-${index}`].screenshot}`} 
+                                    alt="Verification result screenshot" 
+                                    className="max-w-full h-auto rounded border border-indigo-300 shadow-sm"
+                                  />
+                                </div>
+                              </>
+                            )}
+                            {professionalRegisterResults[`license-${index}`].pdf && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const link = document.createElement('a');
+                                  link.href = `data:application/pdf;base64,${professionalRegisterResults[`license-${index}`].pdf}`;
+                                  link.download = `hcpc-verification-${professionalRegisterResults[`license-${index}`].registrationNumber || 'result'}-${new Date().toISOString().split('T')[0]}.pdf`;
+                                  link.click();
+                                }}
+                                className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors flex items-center gap-1.5"
+                              >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                </svg>
+                                Download PDF
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           ))}

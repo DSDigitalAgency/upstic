@@ -68,11 +68,9 @@ export default function VerificationsPage() {
   });
 
   const [professionalRegisterForm, setProfessionalRegisterForm] = useState({
-    source: 'nmc',
+    source: 'hcpc',
     registrationNumber: '',
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
+    profession: '',
   });
 
   const [cosForm, setCosForm] = useState({
@@ -282,10 +280,15 @@ export default function VerificationsPage() {
 
     const colors = resultColorClasses[statusColor as keyof typeof resultColorClasses];
 
-    // Create a display-friendly version of data (without the long screenshot base64)
+    // Create a display-friendly version of data (without the long screenshot/pdf base64)
     const displayData = data ? { ...data } : { ...result };
+    const screenshot = data?.screenshot || result.screenshot;
+    const pdf = data?.pdf || result.pdf;
     if (displayData.screenshot) {
       delete displayData.screenshot;
+    }
+    if (displayData.pdf) {
+      delete displayData.pdf;
     }
 
     return (
@@ -314,16 +317,110 @@ export default function VerificationsPage() {
             
             {/* Show details if available */}
             {data?.details && typeof data.details === 'object' && Object.keys(data.details as object).length > 0 && (
-              <div className="mt-2 p-2 bg-white/70 rounded border border-gray-200">
-                <p className="text-xs font-medium text-gray-700 mb-1">Details:</p>
-                <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-                  {Object.entries(data.details as Record<string, unknown>).map(([k, v]) => (
-                    <div key={k} className="contents">
-                      <dt className="text-gray-500 capitalize">{k.replace(/([A-Z])/g, ' $1').trim()}:</dt>
-                      <dd className="text-gray-900 font-medium">{String(v)}</dd>
+              <div className="mt-3 p-3 bg-white/70 rounded border border-gray-200">
+                <p className="text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Registration Details</p>
+                <dl className="space-y-2 text-xs">
+                  {data.details.fullName && (
+                    <div className="flex items-start border-b border-gray-200 pb-2">
+                      <dt className="text-gray-600 font-medium w-32 flex-shrink-0">Name:</dt>
+                      <dd className="text-gray-900 font-semibold flex-1">{String(data.details.fullName)}</dd>
                     </div>
-                  ))}
+                  )}
+                  {data.registrationNumber && (
+                    <div className="flex items-start border-b border-gray-200 pb-2">
+                      <dt className="text-gray-600 font-medium w-32 flex-shrink-0">Registration number:</dt>
+                      <dd className="text-gray-900 font-semibold flex-1">{String(data.registrationNumber)}</dd>
+                    </div>
+                  )}
+                  {data.details.location && (
+                    <div className="flex items-start border-b border-gray-200 pb-2">
+                      <dt className="text-gray-600 font-medium w-32 flex-shrink-0">Location:</dt>
+                      <dd className="text-gray-900 font-semibold flex-1">{String(data.details.location)}</dd>
+                    </div>
+                  )}
+                  {data.details.registrationStatus && (
+                    <div className="flex items-start border-b border-gray-200 pb-2">
+                      <dt className="text-gray-600 font-medium w-32 flex-shrink-0">Status:</dt>
+                      <dd className={`font-semibold flex-1 ${
+                        String(data.details.registrationStatus).toLowerCase().includes('registered') 
+                          ? 'text-green-600' 
+                          : 'text-gray-900'
+                      }`}>
+                        {String(data.details.registrationStatus)}
+                      </dd>
+                    </div>
+                  )}
+                  {data.details.period && (
+                    <div className="flex items-start border-b border-gray-200 pb-2">
+                      <dt className="text-gray-600 font-medium w-32 flex-shrink-0">Period:</dt>
+                      <dd className="text-gray-900 font-semibold flex-1">{String(data.details.period)}</dd>
+                    </div>
+                  )}
+                  {data.details.profession && (
+                    <div className="flex items-start border-b border-gray-200 pb-2">
+                      <dt className="text-gray-600 font-medium w-32 flex-shrink-0">Profession:</dt>
+                      <dd className="text-gray-900 font-semibold flex-1">{String(data.details.profession)}</dd>
+                    </div>
+                  )}
+                  {/* Show any other details that weren't explicitly handled */}
+                  {Object.entries(data.details as Record<string, unknown>)
+                    .filter(([k]) => !['fullName', 'location', 'registrationStatus', 'period', 'profession'].includes(k))
+                    .map(([k, v]) => (
+                      <div key={k} className="flex items-start border-b border-gray-200 pb-2">
+                        <dt className="text-gray-600 font-medium w-32 flex-shrink-0 capitalize">
+                          {k.replace(/([A-Z])/g, ' $1').trim()}:
+                        </dt>
+                        <dd className="text-gray-900 font-semibold flex-1">{String(v)}</dd>
+                      </div>
+                    ))}
                 </dl>
+              </div>
+            )}
+            
+            {/* Screenshot and PDF download buttons */}
+            {(screenshot || pdf) && (
+              <div className="mt-3 flex gap-2 flex-wrap">
+                {screenshot && (
+                  <button
+                    onClick={() => {
+                      const link = document.createElement('a');
+                      link.href = `data:image/png;base64,${screenshot}`;
+                      link.download = `hcpc-verification-${data?.registrationNumber || 'result'}-${new Date().toISOString().split('T')[0]}.png`;
+                      link.click();
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors flex items-center gap-1.5"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Download Screenshot
+                  </button>
+                )}
+                {pdf && (
+                  <button
+                    onClick={() => {
+                      const link = document.createElement('a');
+                      link.href = `data:application/pdf;base64,${pdf}`;
+                      link.download = `hcpc-verification-${data?.registrationNumber || 'result'}-${new Date().toISOString().split('T')[0]}.pdf`;
+                      link.click();
+                    }}
+                    className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors flex items-center gap-1.5"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    Download PDF
+                  </button>
+                )}
+                {screenshot && (
+                  <div className="mt-2 w-full">
+                    <img 
+                      src={`data:image/png;base64,${screenshot}`} 
+                      alt="Verification result screenshot" 
+                      className="max-w-full h-auto rounded border border-gray-300 shadow-sm"
+                    />
+                  </div>
+                )}
               </div>
             )}
             
@@ -778,7 +875,7 @@ export default function VerificationsPage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">Professional Register</label>
               <select
                 value={professionalRegisterForm.source}
-                onChange={(e) => setProfessionalRegisterForm(prev => ({ ...prev, source: e.target.value }))}
+                onChange={(e) => setProfessionalRegisterForm(prev => ({ ...prev, source: e.target.value, profession: '' }))}
                 className={selectClassName}
               >
                 <option value="nmc">NMC - Nursing and Midwifery Council</option>
@@ -795,56 +892,195 @@ export default function VerificationsPage() {
                 <option value="nhs-performers">NHS Performers List</option>
               </select>
             </div>
-            <div className="grid md:grid-cols-2 gap-4">
+
+            {/* HCPC-specific fields */}
+            {professionalRegisterForm.source === 'hcpc' && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Registration Number <span className="text-red-500">*</span>
+                  Profession <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  value={professionalRegisterForm.registrationNumber}
-                  onChange={(e) => setProfessionalRegisterForm(prev => ({ ...prev, registrationNumber: e.target.value }))}
-                  placeholder="e.g., 12A3456B"
-                  className={inputClassName}
-                />
+                <select
+                  value={professionalRegisterForm.profession}
+                  onChange={(e) => setProfessionalRegisterForm(prev => ({ ...prev, profession: e.target.value }))}
+                  className={selectClassName}
+                  required={professionalRegisterForm.source === 'hcpc'}
+                >
+                  <option value="">{professionalRegisterForm.source === 'hcpc' ? 'Choose a profession (Required)' : 'Choose a profession (Optional)'}</option>
+                  <option value="Arts Therapist">Arts Therapist</option>
+                  <option value="Biomedical scientist">Biomedical scientist</option>
+                  <option value="Chiropodist / podiatrist">Chiropodist / podiatrist</option>
+                  <option value="Clinical scientist">Clinical scientist</option>
+                  <option value="Dietitian">Dietitian</option>
+                  <option value="Hearing aid dispenser">Hearing aid dispenser</option>
+                  <option value="Occupational therapist">Occupational therapist</option>
+                  <option value="Operating department practitioner">Operating department practitioner</option>
+                  <option value="Orthoptist">Orthoptist</option>
+                  <option value="Paramedic">Paramedic</option>
+                  <option value="Physiotherapist">Physiotherapist</option>
+                  <option value="Practitioner psychologist">Practitioner psychologist</option>
+                  <option value="Prosthetist / orthotist">Prosthetist / orthotist</option>
+                  <option value="Radiographer">Radiographer</option>
+                  <option value="Speech and language therapist">Speech and language therapist</option>
+                </select>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
-                <input
-                  type="text"
-                  value={professionalRegisterForm.firstName}
-                  onChange={(e) => setProfessionalRegisterForm(prev => ({ ...prev, firstName: e.target.value }))}
-                  placeholder="e.g., John"
-                  className={inputClassName}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
-                <input
-                  type="text"
-                  value={professionalRegisterForm.lastName}
-                  onChange={(e) => setProfessionalRegisterForm(prev => ({ ...prev, lastName: e.target.value }))}
-                  placeholder="e.g., Smith"
-                  className={inputClassName}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
-                <input
-                  type="date"
-                  value={professionalRegisterForm.dateOfBirth}
-                  onChange={(e) => setProfessionalRegisterForm(prev => ({ ...prev, dateOfBirth: e.target.value }))}
-                  className={inputClassName}
-                />
-              </div>
+            )}
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Registration Number <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={professionalRegisterForm.registrationNumber}
+                onChange={(e) => setProfessionalRegisterForm(prev => ({ ...prev, registrationNumber: e.target.value }))}
+                placeholder={
+                  professionalRegisterForm.source === 'hcpc' ? "e.g., OT61642, DT035366" :
+                  professionalRegisterForm.source === 'gmc' ? "e.g., 7596231, A8142667" :
+                  "e.g., 12A3456B"
+                }
+                className={inputClassName}
+              />
             </div>
+
+            {/* Quick Test Buttons for HCPC */}
+            {professionalRegisterForm.source === 'hcpc' && (
+              <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-medium text-indigo-900">Quick Test Data</h4>
+                  <button
+                    type="button"
+                    onClick={() => setProfessionalRegisterForm(prev => ({
+                      ...prev,
+                      registrationNumber: '',
+                      profession: '',
+                    }))}
+                    className="text-xs text-indigo-600 hover:text-indigo-800 underline"
+                  >
+                    Clear
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setProfessionalRegisterForm(prev => ({
+                      ...prev,
+                      registrationNumber: 'OT61642',
+                      profession: 'Occupational therapist',
+                    }))}
+                    className="px-3 py-2 bg-white border border-indigo-300 rounded-md text-xs text-indigo-700 hover:bg-indigo-50 transition-colors"
+                  >
+                    OT61642 (Occupational Therapist)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProfessionalRegisterForm(prev => ({
+                      ...prev,
+                      registrationNumber: 'OT74314',
+                      profession: 'Occupational therapist',
+                    }))}
+                    className="px-3 py-2 bg-white border border-indigo-300 rounded-md text-xs text-indigo-700 hover:bg-indigo-50 transition-colors"
+                  >
+                    OT74314 (Occupational Therapist)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProfessionalRegisterForm(prev => ({
+                      ...prev,
+                      registrationNumber: 'DT035366',
+                      profession: 'Dietitian',
+                    }))}
+                    className="px-3 py-2 bg-white border border-indigo-300 rounded-md text-xs text-indigo-700 hover:bg-indigo-50 transition-colors"
+                  >
+                    DT035366 (Dietitian)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProfessionalRegisterForm(prev => ({
+                      ...prev,
+                      registrationNumber: 'DT034289',
+                      profession: 'Dietitian',
+                    }))}
+                    className="px-3 py-2 bg-white border border-indigo-300 rounded-md text-xs text-indigo-700 hover:bg-indigo-50 transition-colors"
+                  >
+                    DT034289 (Dietitian)
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Quick Test Buttons for GMC */}
+            {professionalRegisterForm.source === 'gmc' && (
+              <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-medium text-indigo-900">Quick Test Data</h4>
+                  <button
+                    type="button"
+                    onClick={() => setProfessionalRegisterForm(prev => ({
+                      ...prev,
+                      registrationNumber: '',
+                    }))}
+                    className="text-xs text-indigo-600 hover:text-indigo-800 underline"
+                  >
+                    Clear
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setProfessionalRegisterForm(prev => ({
+                      ...prev,
+                      registrationNumber: '7596231',
+                    }))}
+                    className="px-3 py-2 bg-white border border-indigo-300 rounded-md text-xs text-indigo-700 hover:bg-indigo-50 transition-colors"
+                  >
+                    7596231
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProfessionalRegisterForm(prev => ({
+                      ...prev,
+                      registrationNumber: '7488738',
+                    }))}
+                    className="px-3 py-2 bg-white border border-indigo-300 rounded-md text-xs text-indigo-700 hover:bg-indigo-50 transition-colors"
+                  >
+                    7488738
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProfessionalRegisterForm(prev => ({
+                      ...prev,
+                      registrationNumber: '6166983',
+                    }))}
+                    className="px-3 py-2 bg-white border border-indigo-300 rounded-md text-xs text-indigo-700 hover:bg-indigo-50 transition-colors"
+                  >
+                    6166983
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProfessionalRegisterForm(prev => ({
+                      ...prev,
+                      registrationNumber: 'A8142667',
+                    }))}
+                    className="px-3 py-2 bg-white border border-indigo-300 rounded-md text-xs text-indigo-700 hover:bg-indigo-50 transition-colors"
+                  >
+                    A8142667
+                  </button>
+                </div>
+              </div>
+            )}
+
             {renderVerifyButton(
-              () => verify(`/api/verify/${professionalRegisterForm.source}`, {
-                registrationNumber: professionalRegisterForm.registrationNumber,
-                firstName: professionalRegisterForm.firstName,
-                lastName: professionalRegisterForm.lastName,
-                dateOfBirth: professionalRegisterForm.dateOfBirth,
-              }, 'professional'),
+              () => {
+                // Validate HCPC requires profession
+                if (professionalRegisterForm.source === 'hcpc' && !professionalRegisterForm.profession) {
+                  alert('Profession is required for HCPC verification. Please select a profession.');
+                  return;
+                }
+                verify(`/api/verify/${professionalRegisterForm.source}`, {
+                  registrationNumber: professionalRegisterForm.registrationNumber,
+                  ...(professionalRegisterForm.source === 'hcpc' && professionalRegisterForm.profession && { profession: professionalRegisterForm.profession }),
+                }, 'professional');
+              },
               loading['professional'] || false,
               'indigo'
             )}

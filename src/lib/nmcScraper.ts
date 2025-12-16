@@ -9,9 +9,6 @@ import { chromium, Browser } from 'playwright';
 
 export interface NMCVerificationRequest {
   registrationNumber: string;
-  firstName?: string;
-  lastName?: string;
-  dateOfBirth?: string; // Format: YYYY-MM-DD
 }
 
 export interface NMCVerificationResult {
@@ -37,7 +34,7 @@ export interface NMCVerificationResult {
 const NMC_REGISTER_URL = 'https://www.nmc.org.uk/registration/check-the-register/';
 
 export async function nmcScraper(request: NMCVerificationRequest): Promise<NMCVerificationResult> {
-  const { registrationNumber, firstName, lastName, dateOfBirth } = request;
+  const { registrationNumber } = request;
   
   let browser: Browser | null = null;
   

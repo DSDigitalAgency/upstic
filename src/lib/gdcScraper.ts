@@ -9,9 +9,6 @@ import { chromium, Browser } from 'playwright';
 
 export interface GDCVerificationRequest {
   registrationNumber: string;
-  firstName?: string;
-  lastName?: string;
-  dateOfBirth?: string;
 }
 
 export interface GDCVerificationResult {
